@@ -1,7 +1,7 @@
 {
-  "name": "template",
+  "name": "welly_adventure",
   "version": "0.0.1",
-  "description": "template game",
+  "description": "welly adventure game",
   "homepage": "",
   "scripts": {
     "start": "webpack serve --config webpack/webpack.dev.js",

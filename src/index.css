@@ -1,0 +1,12 @@
+/* @font-face { */
+  /* font-family: "Kickers-Regular"; */
+  /* src: url("./assets/fonts/Kickers-Regular.ttf") format("truetype"); */
+  /* font-weight: 400; */
+  /* font-style: normal; */
+/* } */
+
+/* /* Hack to make sure the font is ready when the phaser scenes start - see https://www.html5gamedevs.com/topic/21941-phaser-css-fonts-broke-by-update/ */ */
+/* #force-font-ready-on-phaser{ */
+  /* font-family: "Kickers-Regular"; */
+  /* display: none; */
+/* } */

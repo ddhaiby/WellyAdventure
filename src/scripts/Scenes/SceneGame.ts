@@ -3,10 +3,13 @@ import { CharacterSpawner } from "../Characters/CharacterSpawner";
 import { Npc } from "../Characters/Npcs/Npc";
 import { InteractionComponent } from "../Characters/Players/InteractionComponent";
 import { Player } from "../Characters/Players/Player";
+import { SceneGameUI } from "./SceneGameUI";
 import { Welly_Scene, SceneData } from "./WELLY_Scene";
 
 export class SceneGame extends Welly_Scene
 {
+    private sceneUI: SceneGameUI;
+
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
     private layer2: Phaser.Tilemaps.TilemapLayer;
@@ -45,6 +48,7 @@ export class SceneGame extends Welly_Scene
         this.createMap();
         this.createCamera();
         this.createPhysics();
+        this.initUI();
 
         this.events.on("postupdate", this.postUpdate, this);
     }
@@ -83,6 +87,7 @@ export class SceneGame extends Welly_Scene
             const npc = new Npc(this, npcSpawner.x, npcSpawner.y);
             this.npcs.add(npc);
             npc.init(npcSpawner.getSpawnData());
+            npc.on(CST.EVENTS.UI.REQUEST_DIALOGUE, (message: string, title: string, iconTexture: string, iconFrame: string) => { this.onRequestDialogue(message, title, iconTexture, iconFrame); }, this);
             npcSpawner.destroy();
         }
     }
@@ -124,6 +129,11 @@ export class SceneGame extends Welly_Scene
         interactionComponent.onInteractableOverlapped(npc);
     }
 
+    private initUI(): void
+    {
+        this.sceneUI = this.scene.get<SceneGameUI>(CST.SCENES.GAME_UI);
+    }
+
     // Update
     ////////////////////////////////////////////////////////////////////////
 
@@ -137,5 +147,10 @@ export class SceneGame extends Welly_Scene
     private postUpdate(sys: Phaser.Scenes.Systems, time: number, delta: number): void
     {
         this.player.postUpdate();
+    }
+
+    private onRequestDialogue(message: string, title: string, iconTexture: string, iconFrame: string): void
+    {
+        this.sceneUI.requestDialogue(message, title, iconTexture, iconFrame);
     }
 }

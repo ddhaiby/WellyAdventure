@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ScenePreloadAssets } from "./Scenes/ScenePreloadAssets";
 import { CST } from './CST';
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 document.body.style.margin = "0";
 document.body.style.padding = "0";
@@ -11,8 +12,8 @@ new Phaser.Game({
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    width: 800,
-    height: 600,
+    width: CST.GAME.WIDTH,
+    height: CST.GAME.HEIGHT,
     dom: { createContainer: true },
     scene: [ScenePreloadAssets],
     render: { pixelArt: false, transparent: true },
@@ -22,5 +23,10 @@ new Phaser.Game({
             gravity: {y: 0},
             debug: CST.PHYSIC.DEBUG
         }
+    },
+    plugins: {
+        scene: [
+            {key: 'rexUI',  plugin: UIPlugin, mapping: 'rexUI'},
+        ]
     }
 });

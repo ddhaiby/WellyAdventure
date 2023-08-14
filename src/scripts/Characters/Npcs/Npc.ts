@@ -1,10 +1,12 @@
+import { CST } from "../../CST";
 import { IInteractable } from "../../Interactable/Interactable";
-import { Character } from "../Character";
+import { Welly_Scene } from "../../Scenes/WELLY_Scene";
+import { Character, DIRECTIONS } from "../Character";
 import { Player } from "../Players/Player";
 
 export class Npc extends Character implements IInteractable
 {
-    constructor(scene: Phaser.Scene, x: number, y: number)
+    constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
     }
@@ -18,7 +20,6 @@ export class Npc extends Character implements IInteractable
         (this.body as Phaser.Physics.Arcade.Body).setOffset(17, 4);
         (this.body as Phaser.Physics.Arcade.Body).setImmovable(true);
     }
-    
 
     // Update
     ////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,45 @@ export class Npc extends Character implements IInteractable
 
     public onInteract(source: Player): void
     {
-        console.log("Hey!");
+        switch (source.getCurrentDirection())
+        {
+            case DIRECTIONS.Down:
+                this.setDirection(DIRECTIONS.Up);
+                break;
+
+            case DIRECTIONS.Up:
+                this.setDirection(DIRECTIONS.Down);
+                break;
+
+            case DIRECTIONS.Right:
+                this.setDirection(DIRECTIONS.Left);
+                break;
+
+            case DIRECTIONS.Left:
+                this.setDirection(DIRECTIONS.Right);
+                break;
+
+            case DIRECTIONS.DownLeft:
+                this.setDirection(DIRECTIONS.UpRight);
+                break;
+
+            case DIRECTIONS.DownRight:
+                this.setDirection(DIRECTIONS.UpLeft);
+                break;
+
+            case DIRECTIONS.UpLeft:
+                this.setDirection(DIRECTIONS.DownRight);
+                break;
+
+            case DIRECTIONS.UpRight:
+                this.setDirection(DIRECTIONS.DownLeft);
+                break;
+        }
+
+
+        const message = "Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice v";
+        const title = "Qlice";
+
+        this.emit(CST.EVENTS.UI.REQUEST_DIALOGUE, message, title, this.texture.key, 28); // 28 Is the frame in idle bottom right
     }
 }

@@ -1,3 +1,4 @@
+import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
 
 export declare type DIRECTION = "Up" | "Down" | "Right" | "Left" | "UpLeft" | "DownLeft" | "UpRight" | "DownRight";
@@ -39,7 +40,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     /** The direction this character is looking at */    
     protected currentDirection: DIRECTION = DIRECTIONS.Down;
 
-    constructor(scene: Phaser.Scene, x: number, y: number)
+    constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y, "");
 
@@ -125,12 +126,18 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     // Update
     ////////////////////////////////////////////////////////////////////////
 
+    /** Set the direction this character is looking at */
+    public setDirection(direction: DIRECTION): void
+    {
+        this.currentDirection = direction;
+    }
+
     /** Move the character to the top */
     public walkUp(): void
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(0, -speed);
-        this.currentDirection = DIRECTIONS.Up;
+        this.setDirection(DIRECTIONS.Up);
     }
 
     /** Move the character to the bottom */
@@ -138,7 +145,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(0, speed);
-        this.currentDirection = DIRECTIONS.Down;
+        this.setDirection(DIRECTIONS.Down);
     }
 
     /** Move the character to the left */
@@ -146,7 +153,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(-speed, 0);
-        this.currentDirection = DIRECTIONS.Left;
+        this.setDirection(DIRECTIONS.Left);
     }
 
     /** Move the character to the right */
@@ -154,7 +161,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(speed, 0);
-        this.currentDirection = DIRECTIONS.Right;
+        this.setDirection(DIRECTIONS.Right);
     }
 
     /** Move the character to the top left */
@@ -162,7 +169,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(-speed, -speed);
-        this.currentDirection = DIRECTIONS.UpLeft;
+        this.setDirection(DIRECTIONS.UpLeft);
     }
 
     /** Move the character to the top right */
@@ -170,7 +177,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(speed, -speed);
-        this.currentDirection = DIRECTIONS.UpRight;
+        this.setDirection(DIRECTIONS.UpRight);
     }
 
      /** Move the character to the bottom left */
@@ -178,7 +185,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(-speed, speed);
-        this.currentDirection = DIRECTIONS.DownLeft;
+        this.setDirection(DIRECTIONS.DownLeft);
     }
 
     /** Move the character to the bottom right */
@@ -186,7 +193,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.walk(speed, speed);
-        this.currentDirection = DIRECTIONS.DownRight;
+        this.setDirection(DIRECTIONS.DownRight);
     }
 
     /** Move the character giving a XY-velocity */

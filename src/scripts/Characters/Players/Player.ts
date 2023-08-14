@@ -1,3 +1,4 @@
+import { Welly_Scene } from "../../Scenes/WELLY_Scene";
 import { Character, DIRECTIONS } from "../Character";
 import { SpawnData } from "../CharacterSpawner";
 import { InteractionComponent } from "./InteractionComponent";
@@ -23,7 +24,7 @@ export class Player extends Character
     /** Component used to interact with interactable entities */
     protected interactableComp: InteractionComponent;
 
-    constructor(scene: Phaser.Scene, x: number, y: number)
+    constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
     }

@@ -1,3 +1,5 @@
+import { Welly_Scene } from "../Scenes/WELLY_Scene";
+
 export declare type SpawnData =
 {
     /** Walk speed */
@@ -21,7 +23,7 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
     /** The texture to use for the character */
     protected characterTexture: string = "";
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number | undefined)
+    constructor(scene: Welly_Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number | undefined)
     {
         super(scene, x, y, texture, frame);
     }

@@ -1,6 +1,7 @@
 import { CST } from "../CST";
 import { Welly_Scene } from "./WELLY_Scene";
 import { SceneGame } from "./SceneGame";
+import { SceneGameUI } from "./SceneGameUI";
 
 export class ScenePreloadAssets extends Welly_Scene
 {
@@ -47,7 +48,10 @@ export class ScenePreloadAssets extends Welly_Scene
   
     public create() : void
     {
+        const sceneUI = this.scene.add(CST.SCENES.GAME_UI, SceneGameUI, true, undefined) as SceneGameUI;
         this.scene.add(CST.SCENES.GAME, SceneGame, true, undefined);
+        sceneUI.scene.bringToTop();
+
         this.scene.remove(CST.SCENES.PRELOAD_ASSETS);
     }
 }

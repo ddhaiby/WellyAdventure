@@ -1,3 +1,5 @@
+import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+
 export declare type SceneData = {
 }
 
@@ -6,6 +8,8 @@ declare type CenterableObject = Phaser.GameObjects.Text | Phaser.GameObjects.Ima
 
 export class Welly_Scene extends Phaser.Scene
 {
+    public rexUI: UIPlugin;
+    
     constructor(config: string | Phaser.Types.Scenes.SettingsConfig)
     {
         super(config);

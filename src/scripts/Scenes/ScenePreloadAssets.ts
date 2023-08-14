@@ -39,8 +39,8 @@ export class ScenePreloadAssets extends Welly_Scene
     private preloadMaps(): void
     {
         this.load.setPath("./assets/maps/");
-        this.load.image("assetOasis", "assetOasis.png");
-        this.load.tilemapTiledJSON("oasisMap", "Oasis.json");
+        this.load.image("assetCity", "assetCity.png");
+        this.load.tilemapTiledJSON("cityMap", "cityMap.json");
     }
 
     // Create

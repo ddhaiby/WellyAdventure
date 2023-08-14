@@ -55,18 +55,18 @@ export class SceneGame extends Welly_Scene
 
     private createMap(): void
     {
-        this.currentMap = this.add.tilemap("oasisMap");
+        this.currentMap = this.add.tilemap("cityMap");
 
-        const tilesetOasis = this.currentMap.addTilesetImage("assetOasis", "assetOasis");
-        if (tilesetOasis)
+        const tileset = this.currentMap.addTilesetImage("assetCity", "assetCity");
+        if (tileset)
         {
-            const layer1 = this.currentMap.createLayer("Layer1", tilesetOasis, 0, 0);
-            this.layer2 = this.currentMap.createLayer("Layer2", tilesetOasis, 0, 0) as Phaser.Tilemaps.TilemapLayer;
+            const layer1 = this.currentMap.createLayer("Layer1", tileset, 0, 0);
+            this.layer2 = this.currentMap.createLayer("Layer2", tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
 
             this.createNpcs();
             this.createPlayer();
 
-            this.layer3 = this.currentMap.createLayer("Layer3", tilesetOasis, 0, 0) as Phaser.Tilemaps.TilemapLayer;
+            this.layer3 = this.currentMap.createLayer("Layer3", tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
 
             if (layer1)
             {
@@ -112,8 +112,8 @@ export class SceneGame extends Welly_Scene
 
     private createPhysics(): void
     {
-        this.layer2.setCollisionByProperty({Collide: true});
-        this.layer3.setCollisionByProperty({Collide: true});
+        this.layer2.setCollisionByProperty({collides: true});
+        this.layer3.setCollisionByProperty({collides: true});
 
         this.physics.add.collider(this.player, this.layer2);
         this.physics.add.collider(this.player, this.layer3);

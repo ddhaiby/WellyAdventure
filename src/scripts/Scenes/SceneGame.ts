@@ -142,6 +142,7 @@ export class SceneGame extends Welly_Scene
         super.update(time, delta);
 
         this.player.update();
+        (this.npcs.getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
     }
 
     private postUpdate(sys: Phaser.Scenes.Systems, time: number, delta: number): void

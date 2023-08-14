@@ -30,6 +30,7 @@ export class Npc extends Character implements IInteractable
 
     protected updateAnimations(): void
     {
+        this.anims.play(`Idle${this.currentDirection}`, true);
     }
 
     // Interactions

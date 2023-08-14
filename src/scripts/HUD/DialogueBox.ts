@@ -8,7 +8,7 @@ export class WELLY_DialogueBox extends TextBox
     constructor(scene: Welly_Scene, config: TextBox.IConfig)
     {
         config.width = config.width ?? 400;
-        config.height = config.height ?? 64;
+        config.height = config.height ?? 80;
         config.space = { left: 12, right: 12, top: 12, bottom: 12, icon: 16, text: 0, separator: 6, separatorRight: 200};
 
         config.layoutMode = 1;
@@ -23,6 +23,9 @@ export class WELLY_DialogueBox extends TextBox
         config.text = scene.add.text(0, 0, "", {fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "14px", color: CST.STYLE.COLOR.LIGHT_BLUE, align: "left", wordWrap: { width: config.width - (config.space.left as number) - (config.space.right as number) }}).setFixedSize(config.width - (config.space.left as number) - (config.space.right as number), config.height - (config.space.top as number) - (config.space.bottom as number));
         config.page = config.page ? config.page : {maxLines: 4, pageBreak: "\n"};
 
+        config.width = 0; // Prevent warnings as we don't care about the minimum size
+        config.height = 0; // Prevent warnings as we don't care about the minimum size
+        
         super(scene, config);
         scene.add.existing(this);
 

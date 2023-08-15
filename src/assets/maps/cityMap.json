@@ -57,6 +57,11 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"amalia"
+                        }, 
+                        {
+                         "name":"startDirection",
+                         "type":"string",
+                         "value":"DownLeft"
                         }],
                  "rotation":0,
                  "type":"",
@@ -74,13 +79,18 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"wellyWhite"
+                        }, 
+                        {
+                         "name":"startDirection",
+                         "type":"string",
+                         "value":"UpLeft"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":465,
-                 "y":361
+                 "x":135,
+                 "y":180
                 }, 
                 {
                  "height":0,
@@ -91,6 +101,11 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"wellyWhite"
+                        }, 
+                        {
+                         "name":"startDirection",
+                         "type":"string",
+                         "value":"Down"
                         }],
                  "rotation":0,
                  "type":"",
@@ -108,13 +123,18 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"wellyRed"
+                        }, 
+                        {
+                         "name":"startDirection",
+                         "type":"string",
+                         "value":"DownRight"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":308,
-                 "y":143
+                 "x":104,
+                 "y":140
                 }, 
                 {
                  "height":0,
@@ -125,13 +145,18 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"wellyItaly"
+                        }, 
+                        {
+                         "name":"startDirection",
+                         "type":"string",
+                         "value":"Down"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":118,
-                 "y":153
+                 "x":140,
+                 "y":596
                 }],
          "opacity":1,
          "type":"objectgroup",

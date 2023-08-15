@@ -59,6 +59,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         this.walkSpeed = spawnData.walkSpeed;
         this.runSpeed = spawnData.runSpeed;
+        this.setDirection(spawnData.startDirection);
 
         this.initAnimations(spawnData.characterTexture);
         this.initPhysic();

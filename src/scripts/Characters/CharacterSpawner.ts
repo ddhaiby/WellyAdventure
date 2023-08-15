@@ -1,4 +1,5 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
+import { DIRECTION, DIRECTIONS } from "./Character";
 
 export declare type SpawnData =
 {
@@ -10,6 +11,9 @@ export declare type SpawnData =
 
     /** The texture to use for the character */
     characterTexture: string;
+
+    /** Which direction this character should look at */
+    startDirection: DIRECTION;
 };
 
 export class CharacterSpawner extends Phaser.Physics.Arcade.Image
@@ -23,6 +27,9 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
     /** The texture to use for the character */
     protected characterTexture: string = "";
 
+    /** Which direction this character should look at */
+    protected startDirection: DIRECTION = DIRECTIONS.Down;
+
     constructor(scene: Welly_Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number | undefined)
     {
         super(scene, x, y, texture, frame);
@@ -33,7 +40,8 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
         return {
             walkSpeed: this.walkSpeed,
             runSpeed: this.runSpeed,
-            characterTexture: this.characterTexture
+            characterTexture: this.characterTexture,
+            startDirection: this.startDirection
         };
     }
 }

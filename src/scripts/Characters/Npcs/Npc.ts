@@ -30,7 +30,14 @@ export class Npc extends Character implements IInteractable
 
     protected updateAnimations(): void
     {
-        this.anims.play(`Idle${this.currentDirection}`, true);
+        if ((this.body as Phaser.Physics.Arcade.Body).velocity.length() > 0)
+        {
+            this.anims.play(`Walk${this.currentDirection}`, true);
+        }
+        else
+        {
+            this.anims.play(`Idle${this.currentDirection}`, true);
+        }
     }
 
     // Interactions

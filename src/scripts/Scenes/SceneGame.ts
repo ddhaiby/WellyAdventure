@@ -51,6 +51,16 @@ export class SceneGame extends Welly_Scene
         this.initUI();
 
         this.events.on("postupdate", this.postUpdate, this);
+
+        (this.npcs.getChildren() as Npc[]).forEach((npc: Npc) => {
+            if (npc.name == "amalia")
+            {
+                const position1 = new Phaser.Math.Vector2(160, 160);
+                const position2 = new Phaser.Math.Vector2(160, 386);
+                const position3 = new Phaser.Math.Vector2(this.player.x - 34, 386);
+                npc.moveTo([position3, position2, position1]);
+            }
+        }, this);
     }
 
     private createMap(): void

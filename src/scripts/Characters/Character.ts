@@ -60,6 +60,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         this.walkSpeed = spawnData.walkSpeed;
         this.runSpeed = spawnData.runSpeed;
         this.setDirection(spawnData.startDirection);
+        this.setName(spawnData.characterTexture);
 
         this.initAnimations(spawnData.characterTexture);
         this.initPhysic();
@@ -229,5 +230,75 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     public getCurrentDirection(): DIRECTION
     {
         return this.currentDirection;
+    }
+
+    public moveTo(positions: Phaser.Types.Math.Vector2Like[], threshold: number = 10): void
+    {
+        if (positions.length <= 0)
+        {
+            return;
+        }
+
+        const currentPosition = positions[positions.length - 1];
+        
+        if (currentPosition.x == undefined)
+        {
+            currentPosition.x = this.x;
+        }
+
+        if (currentPosition.y == undefined)
+        {
+            currentPosition.y = this.y;
+        }
+
+        this.scene.physics.moveTo(this, currentPosition.x, currentPosition.y, this.walkSpeed);
+        
+        const characterBody = (this.body as Phaser.Physics.Arcade.Body);
+        const velocityThreshold = 10;
+        
+        let directionV = "";
+        let directionH = "";
+
+        if (characterBody.velocity.x > velocityThreshold)
+        {
+            directionH = DIRECTIONS.Right;
+        }
+        else if (characterBody.velocity.x < -velocityThreshold)
+        {
+            directionH = DIRECTIONS.Left;
+        }
+
+        if (characterBody.velocity.y > velocityThreshold)
+        {
+            directionV = DIRECTIONS.Down;
+        }
+        else if (characterBody.velocity.y < -velocityThreshold)
+        {
+            directionV = DIRECTIONS.Up;
+        }
+
+        const direction = directionV + directionH as DIRECTION;
+        this.setDirection(direction);
+
+        const positionCheck = () => {
+            const dist = Math.abs(this.x - (currentPosition.x as number)) + Math.abs(this.y - (currentPosition.y as number));
+
+            if (dist > threshold)
+            {
+                this.scene.time.delayedCall(50, positionCheck, undefined, this);
+            }
+            else
+            {
+                (this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y);
+                positions.pop();
+
+                if (positions.length > 0)
+                {
+                    this.moveTo(positions, threshold);
+                }
+            }
+        };
+
+        positionCheck();
     }
 }

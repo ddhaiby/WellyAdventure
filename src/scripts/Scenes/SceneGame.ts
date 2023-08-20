@@ -58,7 +58,10 @@ export class SceneGame extends Welly_Scene
                 const position1 = new Phaser.Math.Vector2(160, 160);
                 const position2 = new Phaser.Math.Vector2(160, 386);
                 const position3 = new Phaser.Math.Vector2(this.player.x - 34, 386);
-                npc.moveTo([position3, position2, position1]);
+                npc.moveTo({ positions: [position3, position2, position1] , repeat: 0 });
+
+                // @ts-ignore
+                console.log(npc.walkSpeed)
             }
         }, this);
     }

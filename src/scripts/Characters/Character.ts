@@ -1,6 +1,17 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
 
+export declare type PathFindingConfig = {
+    /** All the positions to follows */
+    positions: Phaser.Types.Math.Vector2Like[],
+
+    /** Threshold to consider that a position has been reached */
+    threshold?: number,
+
+    /** Number of times to repeat the path (-1 for infinity). 1 means to go back and forth one time. */
+    repeat?: number
+}
+
 export declare type DIRECTION = "Up" | "Down" | "Right" | "Left" | "UpLeft" | "DownLeft" | "UpRight" | "DownRight";
 
 export class DIRECTIONS_NO_DIAGONALE
@@ -232,13 +243,31 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         return this.currentDirection;
     }
 
-    public moveTo(positions: Phaser.Types.Math.Vector2Like[], threshold: number = 10): void
+    public moveTo(config: PathFindingConfig): void
     {
-        if (positions.length <= 0)
+        if (config.positions.length > 0)
         {
-            return;
-        }
+            this.pathCount = config.repeat ?? 0;
+            this.threshold = config.threshold ?? 10;
+            
+            this.positions = [];
+            config.positions.forEach((vector: Phaser.Types.Math.Vector2Like) => { this.positions.push(Object.assign({}, vector)); });
 
+            const lastPosition = this.positions[this.positions.length - 1];
+            if ((lastPosition.x == undefined) || (Math.abs(lastPosition.x - this.x) > this.threshold) || (lastPosition.y == undefined) || (Math.abs(lastPosition.y - this.y) > this.threshold))
+            {
+                this.positions.push({ x: this.x, y: this.y } as Phaser.Types.Math.Vector2Like);
+            }
+
+            this.positions.reverse();
+
+            this.moveTo_Internal(config.positions);
+        }
+    }
+
+    private moveTo_Internal(positions: Phaser.Types.Math.Vector2Like[]): void
+    {
+        console.log(this.positions.length)
         const currentPosition = positions[positions.length - 1];
         
         if (currentPosition.x == undefined)
@@ -283,7 +312,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         const positionCheck = () => {
             const dist = Math.abs(this.x - (currentPosition.x as number)) + Math.abs(this.y - (currentPosition.y as number));
 
-            if (dist > threshold)
+            if (dist > this.threshold)
             {
                 this.scene.time.delayedCall(50, positionCheck, undefined, this);
             }
@@ -294,11 +323,24 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
                 if (positions.length > 0)
                 {
-                    this.moveTo(positions, threshold);
+                    this.moveTo_Internal(positions);
+                }
+                else if (this.pathCount > 0)
+                {
+                    this.pathCount = (this.pathCount as number) - 1;
+                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
+                }
+                else if (this.pathCount < 0)
+                {
+                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
                 }
             }
         };
 
         positionCheck();
     }
+
+    private pathCount: number = 0;
+    private threshold: number = 10;
+    private positions: Phaser.Types.Math.Vector2Like[] = [];
 }

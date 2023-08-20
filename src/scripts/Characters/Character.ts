@@ -14,6 +14,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
     /** The direction this character is looking at */    
     protected currentDirection: DIRECTION = DIRECTIONS.Down;
+ 
+    /** Id to determine the dialogues of this character */
+    protected dialogueId: string = "";
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
@@ -36,6 +39,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         this.characterMovementComponent.init(spawnData);
 
+        this.dialogueId = spawnData.dialogueId;
         this.setDirection(spawnData.startDirection);
         this.setName(spawnData.characterTexture);
 

@@ -56,7 +56,12 @@
                         {
                          "name":"characterTexture",
                          "type":"string",
-                         "value":"amalia"
+                         "value":"Amalia"
+                        }, 
+                        {
+                         "name":"dialogueId",
+                         "type":"string",
+                         "value":"welcome"
                         }, 
                         {
                          "name":"startDirection",
@@ -79,6 +84,11 @@
                          "name":"characterTexture",
                          "type":"string",
                          "value":"wellyWhite"
+                        }, 
+                        {
+                         "name":"dialogueId",
+                         "type":"string",
+                         "value":"npcDialogue"
                         }, 
                         {
                          "name":"startDirection",

@@ -24,13 +24,16 @@ export class ScenePreloadAssets extends Welly_Scene
     {
         this.preloadCharacters();
         this.preloadMaps();
+
+        this.load.setPath("./assets/dialogues/");
+        this.load.json("dialogues", "dialogues.json");
     }
 
     private preloadCharacters(): void
     {
         this.load.setPath("./assets/characters/");
         this.load.spritesheet("player", "player.png", { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet("amalia", "amalia.png", { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet("Amalia", "Amalia.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyRed", "wellyRed.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyWhite", "wellyWhite.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyItaly", "wellyItaly.png", { frameWidth: 64, frameHeight: 64 });

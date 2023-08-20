@@ -14,6 +14,9 @@ export declare type SpawnData =
 
     /** Which direction this character should look at */
     startDirection: DIRECTION;
+
+    /** Id to determine the dialogues of this character */
+    dialogueId: string;
 };
 
 export class CharacterSpawner extends Phaser.Physics.Arcade.Image
@@ -30,6 +33,9 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
     /** Which direction this character should look at */
     protected startDirection: DIRECTION = DIRECTIONS.Down;
 
+    /** Id to determine the dialogues of this character */
+    protected dialogueId: string = "";
+
     constructor(scene: Welly_Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number | undefined)
     {
         super(scene, x, y, texture, frame);
@@ -41,7 +47,8 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
             walkSpeed: this.walkSpeed,
             runSpeed: this.runSpeed,
             characterTexture: this.characterTexture,
-            startDirection: this.startDirection
+            startDirection: this.startDirection,
+            dialogueId: this.dialogueId,
         };
     }
 }

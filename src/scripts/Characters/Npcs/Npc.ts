@@ -46,6 +46,14 @@ export class Npc extends Character implements IInteractable
 
     public onInteract(source: Player): void
     {
+        const dialogues = this.scene.cache.json.get("dialogues");
+        const characterDialogue = dialogues[this.name];
+        
+        if (characterDialogue == undefined)
+        {
+            return;
+        }
+
         switch (source.getCurrentDirection())
         {
             case DIRECTIONS.Down:
@@ -81,10 +89,6 @@ export class Npc extends Character implements IInteractable
                 break;
         }
 
-
-        const message = "Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice Hey I'm Alice v";
-        const title = "Qlice";
-
-        this.emit(CST.EVENTS.UI.REQUEST_DIALOGUE, message, title, this.texture.key, 28); // 28 Is the frame in idle bottom right
+        this.emit(CST.EVENTS.UI.REQUEST_DIALOGUE, characterDialogue[this.dialogueId], this.name, this.texture.key, 28); // 28 is the 28th frame of the spritesheet (idle bottom right)
     }
 }

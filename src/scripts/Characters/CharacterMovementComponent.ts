@@ -190,7 +190,6 @@ export class CharacterMovementComponent
 
     private moveTo_Internal(positions: Phaser.Types.Math.Vector2Like[]): void
     {
-        console.log(this.positions.length)
         const currentPosition = positions[positions.length - 1];
         
         if (currentPosition.x == undefined)

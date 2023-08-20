@@ -1,5 +1,5 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
-import { DIRECTION, DIRECTIONS } from "./Character";
+import { DIRECTION, DIRECTIONS } from "./CharacterMovementComponent";
 
 export declare type SpawnData =
 {

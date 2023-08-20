@@ -1,5 +1,5 @@
 import { IInteractable } from "../../Interactable/Interactable";
-import { DIRECTIONS } from "../Character";
+import { DIRECTIONS } from "../CharacterMovementComponent";
 import { Player } from "./Player";
 
 export class InteractionComponent extends Phaser.GameObjects.Zone

@@ -1,52 +1,16 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
-
-export declare type PathFindingConfig = {
-    /** All the positions to follows */
-    positions: Phaser.Types.Math.Vector2Like[],
-
-    /** Threshold to consider that a position has been reached */
-    threshold?: number,
-
-    /** Number of times to repeat the path (-1 for infinity). 1 means to go back and forth one time. */
-    repeat?: number
-}
-
-export declare type DIRECTION = "Up" | "Down" | "Right" | "Left" | "UpLeft" | "DownLeft" | "UpRight" | "DownRight";
-
-export class DIRECTIONS_NO_DIAGONALE
-{
-    public static Down: DIRECTION = "Down";
-    public static Left: DIRECTION = "Left";
-    public static Right: DIRECTION = "Right";
-    public static Up: DIRECTION = "Up";
-}
-
-export class DIRECTIONS
-{
-    public static Down: DIRECTION = "Down";
-    public static DownLeft: DIRECTION = "DownLeft";
-    public static Left: DIRECTION = "Left";
-    public static UpLeft: DIRECTION = "UpLeft";
-    public static Up: DIRECTION = "Up";
-    public static UpRight: DIRECTION = "UpRight";
-    public static Right: DIRECTION = "Right";
-    public static DownRight: DIRECTION = "DownRight";
-}
+import { CharacterMovementComponent, DIRECTION, DIRECTIONS, PathFindingConfig } from "./CharacterMovementComponent";
 
 export class Character extends Phaser.Physics.Arcade.Sprite
 {
-    /** Walk speed */
-    protected walkSpeed: number = 160;
-
     /** Whether this character is walking */
     protected isWalking: boolean = false;
 
-    /** Walk speed */
-    protected runSpeed: number = 250;
-
     /** Whether this character wants to run */
-    protected wantsToRun: boolean = false;
+    public wantsToRun: boolean = false;
+
+    protected characterMovementComponent: CharacterMovementComponent;
 
     /** The direction this character is looking at */    
     protected currentDirection: DIRECTION = DIRECTIONS.Down;
@@ -61,6 +25,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         const body = this.body as Phaser.Physics.Arcade.Body;
         body.allowGravity = false;
         this.setCollideWorldBounds(true);
+
+        this.characterMovementComponent = new CharacterMovementComponent(this);
     }
 
     // Init
@@ -68,8 +34,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
     public init(spawnData: SpawnData): void
     {
-        this.walkSpeed = spawnData.walkSpeed;
-        this.runSpeed = spawnData.runSpeed;
+        this.characterMovementComponent.init(spawnData);
+
         this.setDirection(spawnData.startDirection);
         this.setName(spawnData.characterTexture);
 
@@ -145,77 +111,65 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         this.currentDirection = direction;
     }
 
+    public getCurrentDirection(): DIRECTION
+    {
+        return this.currentDirection;
+    }
+
     /** Move the character to the top */
     public walkUp(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(0, -speed);
-        this.setDirection(DIRECTIONS.Up);
+        this.isWalking = true;
+        this.characterMovementComponent.walkUp();
     }
 
     /** Move the character to the bottom */
     public walkDown(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(0, speed);
-        this.setDirection(DIRECTIONS.Down);
+        this.isWalking = true;
+        this.characterMovementComponent.walkDown();
     }
 
     /** Move the character to the left */
     public walkOnLeft(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(-speed, 0);
-        this.setDirection(DIRECTIONS.Left);
+        this.isWalking = true;
+        this.characterMovementComponent.walkOnLeft();
     }
 
     /** Move the character to the right */
     public walkOnRight(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(speed, 0);
-        this.setDirection(DIRECTIONS.Right);
+        this.isWalking = true;
+        this.characterMovementComponent.walkOnRight();
     }
 
     /** Move the character to the top left */
     public walkUpLeft(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(-speed, -speed);
-        this.setDirection(DIRECTIONS.UpLeft);
+        this.isWalking = true;
+        this.characterMovementComponent.walkUpLeft();
     }
 
     /** Move the character to the top right */
     public walkUpRight(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(speed, -speed);
-        this.setDirection(DIRECTIONS.UpRight);
+        this.isWalking = true;
+        this.characterMovementComponent.walkUpRight();
     }
 
      /** Move the character to the bottom left */
     public walkDownLeft(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(-speed, speed);
-        this.setDirection(DIRECTIONS.DownLeft);
+        this.isWalking = true;
+        this.characterMovementComponent.walkDownLeft();
     }
 
     /** Move the character to the bottom right */
     public walkDownRight(): void
     {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
-        this.walk(speed, speed);
-        this.setDirection(DIRECTIONS.DownRight);
-    }
-
-    /** Move the character giving a XY-velocity */
-    public walk(x: number, y: number): void
-    {
-        const speed = this.wantsToRun ? this.runSpeed : this.walkSpeed;
         this.isWalking = true;
-        this.setVelocity(x,y);
-        (this.body as Phaser.Physics.Arcade.Body).velocity.normalize().scale(speed);
+        this.characterMovementComponent.walkDownRight();
     }
 
     /** Stop all character movements */
@@ -223,7 +177,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     {
         if (this.isWalking)
         {
-            this.setVelocity(0,0);
+            this.characterMovementComponent.stopWalking();
             this.isWalking = false;
         }
     }
@@ -238,109 +192,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         this.wantsToRun = false;
     }
 
-    public getCurrentDirection(): DIRECTION
-    {
-        return this.currentDirection;
-    }
-
     public moveTo(config: PathFindingConfig): void
     {
-        if (config.positions.length > 0)
-        {
-            this.pathCount = config.repeat ?? 0;
-            this.threshold = config.threshold ?? 10;
-            
-            this.positions = [];
-            config.positions.forEach((vector: Phaser.Types.Math.Vector2Like) => { this.positions.push(Object.assign({}, vector)); });
-
-            const lastPosition = this.positions[this.positions.length - 1];
-            if ((lastPosition.x == undefined) || (Math.abs(lastPosition.x - this.x) > this.threshold) || (lastPosition.y == undefined) || (Math.abs(lastPosition.y - this.y) > this.threshold))
-            {
-                this.positions.push({ x: this.x, y: this.y } as Phaser.Types.Math.Vector2Like);
-            }
-
-            this.positions.reverse();
-
-            this.moveTo_Internal(config.positions);
-        }
+        this.characterMovementComponent.moveTo(config);
     }
-
-    private moveTo_Internal(positions: Phaser.Types.Math.Vector2Like[]): void
-    {
-        console.log(this.positions.length)
-        const currentPosition = positions[positions.length - 1];
-        
-        if (currentPosition.x == undefined)
-        {
-            currentPosition.x = this.x;
-        }
-
-        if (currentPosition.y == undefined)
-        {
-            currentPosition.y = this.y;
-        }
-
-        this.scene.physics.moveTo(this, currentPosition.x, currentPosition.y, this.walkSpeed);
-        
-        const characterBody = (this.body as Phaser.Physics.Arcade.Body);
-        const velocityThreshold = 10;
-        
-        let directionV = "";
-        let directionH = "";
-
-        if (characterBody.velocity.x > velocityThreshold)
-        {
-            directionH = DIRECTIONS.Right;
-        }
-        else if (characterBody.velocity.x < -velocityThreshold)
-        {
-            directionH = DIRECTIONS.Left;
-        }
-
-        if (characterBody.velocity.y > velocityThreshold)
-        {
-            directionV = DIRECTIONS.Down;
-        }
-        else if (characterBody.velocity.y < -velocityThreshold)
-        {
-            directionV = DIRECTIONS.Up;
-        }
-
-        const direction = directionV + directionH as DIRECTION;
-        this.setDirection(direction);
-
-        const positionCheck = () => {
-            const dist = Math.abs(this.x - (currentPosition.x as number)) + Math.abs(this.y - (currentPosition.y as number));
-
-            if (dist > this.threshold)
-            {
-                this.scene.time.delayedCall(50, positionCheck, undefined, this);
-            }
-            else
-            {
-                (this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y);
-                positions.pop();
-
-                if (positions.length > 0)
-                {
-                    this.moveTo_Internal(positions);
-                }
-                else if (this.pathCount > 0)
-                {
-                    this.pathCount = (this.pathCount as number) - 1;
-                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
-                }
-                else if (this.pathCount < 0)
-                {
-                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
-                }
-            }
-        };
-
-        positionCheck();
-    }
-
-    private pathCount: number = 0;
-    private threshold: number = 10;
-    private positions: Phaser.Types.Math.Vector2Like[] = [];
 }

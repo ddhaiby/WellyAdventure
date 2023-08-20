@@ -1,5 +1,5 @@
 import { Welly_Scene } from "../../Scenes/WELLY_Scene";
-import { Character, DIRECTIONS } from "../Character";
+import { Character } from "../Character";
 import { SpawnData } from "../CharacterSpawner";
 import { InteractionComponent } from "./InteractionComponent";
 

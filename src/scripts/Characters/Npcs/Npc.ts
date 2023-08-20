@@ -1,7 +1,8 @@
 import { CST } from "../../CST";
 import { IInteractable } from "../../Interactable/Interactable";
 import { Welly_Scene } from "../../Scenes/WELLY_Scene";
-import { Character, DIRECTIONS } from "../Character";
+import { Character } from "../Character";
+import { DIRECTIONS } from "../CharacterMovementComponent";
 import { Player } from "../Players/Player";
 
 export class Npc extends Character implements IInteractable

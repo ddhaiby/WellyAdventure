@@ -1,5 +1,6 @@
 import { CST } from "../CST";
 import { CharacterSpawner } from "../Characters/CharacterSpawner";
+import { MoveToPoint } from "../Characters/Npcs/MoveToEntity";
 import { Npc } from "../Characters/Npcs/Npc";
 import { InteractionComponent } from "../Characters/Players/InteractionComponent";
 import { Player } from "../Characters/Players/Player";
@@ -51,16 +52,6 @@ export class SceneGame extends Welly_Scene
         this.initUI();
 
         this.events.on("postupdate", this.postUpdate, this);
-
-        (this.npcs.getChildren() as Npc[]).forEach((npc: Npc) => {
-            if (npc.name == "Amalia")
-            {
-                const position1 = new Phaser.Math.Vector2(160, 160);
-                const position2 = new Phaser.Math.Vector2(160, 386);
-                const position3 = new Phaser.Math.Vector2(this.player.x - 34, 386);
-                npc.moveTo({ positions: [position3, position2, position1] , repeat: 0 });
-            }
-        }, this);
     }
 
     private createMap(): void
@@ -90,13 +81,40 @@ export class SceneGame extends Welly_Scene
     {
         this.npcs = this.physics.add.group();
 
-        // @ts-ignore - A phaser type issue. classType can use a CharacterSpawner since it's a phaser image.
         const npcSpawners = this.currentMap.createFromObjects("Characters", {name: "Npc", classType: CharacterSpawner}) as CharacterSpawner[];
         for (const npcSpawner of npcSpawners)
         {
+            const spawnData = npcSpawner.getSpawnData();
+
             const npc = new Npc(this, npcSpawner.x, npcSpawner.y);
             this.npcs.add(npc);
             npc.init(npcSpawner.getSpawnData());
+            
+            let positions = [] as Phaser.Types.Math.Vector2Like[];
+
+            while (spawnData.moveToPointId >= 0)
+            {
+                const moveToEntities = this.currentMap.createFromObjects("Characters", {id: spawnData.moveToPointId, classType: MoveToPoint}) as MoveToPoint[];
+
+                if (moveToEntities.length > 0)
+                {
+                    positions.push(new Phaser.Math.Vector2(moveToEntities[0].x, moveToEntities[0].y))
+                    spawnData.moveToPointId = moveToEntities[0].moveToPointId;
+
+                    for (const entity of moveToEntities)
+                    {
+                        entity.destroy();
+                    }
+                }
+                else
+                {
+                    spawnData.moveToPointId = -1;
+                }
+            }
+
+            positions.reverse();
+            npc.moveTo({ positions: positions, repeat: spawnData.moveToPointRepeat });
+            
             npc.on(CST.EVENTS.UI.REQUEST_DIALOGUE, (message: string, title: string, iconTexture: string, iconFrame: string) => { this.onRequestDialogue(message, title, iconTexture, iconFrame); }, this);
             npcSpawner.destroy();
         }
@@ -104,7 +122,6 @@ export class SceneGame extends Welly_Scene
 
     private createPlayer(): void
     {
-        // @ts-ignore - A phaser type issue. classType can use a CharacterSpawner since it's a phaser image.
         const playerSpawners = this.currentMap.createFromObjects("Characters", {name: "Player", classType: CharacterSpawner}) as CharacterSpawner[];
         const playerSpawner = playerSpawners[0]; // There should be only one player
 

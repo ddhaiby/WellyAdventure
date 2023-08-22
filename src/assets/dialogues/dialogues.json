@@ -1,6 +1,6 @@
 {
     "Amalia": {
-        "AmaliaWelcome" : "Ciao! You're the new guy, right ?\n Welcome aboard! I'm happy we found someone to help us with the restaurant.\n I am Amalia, nice to meet you."
+        "welcome" : "Ciao! You're the new guy, right ?\n Welcome aboard! I'm happy we found someone to help us with the restaurant.\n I am Amalia, nice to meet you."
     },
     "wellyWhite": {
         "npcDialogue": "Hungryyy... I think I'll try the new chicken tenders from Welly. I heard they changed the receipt!"

@@ -17,6 +17,12 @@ export declare type SpawnData =
 
     /** Id to determine the dialogues of this character */
     dialogueId: string;
+
+    /** The entity id we should move to */
+    moveToPointId: number;
+
+    /** Number of times to repeat the path to the move point entity (-1 for infinity). 1 means to go back and forth one time. */
+    moveToPointRepeat: number;
 };
 
 export class CharacterSpawner extends Phaser.Physics.Arcade.Image
@@ -36,6 +42,10 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
     /** Id to determine the dialogues of this character */
     protected dialogueId: string = "";
 
+    protected moveToPointId: number = -1;
+
+    protected moveToPointRepeat: number = 0;
+
     constructor(scene: Welly_Scene, x: number, y: number, texture: string | Phaser.Textures.Texture, frame?: string | number | undefined)
     {
         super(scene, x, y, texture, frame);
@@ -49,6 +59,8 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
             characterTexture: this.characterTexture,
             startDirection: this.startDirection,
             dialogueId: this.dialogueId,
+            moveToPointId: this.moveToPointId,
+            moveToPointRepeat: this.moveToPointRepeat
         };
     }
 }

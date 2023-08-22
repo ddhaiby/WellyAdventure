@@ -1,6 +1,7 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
 import { CharacterMovementComponent, DIRECTION, DIRECTIONS, PathFindingConfig } from "./CharacterMovementComponent";
+import { MoveToPoint } from "./Npcs/MoveToEntity";
 
 export class Character extends Phaser.Physics.Arcade.Sprite
 {

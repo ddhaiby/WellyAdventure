@@ -64,6 +64,16 @@
                          "value":"welcome"
                         }, 
                         {
+                         "name":"moveToPointId",
+                         "type":"object",
+                         "value":11
+                        }, 
+                        {
+                         "name":"moveToPointRepeat",
+                         "type":"int",
+                         "value":0
+                        }, 
+                        {
                          "name":"startDirection",
                          "type":"string",
                          "value":"DownLeft"
@@ -167,6 +177,51 @@
                  "width":0,
                  "x":140,
                  "y":596
+                }, 
+                {
+                 "height":0,
+                 "id":11,
+                 "name":"moveTo",
+                 "properties":[
+                        {
+                         "name":"moveToPointId",
+                         "type":"object",
+                         "value":12
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":160,
+                 "y":157
+                }, 
+                {
+                 "height":0,
+                 "id":12,
+                 "name":"moveTo",
+                 "properties":[
+                        {
+                         "name":"moveToPointId",
+                         "type":"object",
+                         "value":14
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":160,
+                 "y":386
+                }, 
+                {
+                 "height":0,
+                 "id":14,
+                 "name":"moveTo",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":267,
+                 "y":385
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -187,7 +242,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":9,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

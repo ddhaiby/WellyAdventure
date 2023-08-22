@@ -4,12 +4,12 @@ import { MoveToPoint } from "../Characters/Npcs/MoveToEntity";
 import { Npc } from "../Characters/Npcs/Npc";
 import { InteractionComponent } from "../Characters/Players/InteractionComponent";
 import { Player } from "../Characters/Players/Player";
-import { SceneGameUI } from "./SceneGameUI";
+import { SceneCityUI } from "./SceneCityUI";
 import { Welly_Scene, SceneData } from "./WELLY_Scene";
 
-export class SceneGame extends Welly_Scene
+export class SceneCity extends Welly_Scene
 {
-    private sceneUI: SceneGameUI;
+    private sceneUI: SceneCityUI;
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
@@ -158,7 +158,7 @@ export class SceneGame extends Welly_Scene
 
     private initUI(): void
     {
-        this.sceneUI = this.scene.get<SceneGameUI>(CST.SCENES.GAME_UI);
+        this.sceneUI = this.scene.get<SceneCityUI>(CST.SCENES.GAME_UI);
     }
 
     // Update

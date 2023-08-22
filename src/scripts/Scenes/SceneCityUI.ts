@@ -8,7 +8,7 @@ declare type UIKeys =
     skip: Phaser.Input.Keyboard.Key;
 }
 
-export class SceneGameUI extends Welly_Scene
+export class SceneCityUI extends Welly_Scene
 {
     private dialogueBox: WELLY_DialogueBox;
 

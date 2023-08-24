@@ -2,7 +2,10 @@ export const CST = {
     GAME: {
         WIDTH: 900,
         HEIGHT: 700,
-        ZOOM: 1.2,
+        ZOOM: {
+            CITY: 1.2,
+            TOWER_DEFENSE: 0.8
+        },
         MAP: {
             TILESET: {
                 TILE_SIZE: 32
@@ -14,8 +17,10 @@ export const CST = {
     },
     SCENES: {
         PRELOAD_ASSETS: "PRELOAD_ASSETS",
-        GAME: "GAME",
-        GAME_UI: "GAME_UI",
+        EXPLORATION_GAME: "CITY",
+        EXPLORATION_GAME_UI: "CITY_UI",
+        TOWER_DEFENSE: "TOWER_DEFENSE",
+        TOWER_DEFENSE_UI: "TOWER_DEFENSE_UI",
     },
     STYLE: {
         TEXT: {
@@ -32,5 +37,6 @@ export const CST = {
         UI: {
             REQUEST_DIALOGUE: "REQUEST_DIALOGUE"
         }
-    }
+    },
+    NONE: "NONE"
 }

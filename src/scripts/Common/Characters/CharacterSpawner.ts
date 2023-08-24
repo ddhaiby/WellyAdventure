@@ -1,4 +1,5 @@
-import { Welly_Scene } from "../Scenes/WELLY_Scene";
+import { CST } from "../CST";
+import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { DIRECTION, DIRECTIONS } from "./CharacterMovementComponent";
 
 export declare type SpawnData =
@@ -40,7 +41,7 @@ export class CharacterSpawner extends Phaser.Physics.Arcade.Image
     protected startDirection: DIRECTION = DIRECTIONS.Down;
 
     /** Id to determine the dialogues of this character */
-    protected dialogueId: string = "";
+    protected dialogueId: string = CST.NONE;
 
     protected moveToPointId: number = -1;
 

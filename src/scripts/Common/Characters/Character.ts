@@ -1,7 +1,8 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
 import { CharacterMovementComponent, DIRECTION, DIRECTIONS, PathFindingConfig } from "./CharacterMovementComponent";
-import { MoveToPoint } from "./Npcs/MoveToEntity";
+import { MoveToPoint } from "../PathFinding/MoveToEntity";
+import { CST } from "../CST";
 
 export class Character extends Phaser.Physics.Arcade.Sprite
 {
@@ -17,7 +18,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     protected currentDirection: DIRECTION = DIRECTIONS.Down;
  
     /** Id to determine the dialogues of this character */
-    protected dialogueId: string = "";
+    protected dialogueId: string = CST.NONE;
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {

@@ -1,5 +1,5 @@
-import { Welly_Scene } from "../../Scenes/WELLY_Scene";
-import { DIRECTION, DIRECTIONS } from "../CharacterMovementComponent";
+import { Welly_Scene } from "../Scenes/WELLY_Scene";
+import { DIRECTION, DIRECTIONS } from "../Characters/CharacterMovementComponent";
 
 export class MoveToPoint extends Phaser.GameObjects.Image
 {

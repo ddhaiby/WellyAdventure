@@ -1,15 +1,15 @@
-import { CST } from "../CST";
-import { CharacterSpawner } from "../Characters/CharacterSpawner";
-import { MoveToPoint } from "../Characters/Npcs/MoveToEntity";
-import { Npc } from "../Characters/Npcs/Npc";
-import { InteractionComponent } from "../Characters/Players/InteractionComponent";
-import { Player } from "../Characters/Players/Player";
-import { SceneCityUI } from "./SceneCityUI";
-import { Welly_Scene, SceneData } from "./WELLY_Scene";
+import { CST } from "../../Common/CST";
+import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { CharacterSpawner } from "../../Common/Characters/CharacterSpawner";
+import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
+import { Npc } from "../../Common/Characters/Npcs/Npc";
+import { InteractionComponent } from "../../Common/Characters/Players/InteractionComponent";
+import { Player } from "../../Common/Characters/Players/Player";
+import { SceneExplorationGameUI } from "./SceneExplorationGameUI";
 
-export class SceneCity extends Welly_Scene
+export class SceneExplorationGame extends Welly_Scene
 {
-    private sceneUI: SceneCityUI;
+    private sceneUI: SceneExplorationGameUI;
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
@@ -22,7 +22,7 @@ export class SceneCity extends Welly_Scene
 
     constructor()
     {
-        super({key: CST.SCENES.GAME});
+        super({key: CST.SCENES.EXPLORATION_GAME});
     }
 
     // Init
@@ -133,7 +133,7 @@ export class SceneCity extends Welly_Scene
 
     private createCamera(): void
     {
-        this.cameras.main.zoomTo(CST.GAME.ZOOM, 0.0);
+        this.cameras.main.zoomTo(CST.GAME.ZOOM.CITY, 0.0);
         this.cameras.main.startFollow(this.player);
     }
 
@@ -158,7 +158,7 @@ export class SceneCity extends Welly_Scene
 
     private initUI(): void
     {
-        this.sceneUI = this.scene.get<SceneCityUI>(CST.SCENES.GAME_UI);
+        this.sceneUI = this.scene.get<SceneExplorationGameUI>(CST.SCENES.EXPLORATION_GAME_UI);
     }
 
     // Update

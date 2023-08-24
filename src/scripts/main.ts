@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { ScenePreloadAssets } from "./Scenes/ScenePreloadAssets";
-import { CST } from './CST';
+import { ScenePreloadAssets } from './Common/Scenes/ScenePreloadAssets';
+import { CST } from './Common/CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 document.body.style.margin = "0";

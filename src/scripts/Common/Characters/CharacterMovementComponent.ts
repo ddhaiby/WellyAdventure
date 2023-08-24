@@ -191,7 +191,6 @@ export class CharacterMovementComponent
     private moveTo_Internal(positions: Phaser.Types.Math.Vector2Like[]): void
     {
         const currentPosition = positions[positions.length - 1];
-        
         if (currentPosition.x == undefined)
         {
             currentPosition.x = this.owner.x;
@@ -235,7 +234,7 @@ export class CharacterMovementComponent
 
             if (dist > this.threshold)
             {
-                this.owner.scene.time.delayedCall(50, positionCheck, undefined, this);
+                this.owner.scene.time.delayedCall(30, positionCheck, undefined, this);
             }
             else
             {

@@ -1,6 +1,6 @@
-import { CST } from "../CST";
-import { WELLY_DialogueBox } from "../HUD/DialogueBox";
-import { Welly_Scene, SceneData } from "./WELLY_Scene";
+import { CST } from "../../Common/CST";
+import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
+import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 
 declare type UIKeys = 
 {
@@ -8,13 +8,13 @@ declare type UIKeys =
     skip: Phaser.Input.Keyboard.Key;
 }
 
-export class SceneCityUI extends Welly_Scene
+export class SceneExplorationGameUI extends Welly_Scene
 {
     private dialogueBox: WELLY_DialogueBox;
 
     constructor()
     {
-        super({key: CST.SCENES.GAME_UI});
+        super({key: CST.SCENES.EXPLORATION_GAME_UI});
     }
 
     // Init

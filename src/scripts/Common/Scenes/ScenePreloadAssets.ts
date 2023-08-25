@@ -61,13 +61,13 @@ export class ScenePreloadAssets extends Welly_Scene
   
     public create() : void
     {
-        const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;
-        this.scene.add(CST.SCENES.EXPLORATION_GAME, SceneExplorationGame, true, undefined);
-        sceneUI.scene.bringToTop();
-
-        // const sceneUI = this.scene.add(CST.SCENES.TOWER_DEFENSE_UI, SceneTowerDefenseUI, true, undefined) as SceneTowerDefenseUI;
-        // this.scene.add(CST.SCENES.TOWER_DEFENSE, SceneTowerDefense, true, undefined);
+        // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;
+        // this.scene.add(CST.SCENES.EXPLORATION_GAME, SceneExplorationGame, true, undefined);
         // sceneUI.scene.bringToTop();
+
+        const sceneUI = this.scene.add(CST.SCENES.TOWER_DEFENSE_UI, SceneTowerDefenseUI, true, undefined) as SceneTowerDefenseUI;
+        this.scene.add(CST.SCENES.TOWER_DEFENSE, SceneTowerDefense, true, undefined);
+        sceneUI.scene.bringToTop();
 
         this.scene.remove(CST.SCENES.PRELOAD_ASSETS);
     }

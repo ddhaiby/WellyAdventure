@@ -15,14 +15,16 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     /** The entity id we should move to */
     protected moveToPointId: number = -1;
 
-    /** The list of the spawned npcs (alive) in the game */
-    protected npcs: Npc[];
+    /** The spawned npcs (alive) in the game */
+    private npcs: Phaser.Physics.Arcade.Group;
 
     protected pathFindingConfig: PathFindingConfig;
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y, "");
+
+        this.npcs = scene.physics.add.group();
     }
 
     /** Whether the spawner can spawn a npc */
@@ -41,18 +43,18 @@ export class WaveSpawner extends Phaser.GameObjects.Image
         return this.pathFindingConfig;
     }
 
-    public reset(shouldKillNpc: boolean = false): void
+    public getNpcs(): Phaser.Physics.Arcade.Group
+    {
+        return this.npcs;
+    }
+
+    public reset(shouldClearNpcs: boolean = false): void
     {
         this.spawnedNpcCount = 0;
 
-        if (shouldKillNpc)
+        if (shouldClearNpcs)
         {
-            for (const npc of this.npcs)
-            {
-                npc.destroy();
-            }
-
-            this.npcs = [];
+            this.npcs.clear(true, true);
         }
     }
 
@@ -61,16 +63,22 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     {
         if (this.canSpawnNpc())
         {
-            const npcX = this.x + Phaser.Math.FloatBetween(-5, 5);
-            const npcY = this.y + Phaser.Math.FloatBetween(-5, 5);
+            const rangeX = 10;
+            const rangeY = 70;
+            const offsetX = Phaser.Math.FloatBetween(-rangeX, rangeX);
+            const offsetY = Phaser.Math.FloatBetween(-rangeY, rangeY);
+
+            const npcX = this.x + offsetX;
+            const npcY = this.y + offsetY;
 
             const npc = new JunkMonster(this.scene, npcX, npcY);
+            this.npcs.add(npc);
 
             const npcSpawn: SpawnData = {
                 walkSpeed: 200,
                 runSpeed: 200,
                 characterTexture: "Amalia",
-                startDirection: DIRECTIONS.Down,
+                startDirection: DIRECTIONS.Up,
                 dialogueId: CST.NONE,
                 moveToPointId: this.moveToPointId,
                 moveToPointRepeat: 0
@@ -79,7 +87,16 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             npc.init(npcSpawn);
             npc.onDie(() => { this.onNpcDie(npc); }, this);
 
-            npc.moveTo({ positions: this.pathFindingConfig.positions, repeat: this.pathFindingConfig.repeat });
+            const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];
+            for (const position of this.pathFindingConfig.positions)
+            {
+                adaptedPositions.push({
+                    x: (position.x != undefined) ? (position.x + offsetX) : undefined,
+                    y: (position.y != undefined) ? (position.y + offsetY) : undefined,
+                });
+            }
+
+            npc.moveTo({ positions: adaptedPositions, repeat: this.pathFindingConfig.repeat });
 
             this.emit("NPC_SPAWNED", npc);
 
@@ -92,21 +109,13 @@ export class WaveSpawner extends Phaser.GameObjects.Image
 
     public getAlivedNpcCount(): number
     {
-        return this.npcs.length;
+        return this.npcs.getLength();
     }
 
     /** Triggered function when a npc dies */
     protected onNpcDie(InNpc: JunkMonster): void
     {
-        const npcIndex = this.npcs.findIndex((npc: Npc) => {
-            return npc == InNpc;
-        }, this);
-
-        if (npcIndex >= 0)
-        {
-            this.npcs.slice(npcIndex);
-        }
-        
+        this.npcs.remove(InNpc, true, true);
         this.emit("NPC_DIED", InNpc);
     }
 

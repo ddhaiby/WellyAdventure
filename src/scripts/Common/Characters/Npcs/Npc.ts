@@ -10,6 +10,8 @@ export class Npc extends Character implements IInteractable
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
+
+        this.setCollideWorldBounds(false);
     }
 
     // Init

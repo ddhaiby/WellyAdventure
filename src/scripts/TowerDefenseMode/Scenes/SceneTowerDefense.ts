@@ -4,6 +4,8 @@ import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplorationGameUI";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { SpawnData } from "../../Common/Characters/CharacterSpawner";
+import { DIRECTIONS } from "../../Common/Characters/CharacterMovementComponent";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -12,7 +14,7 @@ export class SceneTowerDefense extends Welly_Scene
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
 
-    private npcs: Phaser.Physics.Arcade.Group;
+    private spawners: WaveSpawner[];
 
     constructor()
     {
@@ -24,6 +26,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     public init(data?: SceneData): void
     {
+        this.spawners = [];
     }
 
     // Preload
@@ -67,11 +70,9 @@ export class SceneTowerDefense extends Welly_Scene
 
     private setupWaveSpawner(): void
     {
-        this.npcs = this.physics.add.group();
+        this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
-        const npcSpawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
-
-        for (const npcSpawner of npcSpawners)
+        for (const npcSpawner of this.spawners)
         {
             let moveToPointId = npcSpawner.getMoveToPointId();
             let positions = [] as Phaser.Types.Math.Vector2Like[];
@@ -98,10 +99,30 @@ export class SceneTowerDefense extends Welly_Scene
 
             positions.reverse();
 
-            console.log(positions)
-
             npcSpawner.setPathFindingConfig({positions: positions, repeat: 0});
-            npcSpawner.spawnNpc();
+            
+            for (let i = 0; i < 7; ++i)
+            {
+                const npc = npcSpawner.spawnNpc();
+                if (npc)
+                {
+                    // this.npcs.add(npc);
+
+                    const npcSpawn: SpawnData = {
+                        walkSpeed: 200,
+                        runSpeed: 200,
+                        characterTexture: "Amalia",
+                        startDirection: DIRECTIONS.Down,
+                        dialogueId: CST.NONE,
+                        moveToPointId: -1,
+                        moveToPointRepeat: 0
+                    };
+        
+                    npc.init(npcSpawn);
+
+                    console.log(npc)
+                }
+            }
         }
     }
 
@@ -128,6 +149,9 @@ export class SceneTowerDefense extends Welly_Scene
     {
         super.update(time, delta);
 
-        (this.npcs.getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
+        for (const spawner of this.spawners)
+        {
+            (spawner.getNpcs().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
+        }
     }
 }

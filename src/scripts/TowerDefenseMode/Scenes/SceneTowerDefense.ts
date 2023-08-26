@@ -101,28 +101,18 @@ export class SceneTowerDefense extends Welly_Scene
 
             npcSpawner.setPathFindingConfig({positions: positions, repeat: 0});
             
-            for (let i = 0; i < 7; ++i)
-            {
-                const npc = npcSpawner.spawnNpc();
-                if (npc)
+           let i = 0;
+
+            const fn = () => {
+                if (++i > 10)
                 {
-                    // this.npcs.add(npc);
-
-                    const npcSpawn: SpawnData = {
-                        walkSpeed: 200,
-                        runSpeed: 200,
-                        characterTexture: "Amalia",
-                        startDirection: DIRECTIONS.Down,
-                        dialogueId: CST.NONE,
-                        moveToPointId: -1,
-                        moveToPointRepeat: 0
-                    };
-        
-                    npc.init(npcSpawn);
-
-                    console.log(npc)
+                    return;
                 }
+                npcSpawner.spawnNpc();
+                this.time.delayedCall(2000, () => { fn(); })
             }
+
+            fn();
         }
     }
 

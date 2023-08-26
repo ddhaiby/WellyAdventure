@@ -63,7 +63,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         this.setTexture(texture);
 
         const directions = Object.keys(DIRECTIONS);
-
         for (let i = 0; i < directions.length; ++i)
         {
             const direction = directions[i];

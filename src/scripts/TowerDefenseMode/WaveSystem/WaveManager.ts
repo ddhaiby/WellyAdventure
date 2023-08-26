@@ -1,5 +1,5 @@
 import { Character } from "../../Common/Characters/Character";
-import { JunkMonster } from "../../Common/Characters/Npcs/JunkMonster";
+import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveSpawner } from "./WaveSpawner";
 
 export class WaveManager extends Phaser.GameObjects.GameObject

@@ -1,7 +1,7 @@
 import { CST } from "../../Common/CST";
 import { DIRECTIONS, PathFindingConfig } from "../../Common/Characters/CharacterMovementComponent";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
-import { JunkMonster } from "../../Common/Characters/Npcs/JunkMonster";
+import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 

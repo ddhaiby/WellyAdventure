@@ -6,6 +6,7 @@ import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { InteractionComponent } from "../../Common/Characters/Players/InteractionComponent";
 import { Player } from "../../Common/Characters/Players/Player";
 import { SceneExplorationGameUI } from "./SceneExplorationGameUI";
+import { WellyNpc } from "../Characters/WellyNpc";
 
 export class SceneExplorationGame extends Welly_Scene
 {
@@ -151,7 +152,7 @@ export class SceneExplorationGame extends Welly_Scene
         this.physics.add.overlap(this.player.getInteractableComp(), this.npcs, this.onPlayerOverlapInteractable);
     }
 
-    private onPlayerOverlapInteractable(interactionComponent: InteractionComponent, npc: Npc): void
+    private onPlayerOverlapInteractable(interactionComponent: InteractionComponent, npc: WellyNpc): void
     {
         interactionComponent.onInteractableOverlapped(npc);
     }

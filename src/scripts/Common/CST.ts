@@ -13,7 +13,7 @@ export const CST = {
         }
     },
     PHYSIC: {
-        DEBUG: false,
+        DEBUG: true,
     },
     SCENES: {
         PRELOAD_ASSETS: "PRELOAD_ASSETS",

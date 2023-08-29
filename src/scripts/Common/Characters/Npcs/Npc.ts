@@ -11,13 +11,6 @@ export class Npc extends Character
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    protected initPhysic(): void
-    {
-        (this.body as Phaser.Physics.Arcade.Body).setSize(28, 46);
-        (this.body as Phaser.Physics.Arcade.Body).setOffset(17, 4);
-        (this.body as Phaser.Physics.Arcade.Body).setImmovable(true);
-    }
-
     // Update
     ////////////////////////////////////////////////////////////////////////
 

@@ -1,3 +1,4 @@
+import { DIRECTIONS } from "../../../Common/Characters/CharacterMovementComponent";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
 
@@ -11,6 +12,35 @@ export class JunkMonster extends Npc
         super(scene, x, y);
 
         this.setCollideWorldBounds(false);
+    }
+
+    protected initAnimations(texture: string): void
+    {
+        if (texture == undefined || texture == "__MISSING")
+        {
+            return;
+        }
+
+        this.setTexture(texture);
+
+        const directions = Object.keys(DIRECTIONS);
+        for (let i = 0; i < directions.length; ++i)
+        {
+            const direction = directions[i];
+            this.anims.create({
+                key: `Idle${direction}`,
+                frames: this.anims.generateFrameNumbers(texture, { start: i * 4, end: i * 4 }),
+                frameRate: 1,
+                repeat: 0
+            });
+
+            this.anims.create({
+                key: `Walk${direction}`,
+                frames: this.anims.generateFrameNumbers(texture, { start: i * 4, end: (i + 1) * 4 - 1 }),
+                frameRate: 6,
+                repeat: -1
+            });
+        }    
     }
 
     protected die(): void

@@ -115,6 +115,54 @@
                  "width":0,
                  "x":769,
                  "y":692
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":27,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":704,
+                 "y":224
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":28,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":447,
+                 "y":223
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":29,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":576,
+                 "y":127
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":30,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":772,
+                 "y":127
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -135,7 +183,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":18,
+ "nextobjectid":31,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

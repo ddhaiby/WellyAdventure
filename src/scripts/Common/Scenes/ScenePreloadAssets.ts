@@ -54,6 +54,10 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.setPath("./assets/maps/");
         this.load.image("assetTowerDefenseMap", "assetTowerDefenseMap.png");
         this.load.tilemapTiledJSON("towerDefenseMap", "towerDefenseMap.json");
+
+        this.load.setPath("./assets/turrets/");
+        this.load.image("emptyTurret", "emptyTurret.png");
+        this.load.image("canon", "canon.png");
     }
 
     // Create

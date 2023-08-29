@@ -4,8 +4,7 @@ import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplorationGameUI";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
-import { SpawnData } from "../../Common/Characters/CharacterSpawner";
-import { DIRECTIONS } from "../../Common/Characters/CharacterMovementComponent";
+import { Turret } from "../Characters/Npcs/Turret";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -15,6 +14,8 @@ export class SceneTowerDefense extends Welly_Scene
     private currentMap: Phaser.Tilemaps.Tilemap;
 
     private spawners: WaveSpawner[];
+
+    private turrets: Phaser.Physics.Arcade.Group;
 
     constructor()
     {
@@ -45,6 +46,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.createMap();
         this.setupWaveSpawner();
+        this.createBaseTurrets();
         this.createCamera();
         this.createPhysics();
         this.initUI();
@@ -113,6 +115,19 @@ export class SceneTowerDefense extends Welly_Scene
             }
 
             fn();
+        }
+    }
+
+    private createBaseTurrets(): void
+    {
+        this.turrets = this.physics.add.group();
+
+        const turretArray = this.currentMap.createFromObjects("Wave", {name: "Turret", classType: Turret, key: "emptyTurret"}) as Turret[];
+
+        for (const turret of turretArray)
+        {
+            this.turrets.add(turret);
+            
         }
     }
 

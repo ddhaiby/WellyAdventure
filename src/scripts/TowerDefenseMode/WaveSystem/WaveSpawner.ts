@@ -2,7 +2,6 @@ import { CST } from "../../Common/CST";
 import { DIRECTIONS, PathFindingConfig } from "../../Common/Characters/CharacterMovementComponent";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
-import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 
 export class WaveSpawner extends Phaser.GameObjects.Image
@@ -59,7 +58,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     }
 
     /** Spawn a new npc if possible */
-    public spawnNpc(npcLevel: number = 0): Npc | undefined
+    public spawnNpc(npcLevel: number = 0): JunkMonster | undefined
     {
         if (this.canSpawnNpc())
         {

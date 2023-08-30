@@ -64,6 +64,15 @@ export class WellyNpc extends Npc implements IInteractable
     protected updateAnimations(): void
     {
         super.updateAnimations();
+
+        if ((this.body as Phaser.Physics.Arcade.Body).velocity.length() > 0)
+        {
+            this.anims.play(`Walk${this.currentDirection}`, true);
+        }
+        else
+        {
+            this.anims.play(`Idle${this.currentDirection}`, true);
+        }
     }
 
     // Interactions

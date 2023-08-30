@@ -14,6 +14,9 @@ export class JunkMonster extends Npc
         this.setCollideWorldBounds(false);
     }
 
+    // Init
+    ////////////////////////////////////////////////////////////////////////
+
     protected initAnimations(texture: string): void
     {
         if (texture == undefined || texture == "__MISSING")
@@ -41,6 +44,28 @@ export class JunkMonster extends Npc
                 repeat: -1
             });
         }    
+    }
+
+    // Update
+    ////////////////////////////////////////////////////////////////////////
+
+    protected updateControls(): void
+    {
+        super.updateControls();
+    }
+
+    protected updateAnimations(): void
+    {
+        super.updateAnimations();
+
+        if ((this.body as Phaser.Physics.Arcade.Body).velocity.length() > 0)
+        {
+            this.anims.play(`Walk${this.currentDirection}`, true);
+        }
+        else
+        {
+            this.anims.play(`Idle${this.currentDirection}`, true);
+        }
     }
 
     protected die(): void

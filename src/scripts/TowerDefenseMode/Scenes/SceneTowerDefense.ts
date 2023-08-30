@@ -5,6 +5,7 @@ import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplorationGameUI";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { Turret } from "../Characters/Npcs/Turret";
+import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -127,7 +128,12 @@ export class SceneTowerDefense extends Welly_Scene
         for (const turret of turretArray)
         {
             this.turrets.add(turret);
-            
+
+            for (const spawner of this.spawners)
+            {
+                // @ts-ignore
+                this.physics.add.overlap(this.turrets, spawner.getNpcs(), this.onMonsterInRange, this.isMonsterTargetable, this);
+            }
         }
     }
 
@@ -157,6 +163,17 @@ export class SceneTowerDefense extends Welly_Scene
         for (const spawner of this.spawners)
         {
             (spawner.getNpcs().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
+            (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => { turret.update(); }, this);
         }
+    }
+
+    private onMonsterInRange(turret: Turret, monster: JunkMonster): void
+    {
+        turret.onMonsterInRange(monster);
+    }
+    
+    private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
+    {
+        return true;
     }
 }

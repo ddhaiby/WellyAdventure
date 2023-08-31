@@ -108,16 +108,22 @@ export class Turret extends Npc
         if (!this.isReloading && this.currentFocus)
         {
             this.currentFocus.takeDamage(25);
-            this.isReloading = true;
-            
-            this.scene.time.delayedCall(1000 / this.attackSpeed, () => {
-                this.isReloading = false;
 
-                if (this.currentFocus)
-                {
-                    this.attack();
-                }
-            }, undefined, this);
+            this.reload();
         }
+    }
+
+    protected reload(): void
+    {
+        this.isReloading = true;
+
+        this.scene.time.delayedCall(1000 / this.attackSpeed, () => {
+            this.isReloading = false;
+
+            if (this.currentFocus)
+            {
+                this.attack();
+            }
+        }, undefined, this);
     }
 }

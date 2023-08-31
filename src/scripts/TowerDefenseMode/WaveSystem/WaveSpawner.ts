@@ -74,7 +74,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             this.npcs.add(npc);
 
             const npcSpawn: SpawnData = {
-                walkSpeed: 200,
+                walkSpeed: 100,
                 runSpeed: 200,
                 characterTexture: "Amalia",
                 startDirection: DIRECTIONS.Up,

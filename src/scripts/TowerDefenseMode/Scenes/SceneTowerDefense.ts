@@ -1,15 +1,15 @@
 import { CST } from "../../Common/CST";
+import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { SceneTowerDefenseUI } from "./SceneTowerDefenseUI";
 import { WaveSpawner } from "../WaveSystem/WaveSpawner";
 import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
-import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplorationGameUI";
-import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { Turret } from "../Characters/Npcs/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 
 export class SceneTowerDefense extends Welly_Scene
 {
-    private sceneUI: SceneExplorationGameUI;
+    private sceneUI: SceneTowerDefenseUI;
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
@@ -17,6 +17,9 @@ export class SceneTowerDefense extends Welly_Scene
     private spawners: WaveSpawner[];
 
     private turrets: Phaser.Physics.Arcade.Group;
+
+    /** The money to use to build turrets */
+    private money: number = 0;
 
     constructor()
     {
@@ -51,6 +54,8 @@ export class SceneTowerDefense extends Welly_Scene
         this.createCamera();
         this.createPhysics();
         this.initUI();
+
+        this.setMoney(100);
     }
 
     private createMap(): void
@@ -150,7 +155,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private initUI(): void
     {
-        this.sceneUI = this.scene.get<SceneExplorationGameUI>(CST.SCENES.TOWER_DEFENSE_UI);
+        this.sceneUI = this.scene.get<SceneTowerDefenseUI>(CST.SCENES.TOWER_DEFENSE_UI);
     }
 
     // Update
@@ -175,5 +180,25 @@ export class SceneTowerDefense extends Welly_Scene
     private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
     {
         return true;
+    }
+
+    private addMoney(money: number): void
+    {
+        this.setMoney(this.money + money);
+    }
+
+    private removeMoney(cost: number): void
+    {
+        this.setMoney(this.money - cost);
+    }
+
+    private setMoney(money: number): void
+    {
+        this.money = money;
+
+        if (this.sceneUI)
+        {
+            this.sceneUI.onMoneyChanged(this.money);
+        }
     }
 }

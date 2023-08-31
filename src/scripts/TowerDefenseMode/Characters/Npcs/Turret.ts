@@ -107,7 +107,23 @@ export class Turret extends Npc
     {
         if (!this.isReloading && this.currentFocus)
         {
-            this.currentFocus.takeDamage(25);
+            const bullet = this.scene.add.image(this.x, this.y, "bullet");
+            const target = this.currentFocus;
+
+            this.scene.tweens.add({
+                targets: bullet,
+                x: this.currentFocus.x,
+                y: this.currentFocus.y,
+                duration: 80,
+                onCompleteScope: this,
+                onComplete: () => {
+                    if (target)
+                    {
+                        target.takeDamage(25);
+                    }
+                    bullet.destroy();
+                }
+            });
 
             this.reload();
         }

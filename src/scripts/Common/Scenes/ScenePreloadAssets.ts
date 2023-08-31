@@ -58,6 +58,7 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.setPath("./assets/turrets/");
         this.load.image("emptyTurret", "emptyTurret.png");
         this.load.image("canon", "canon.png");
+        this.load.image("bullet", "bullet.png");
     }
 
     // Create

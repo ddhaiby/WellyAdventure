@@ -107,7 +107,7 @@ export class Turret extends Npc
     {
         if (!this.isReloading && this.currentFocus)
         {
-            this.currentFocus.setVisible(false);
+            this.currentFocus.takeDamage(25);
             this.isReloading = true;
             
             this.scene.time.delayedCall(1000 / this.attackSpeed, () => {

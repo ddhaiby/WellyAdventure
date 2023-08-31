@@ -1,11 +1,24 @@
 import { DIRECTIONS } from "../../../Common/Characters/CharacterMovementComponent";
+import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
+import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
 
 export class JunkMonster extends Npc
 {
     public scene: Welly_Scene;
+
+    /** Component showing the health */
+    protected healthBar: WELLY_Bar;
+
+    /** Health of the monster. The mosnter is considered dead when it reaches 0 */
     private health: number = 100;
+
+    /** Max health of the monster */
+    private maxHealth: number = 100;
+
+    protected healthBarOffsetX: number = 0;
+    protected healthBarOffsetY: number = -6;
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
@@ -14,8 +27,33 @@ export class JunkMonster extends Npc
         this.setCollideWorldBounds(false);
     }
 
+    public destroy(fromScene?: boolean | undefined): void
+    {
+        if (this.healthBar)
+        {
+            this.healthBar.destroy(fromScene);
+        }    
+    }
+
+    public setDepth(value: number): this
+    {
+        if (this.healthBar)
+        {
+            this.healthBar.setDepth(value);
+        }
+        
+        return super.setDepth(value);
+    }
+
     // Init
     ////////////////////////////////////////////////////////////////////////
+
+    public init(spawnData: SpawnData): void
+    {
+        super.init(spawnData);
+        
+        this.initHealthBar();
+    }
 
     protected initAnimations(texture: string): void
     {
@@ -46,8 +84,27 @@ export class JunkMonster extends Npc
         }    
     }
 
+    protected initHealthBar(): void
+    {
+        this.healthBar = new WELLY_Bar(this.scene, {
+            width: 36,
+            height: 4,
+            radius: 2,
+            value: 1,
+            color: 0xFF0000
+        });
+    }
+
     // Update
     ////////////////////////////////////////////////////////////////////////
+
+    public update(): void
+    {
+        super.update();
+        
+        this.healthBar.setX(this.x - this.healthBar.width * 0.5 + this.healthBarOffsetX);
+        this.healthBar.setY(this.y - this.height * 0.5 - this.healthBar.height + this.healthBarOffsetY);
+    }
 
     protected updateControls(): void
     {
@@ -68,11 +125,27 @@ export class JunkMonster extends Npc
         }
     }
 
+    public setHealth(inHealth: number): void
+    {
+        this.health = Phaser.Math.Clamp(inHealth, 0, this.maxHealth);
+        this.healthBar.setValue(this.health / this.maxHealth);
+
+        if (this.health <= 0)
+        {
+            this.die();
+        }
+    }
+
+    public takeDamage(damage: number): void
+    {
+        this.setHealth(this.health - damage);
+    }
+
     protected die(): void
     {
         this.health = 0;
         this.stopWalking();
-        this.disableBody(true, false);
+        this.disableBody(true, true);
 
         this.emit("DIE");
     }

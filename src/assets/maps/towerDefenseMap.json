@@ -127,6 +127,42 @@
                  "width":32,
                  "x":447,
                  "y":223
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":32,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":545,
+                 "y":126
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":33,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":192,
+                 "y":225
+                }, 
+                {
+                 "gid":24,
+                 "height":32,
+                 "id":34,
+                 "name":"Turret",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":640,
+                 "y":450
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -147,7 +183,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":32,
+ "nextobjectid":35,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

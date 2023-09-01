@@ -7,7 +7,7 @@ export class Turret extends Npc
     public scene: Welly_Scene;
 
     /** The level of this turret. The higher the stronger it is */
-    protected level: 0;
+    protected level: number = 0;
 
     /** The monster this turret should attack */
     protected currentFocus: JunkMonster | undefined;
@@ -18,23 +18,12 @@ export class Turret extends Npc
     /** How many time the turret can attack per second */
     protected attackSpeed: number = 1; 
 
+    protected waitingForUpgradeTween: Phaser.Tweens.Tween;
+
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
-
-        this.setAlpha(1);
-        const tween = this.scene.tweens.add({ targets: this, alpha: 0.3, yoyo: true, duration: 600, repeat: -1 });
-        
-        this.setInteractive();
-        this.once(Phaser.Input.Events.POINTER_UP, () => {
-            this.setTexture("canon");
-            this.setAlpha(1);
-            tween.stop();
-        }, this);
-
-        this.once(Phaser.Input.Events.POINTER_UP, () => {
-            this.upgrade();
-        }, this);
+        this.waitingForUpgradeTween = this.scene.tweens.add({ targets: this, alpha: 0.3, yoyo: true, duration: 600, repeat: -1 });
     }
 
     // Init
@@ -60,8 +49,6 @@ export class Turret extends Npc
         {
             this.setCurrentFocus(undefined);
         }
-
-        console.log(this.currentFocus)
     }
 
     protected setCurrentFocus(inFocus: JunkMonster | undefined): void
@@ -97,10 +84,16 @@ export class Turret extends Npc
         return (distMonster1 <= distMonster2) ? monster1 : monster2;
     }
 
-    protected upgrade(levelIncrease: number = 1): void
+    public upgrade(levelIncrease: number = 1): void
     {
         this.level += levelIncrease;
-        (this.body as Phaser.Physics.Arcade.Body).setSize(200, 200);
+
+        this.setTexture("canon");
+        this.setAlpha(1);
+        this.waitingForUpgradeTween.stop();
+
+        const size = 100 + 10 * this.level;
+        (this.body as Phaser.Physics.Arcade.Body).setSize(size, size);
     }
 
     protected attack(): void

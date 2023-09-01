@@ -18,8 +18,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     private turrets: Phaser.Physics.Arcade.Group;
 
-    /** The money to use to build turrets */
-    private money: number = 0;
+    /** The gold to use to build turrets */
+    private gold: number = 0;
 
     constructor()
     {
@@ -55,7 +55,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.createPhysics();
         this.initUI();
 
-        this.setMoney(100);
+        this.setGold(100);
     }
 
     private createMap(): void
@@ -140,6 +140,9 @@ export class SceneTowerDefense extends Welly_Scene
                 // @ts-ignore
                 this.physics.add.overlap(this.turrets, spawner.getNpcs(), this.onMonsterInRange, this.isMonsterTargetable, this);
             }
+
+            turret.setInteractive();
+            turret.on(Phaser.Input.Events.POINTER_UP, () => { this.tryUpgradeTurret(turret); }, this);
         }
     }
 
@@ -185,26 +188,35 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        this.addMoney(10);
+        this.addGold(10);
     }
 
-    private addMoney(money: number): void
+    private addGold(gold: number): void
     {
-        this.setMoney(this.money + money);
+        this.setGold(this.gold + gold);
     }
 
-    private removeMoney(cost: number): void
+    private removeGold(cost: number): void
     {
-        this.setMoney(this.money - cost);
+        this.setGold(this.gold - cost);
     }
 
-    private setMoney(money: number): void
+    private setGold(gold: number): void
     {
-        this.money = money;
+        this.gold = gold;
 
         if (this.sceneUI)
         {
-            this.sceneUI.onMoneyChanged(this.money);
+            this.sceneUI.onGoldChanged(this.gold);
+        }
+    }
+
+    private tryUpgradeTurret(turret: Turret): void
+    {
+        if (this.gold >= 50)
+        {
+            turret.upgrade();
+            this.removeGold(50);
         }
     }
 }

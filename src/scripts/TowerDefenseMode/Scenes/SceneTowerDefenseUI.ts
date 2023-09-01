@@ -9,7 +9,7 @@ declare type UIKeys =
 
 export class SceneTowerDefenseUI extends Welly_Scene
 {
-    private moneyText: Phaser.GameObjects.Text;
+    private goldText: Phaser.GameObjects.Text;
     private waveText: Phaser.GameObjects.Text;
     
     constructor()
@@ -40,7 +40,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         this.createShortcuts(); 
 
-        this.moneyText = this.add.text(24, 24, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" })
+        this.goldText = this.add.text(24, 24, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" })
         this.waveText = this.add.text(24, 60, "Wave 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, fontSize: "24px" })
     }
 
@@ -64,13 +64,13 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
     }
 
-    public onMoneyChanged(money: number): void
+    public onGoldChanged(gold: number): void
     {
-        this.moneyText.setText(`Gold: ${money.toString()}`);
+        this.goldText.setText(`Gold: ${gold.toString()}`);
     }
 
     public onWaveChanged(wave: number): void
     {
-        this.moneyText.setText(`Wave: ${wave.toString()}`);
+        this.goldText.setText(`Wave: ${wave.toString()}`);
     }
 }

@@ -80,9 +80,9 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
-        for (const npcSpawner of this.spawners)
+        for (const monsterSpawner of this.spawners)
         {
-            let moveToPointId = npcSpawner.getMoveToPointId();
+            let moveToPointId = monsterSpawner.getMoveToPointId();
             let positions = [] as Phaser.Types.Math.Vector2Like[];
 
             while (moveToPointId >= 0)
@@ -107,8 +107,9 @@ export class SceneTowerDefense extends Welly_Scene
 
             positions.reverse();
 
-            npcSpawner.setPathFindingConfig({positions: positions, repeat: 0});
-            
+            monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
+            monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
+
            let i = 0;
 
             const fn = () => {
@@ -116,11 +117,7 @@ export class SceneTowerDefense extends Welly_Scene
                 {
                     return;
                 }
-                const npc = npcSpawner.spawnNpc();
-                if (npc)
-                {
-                    npc.onDie(() => { this.addMoney(10); }, this);
-                }
+                monsterSpawner.spawnNpc();
                 this.time.delayedCall(2000, () => { fn(); })
             }
 
@@ -176,14 +173,19 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
+    private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
+    {
+        return true;
+    }
+
     private onMonsterInRange(turret: Turret, monster: JunkMonster): void
     {
         turret.onMonsterInRange(monster);
     }
-    
-    private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
+
+    private onMonsterDie(monster: JunkMonster): void
     {
-        return true;
+        this.addMoney(10);
     }
 
     private addMoney(money: number): void

@@ -84,7 +84,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             };
 
             npc.init(npcSpawn);
-            npc.onDie(() => { this.onNpcDie(npc); }, this);
+            npc.onDie(() => { this.onNpcDieInternal(npc); }, this);
 
             const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];
             for (const position of this.pathFindingConfig.positions)
@@ -112,10 +112,15 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     }
 
     /** Triggered function when a npc dies */
-    protected onNpcDie(InNpc: JunkMonster): void
+    protected onNpcDieInternal(npc: JunkMonster): void
     {
-        this.npcs.remove(InNpc, true, true);
-        this.emit("NPC_DIED", InNpc);
+        this.npcs.remove(npc, true, true);
+        this.emit("NPC_DIED", npc);
+    }
+
+    public onMonsterDie(fn: (npc: JunkMonster) => void , context?: any): void
+    {
+        this.on("NPC_DIED", fn, context);
     }
 
     public getMoveToPointId(): number

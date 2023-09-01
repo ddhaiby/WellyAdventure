@@ -127,10 +127,12 @@ export class JunkMonster extends Npc
 
     public setHealth(inHealth: number): void
     {
+        const oldHealth = this.health;
+
         this.health = Phaser.Math.Clamp(inHealth, 0, this.maxHealth);
         this.healthBar.setValue(this.health / this.maxHealth);
 
-        if (this.health <= 0)
+        if ((this.health <= 0) && (oldHealth > 0))
         {
             this.die();
         }
@@ -150,7 +152,7 @@ export class JunkMonster extends Npc
         this.emit("DIE");
     }
 
-    public onDie(fn: Function, context?: any): void
+    public onDie(fn: () => void , context?: any): void
     {
         this.on("DIE", fn, context);
     }

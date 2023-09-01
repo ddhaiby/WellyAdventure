@@ -116,7 +116,11 @@ export class SceneTowerDefense extends Welly_Scene
                 {
                     return;
                 }
-                npcSpawner.spawnNpc();
+                const npc = npcSpawner.spawnNpc();
+                if (npc)
+                {
+                    npc.onDie(() => { this.addMoney(10); }, this);
+                }
                 this.time.delayedCall(2000, () => { fn(); })
             }
 

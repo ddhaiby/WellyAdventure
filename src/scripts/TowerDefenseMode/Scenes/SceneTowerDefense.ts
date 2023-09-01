@@ -135,6 +135,8 @@ export class SceneTowerDefense extends Welly_Scene
         {
             this.turrets.add(turret);
 
+            turret.init();
+
             for (const spawner of this.spawners)
             {
                 // @ts-ignore

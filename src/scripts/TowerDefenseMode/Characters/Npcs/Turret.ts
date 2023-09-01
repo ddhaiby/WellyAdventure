@@ -1,6 +1,8 @@
+import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "./JunkMonster";
+import { CST } from "../../../Common/CST";
 
 export class Turret extends Npc
 {
@@ -20,6 +22,8 @@ export class Turret extends Npc
 
     protected waitingForUpgradeTween: Phaser.Tweens.Tween;
 
+    protected levelText: Phaser.GameObjects.Text;
+
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
@@ -29,13 +33,19 @@ export class Turret extends Npc
     // Init
     ////////////////////////////////////////////////////////////////////////
 
+    public init(spawnData?: SpawnData): void
+    {
+        super.init(spawnData);
+
+        this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "28px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
+    }
+
     protected initPhysic(): void
     {
     }
 
     protected initAnimations(texture: string): void
     {
-       // this.setTexture("");
     }
 
     // Upgrade
@@ -94,6 +104,8 @@ export class Turret extends Npc
 
         const size = 100 + 10 * this.level;
         (this.body as Phaser.Physics.Arcade.Body).setSize(size, size);
+
+        this.levelText.setText(`${this.level}`);
     }
 
     protected attack(): void

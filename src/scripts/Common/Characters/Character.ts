@@ -37,8 +37,21 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    public init(spawnData: SpawnData): void
+    public init(spawnData?: SpawnData): void
     {
+        if (spawnData == undefined)
+        {
+            spawnData = {
+                walkSpeed: 100,
+                runSpeed: 100,
+                characterTexture: this.texture.key,
+                startDirection: DIRECTIONS.Down,
+                dialogueId: CST.NONE,
+                moveToPointId: -1,
+                moveToPointRepeat: 0
+            }
+        }
+
         this.characterMovementComponent.init(spawnData);
 
         this.dialogueId = spawnData.dialogueId;

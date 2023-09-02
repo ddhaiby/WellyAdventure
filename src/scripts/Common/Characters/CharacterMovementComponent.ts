@@ -57,10 +57,23 @@ export class CharacterMovementComponent
     /** The threshold to consider we reached a position. The lower this value the more accurate we want the component to be */
     private threshold: number = 10;
 
+    /** Internal timer called to check the position of the character when they follow a path */
+    private internalPositionCheckTimerEvent: Phaser.Time.TimerEvent | undefined;
+
     constructor(owner: Character)
     {
         this.owner = owner;
         this.ownerBody = owner.body as Phaser.Physics.Arcade.Body;
+    }
+
+    public destroy(): void
+    {
+        if (this.internalPositionCheckTimerEvent)
+        {
+            this.internalPositionCheckTimerEvent.remove(false);
+            this.internalPositionCheckTimerEvent.destroy();
+            this.internalPositionCheckTimerEvent = undefined;
+        }
     }
 
     // Init
@@ -234,7 +247,7 @@ export class CharacterMovementComponent
 
             if (dist > this.threshold)
             {
-                this.owner.scene.time.delayedCall(30, positionCheck, undefined, this);
+                this.internalPositionCheckTimerEvent = this.owner.scene.time.delayedCall(30, positionCheck, undefined, this);
             }
             else
             {

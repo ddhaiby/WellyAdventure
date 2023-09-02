@@ -23,7 +23,7 @@ export class JunkMonster extends Npc
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
-
+        scene.physics.add.existing(this);
         this.setCollideWorldBounds(false);
     }
 
@@ -32,7 +32,8 @@ export class JunkMonster extends Npc
         if (this.healthBar)
         {
             this.healthBar.destroy(fromScene);
-        }    
+        }
+        super.destroy(fromScene);
     }
 
     public setDepth(value: number): this

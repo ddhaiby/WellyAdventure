@@ -84,7 +84,10 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             };
 
             monster.init(monsterSpawnData);
-            monster.onDie(() => { this.notifyMonsterDie(monster); }, this);
+            monster.onDie(() => {
+                this.emit("MONSTER_DIED", monster);
+                this.monsters.remove(monster, true, true);
+            }, this);
 
             const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];
             for (const position of this.pathFindingConfig.positions)
@@ -109,13 +112,6 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     public getAlivedMonsterCount(): number
     {
         return this.monsters.getLength();
-    }
-
-    /** Triggered function when a monster dies */
-    protected notifyMonsterDie(monster: JunkMonster): void
-    {
-        this.monsters.remove(monster, true, true);
-        this.emit("MONSTER_DIED", monster);
     }
 
     public onMonsterDie(fn: (monster: JunkMonster) => void , context?: any): void

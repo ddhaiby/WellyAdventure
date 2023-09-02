@@ -34,6 +34,16 @@ export class Character extends Phaser.Physics.Arcade.Sprite
         this.characterMovementComponent = new CharacterMovementComponent(this);
     }
 
+    public destroy(fromScene?: boolean | undefined): void
+    {
+        if (this.characterMovementComponent)
+        {
+            this.characterMovementComponent.destroy();
+        }
+
+        super.destroy(fromScene);
+    }
+
     // Init
     ////////////////////////////////////////////////////////////////////////
 

@@ -124,7 +124,7 @@ export class Turret extends Npc
                 onComplete: () => {
                     if (target)
                     {
-                        target.takeDamage(25);
+                        target.takeDamage(50);
                     }
                     bullet.destroy();
                 }

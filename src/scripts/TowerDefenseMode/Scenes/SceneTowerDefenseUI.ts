@@ -69,8 +69,12 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.goldText.setText(`Gold: ${gold.toString()}`);
     }
 
-    public onWaveChanged(wave: number): void
+    public onWaveStarted(currentWave: number): void
     {
-        this.goldText.setText(`Wave: ${wave.toString()}`);
+        this.waveText.setText(`Wave: ${currentWave.toString()}`);
+    }
+
+    public onWaveCompleted(currentWave: number): void
+    {
     }
 }

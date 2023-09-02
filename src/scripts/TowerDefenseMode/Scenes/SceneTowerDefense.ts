@@ -6,6 +6,7 @@ import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Turret } from "../Characters/Npcs/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
+import { WaveManager } from "../WaveSystem/WaveManager";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -14,7 +15,10 @@ export class SceneTowerDefense extends Welly_Scene
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
 
+    // Waves
     private spawners: WaveSpawner[];
+    private waveManager: WaveManager;
+    private currentWave: number;
 
     private turrets: Phaser.Physics.Arcade.Group;
 
@@ -56,6 +60,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.initUI();
 
         this.setGold(100);
+        this.waveManager.startNextWave();
     }
 
     private createMap(): void
@@ -78,6 +83,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private setupWaveSpawner(): void
     {
+        this.currentWave = 0;
         this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
         for (const monsterSpawner of this.spawners)
@@ -109,20 +115,11 @@ export class SceneTowerDefense extends Welly_Scene
 
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
             monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
-
-           let i = 0;
-
-            const fn = () => {
-                if (++i > 10)
-                {
-                    return;
-                }
-                monsterSpawner.spawnNpc();
-                this.time.delayedCall(2000, () => { fn(); })
-            }
-
-            fn();
         }
+
+        this.waveManager = new WaveManager(this, this.spawners);
+        this.waveManager.onWaveStarted(this.onWaveStarted, this)
+        this.waveManager.onWaveCompleted(this.onWaveCompleted, this)
     }
 
     private createBaseTurrets(): void
@@ -140,7 +137,7 @@ export class SceneTowerDefense extends Welly_Scene
             for (const spawner of this.spawners)
             {
                 // @ts-ignore
-                this.physics.add.overlap(this.turrets, spawner.getNpcs(), this.onMonsterInRange, this.isMonsterTargetable, this);
+                this.physics.add.overlap(this.turrets, spawner.getMonsters(), this.onMonsterInRange, this.isMonsterTargetable, this);
             }
 
             turret.setInteractive();
@@ -173,7 +170,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         for (const spawner of this.spawners)
         {
-            (spawner.getNpcs().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
+            (spawner.getMonsters().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
             (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => { turret.update(); }, this);
         }
     }
@@ -220,5 +217,16 @@ export class SceneTowerDefense extends Welly_Scene
             turret.upgrade();
             this.removeGold(50);
         }
+    }
+
+    private onWaveStarted(currentWave: number): void
+    {
+        this.sceneUI.onWaveStarted(currentWave);
+    }
+
+    private onWaveCompleted(currentWave: number): void
+    {
+        this.addGold(100);
+        this.sceneUI.onWaveCompleted(currentWave);
     }
 }

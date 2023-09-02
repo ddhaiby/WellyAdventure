@@ -8,14 +8,14 @@ export class WaveSpawner extends Phaser.GameObjects.Image
 {
     public scene: Welly_Scene;
 
-    /** The number of spawned npcs since the beginning */
-    protected spawnedNpcCount: number = 0;
+    /** The number of spawned monsters since the beginning */
+    protected spawnedMonsterCount: number = 0;
 
     /** The entity id we should move to */
     protected moveToPointId: number = -1;
 
-    /** The spawned npcs (alive) in the game */
-    private npcs: Phaser.Physics.Arcade.Group;
+    /** The spawned monsters (alive) in the game */
+    private monsters: Phaser.Physics.Arcade.Group;
 
     protected pathFindingConfig: PathFindingConfig;
 
@@ -23,11 +23,11 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     {
         super(scene, x, y, "");
 
-        this.npcs = scene.physics.add.group();
+        this.monsters = scene.physics.add.group();
     }
 
-    /** Whether the spawner can spawn a npc */
-    public canSpawnNpc(): boolean
+    /** Whether the spawner can spawn a monster */
+    public canSpawnMonster(): boolean
     {
         return true;
     }
@@ -42,38 +42,38 @@ export class WaveSpawner extends Phaser.GameObjects.Image
         return this.pathFindingConfig;
     }
 
-    public getNpcs(): Phaser.Physics.Arcade.Group
+    public getMonsters(): Phaser.Physics.Arcade.Group
     {
-        return this.npcs;
+        return this.monsters;
     }
 
-    public reset(shouldClearNpcs: boolean = false): void
+    public reset(shouldClearMonsters: boolean = false): void
     {
-        this.spawnedNpcCount = 0;
+        this.spawnedMonsterCount = 0;
 
-        if (shouldClearNpcs)
+        if (shouldClearMonsters)
         {
-            this.npcs.clear(true, true);
+            this.monsters.clear(true, true);
         }
     }
 
-    /** Spawn a new npc if possible */
-    public spawnNpc(npcLevel: number = 0): JunkMonster | undefined
+    /** Spawn a new monster if possible */
+    public spawnMonster(): JunkMonster | undefined
     {
-        if (this.canSpawnNpc())
+        if (this.canSpawnMonster())
         {
             const rangeX = 10;
             const rangeY = 70;
             const offsetX = Phaser.Math.FloatBetween(-rangeX, rangeX);
             const offsetY = Phaser.Math.FloatBetween(-rangeY, rangeY);
 
-            const npcX = this.x + offsetX;
-            const npcY = this.y + offsetY;
+            const monsterX = this.x + offsetX;
+            const monsterY = this.y + offsetY;
 
-            const npc = new JunkMonster(this.scene, npcX, npcY);
-            this.npcs.add(npc);
+            const monster = new JunkMonster(this.scene, monsterX, monsterY);
+            this.monsters.add(monster);
 
-            const npcSpawn: SpawnData = {
+            const monsterSpawnData: SpawnData = {
                 walkSpeed: 100,
                 runSpeed: 200,
                 characterTexture: "Amalia",
@@ -83,8 +83,8 @@ export class WaveSpawner extends Phaser.GameObjects.Image
                 moveToPointRepeat: 0
             };
 
-            npc.init(npcSpawn);
-            npc.onDie(() => { this.onNpcDieInternal(npc); }, this);
+            monster.init(monsterSpawnData);
+            monster.onDie(() => { this.notifyMonsterDie(monster); }, this);
 
             const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];
             for (const position of this.pathFindingConfig.positions)
@@ -95,32 +95,32 @@ export class WaveSpawner extends Phaser.GameObjects.Image
                 });
             }
 
-            npc.moveTo({ positions: adaptedPositions, repeat: this.pathFindingConfig.repeat });
+            monster.moveTo({ positions: adaptedPositions, repeat: this.pathFindingConfig.repeat });
 
-            this.emit("NPC_SPAWNED", npc);
+            this.emit("MONSTER_SPAWNED", monster);
 
-            ++this.spawnedNpcCount;
+            ++this.spawnedMonsterCount;
 
-            return npc;
+            return monster;
         }
         return undefined;
     }
 
-    public getAlivedNpcCount(): number
+    public getAlivedMonsterCount(): number
     {
-        return this.npcs.getLength();
+        return this.monsters.getLength();
     }
 
-    /** Triggered function when a npc dies */
-    protected onNpcDieInternal(npc: JunkMonster): void
+    /** Triggered function when a monster dies */
+    protected notifyMonsterDie(monster: JunkMonster): void
     {
-        this.npcs.remove(npc, true, true);
-        this.emit("NPC_DIED", npc);
+        this.monsters.remove(monster, true, true);
+        this.emit("MONSTER_DIED", monster);
     }
 
-    public onMonsterDie(fn: (npc: JunkMonster) => void , context?: any): void
+    public onMonsterDie(fn: (monster: JunkMonster) => void , context?: any): void
     {
-        this.on("NPC_DIED", fn, context);
+        this.on("MONSTER_DIED", fn, context);
     }
 
     public getMoveToPointId(): number

@@ -216,9 +216,10 @@ export class SceneTowerDefense extends Welly_Scene
     private onTurretClicked(turret: Turret): void
     {
         const turretPopup = new TurretPopup(turret, turret.x, turret.y);
-        turretPopup.on("requestUpgrade", () => {
-            this.tryUpgradeTurret(turret);
-        }, this);
+        turretPopup.on("requestUpgrade", () => { this.tryUpgradeTurret(turret); }, this);
+        turretPopup.on("destroyed", () => { turret.hideRangeIndicator(); }, this);
+
+        turret.showRangeIndicator();
     }
 
     private tryUpgradeTurret(turret: Turret): void

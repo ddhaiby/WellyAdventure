@@ -52,4 +52,10 @@ export class TurretPopup extends WELLY_Popup
 
         // Bouger le fichier dans le dossier towerDefense
     }
+
+    public destroy(fromScene?: boolean | undefined): void
+    {
+        this.emit("destroyed");
+        super.destroy(fromScene);    
+    }
 }

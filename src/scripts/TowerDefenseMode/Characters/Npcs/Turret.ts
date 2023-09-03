@@ -22,12 +22,19 @@ export class Turret extends Npc
 
     protected waitingForUpgradeTween: Phaser.Tweens.Tween;
 
+    /** Text that shows the current level of the turret */
     protected levelText: Phaser.GameObjects.Text;
+
+    protected rangeIndicator: Phaser.GameObjects.Graphics;
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
+        
         this.waitingForUpgradeTween = this.scene.tweens.add({ targets: this, alpha: 0.3, yoyo: true, duration: 600, repeat: -1 });
+
+        this.rangeIndicator = this.scene.add.graphics();
+        this.hideRangeIndicator();
     }
 
     // Init
@@ -146,5 +153,32 @@ export class Turret extends Npc
                 this.attack();
             }
         }, undefined, this);
+    }
+
+    public getRange(): number
+    {
+        return (this.body as Phaser.Physics.Arcade.Body).width * 0.5;
+    }
+
+    public showRangeIndicator(): void
+    {
+        if (!this.rangeIndicator.visible)
+        {
+            this.hideRangeIndicator();
+
+            const range = this.getRange();
+            this.rangeIndicator.fillStyle(0x0000AA, 0.25);
+            this.rangeIndicator.fillCircle(this.x, this.y, range);
+            this.rangeIndicator.lineStyle(3, 0x0000FF, 0.8);
+            this.rangeIndicator.strokeCircle(this.x, this.y, range);
+
+            this.rangeIndicator.setVisible(true);
+        }
+    }
+
+    public hideRangeIndicator(): void
+    {
+        this.rangeIndicator.clear();
+        this.rangeIndicator.setVisible(false);
     }
 }

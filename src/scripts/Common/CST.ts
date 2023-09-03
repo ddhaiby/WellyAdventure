@@ -35,7 +35,11 @@ export const CST = {
     },
     EVENTS: {
         UI: {
-            REQUEST_DIALOGUE: "REQUEST_DIALOGUE"
+            REQUEST_DIALOGUE: "REQUEST_DIALOGUE",
+            TOOLTIP: {
+                SHOW: "SHOW_TOOLTIP",
+                HIDE: "HIDE_TOOLTIP"
+            }
         }
     },
     NONE: "NONE"

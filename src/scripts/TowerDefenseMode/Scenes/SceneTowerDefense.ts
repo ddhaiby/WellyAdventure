@@ -7,6 +7,9 @@ import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Turret } from "../Characters/Npcs/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
+import { ModalBehavoir } from "phaser3-rex-plugins/plugins/modal";
+import { WELLY_Popup } from "../../Common/HUD/WELLY_Popup";
+import { TurretPopup } from "../HUD/TurretPopup";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -54,7 +57,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.createMap();
         this.setupWaveSpawner();
-        this.createBaseTurrets();
+        this.createTurrets();
         this.createCamera();
         this.createPhysics();
         this.initUI();
@@ -122,7 +125,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.waveManager.onWaveCompleted(this.onWaveCompleted, this)
     }
 
-    private createBaseTurrets(): void
+    private createTurrets(): void
     {
         this.turrets = this.physics.add.group();
 
@@ -141,7 +144,7 @@ export class SceneTowerDefense extends Welly_Scene
             }
 
             turret.setInteractive();
-            turret.on(Phaser.Input.Events.POINTER_UP, () => { this.tryUpgradeTurret(turret); }, this);
+            turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);
         }
     }
 
@@ -208,6 +211,14 @@ export class SceneTowerDefense extends Welly_Scene
         {
             this.sceneUI.onGoldChanged(this.gold);
         }
+    }
+
+    private onTurretClicked(turret: Turret): void
+    {
+        const turretPopup = new TurretPopup(turret, turret.x, turret.y);
+        turretPopup.on("requestUpgrade", () => {
+            this.tryUpgradeTurret(turret);
+        }, this);
     }
 
     private tryUpgradeTurret(turret: Turret): void

@@ -26,7 +26,7 @@ new Phaser.Game({
     },
     plugins: {
         scene: [
-            {key: 'rexUI',  plugin: UIPlugin, mapping: 'rexUI'},
+            {key: 'rexUI',  plugin: UIPlugin, mapping: 'rexUI'}
         ]
     }
 });

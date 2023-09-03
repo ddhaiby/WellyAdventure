@@ -109,10 +109,22 @@ export class Turret extends Npc
         this.setAlpha(1);
         this.waitingForUpgradeTween.stop();
 
-        const size = 100 + 10 * this.level;
+        const size = 200 + 10 * this.level;
         (this.body as Phaser.Physics.Arcade.Body).setSize(size, size);
 
         this.levelText.setText(`${this.level}`);
+
+        this.emit("upgrade");
+        this.onUpgrade();
+    }
+
+    protected onUpgrade(): void
+    {
+        if (this.rangeIndicator.visible)
+        {
+            this.hideRangeIndicator();
+            this.showRangeIndicator();
+        }
     }
 
     protected attack(): void

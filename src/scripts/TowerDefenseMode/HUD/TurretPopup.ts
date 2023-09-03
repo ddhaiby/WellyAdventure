@@ -13,14 +13,14 @@ export class TurretPopup extends WELLY_Popup
     {
         super(turret.scene, x, y, config);
 
-        const backgroundWidth = 200;
-        const backgroundHeight = 200;
-        const background = this.scene.rexUI.add.roundRectangle(0, backgroundHeight * 0.5 + 24, backgroundWidth, backgroundHeight, 8, WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE));
-        background.strokeColor = WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.BLUE);
-        background.lineWidth = 2;
-        background.setInteractive();
+        // const backgroundWidth = 200;
+        // const backgroundHeight = 200;
+        // const background = this.scene.rexUI.add.roundRectangle(0, backgroundHeight * 0.5 + 24, backgroundWidth, backgroundHeight, 8, WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE));
+        // background.strokeColor = WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.BLUE);
+        // background.lineWidth = 2;
+        // background.setInteractive();
 
-        this.add(background);
+        // this.add(background);
 
         // const iconContainer = this.scene.add.container(0, 0);
         
@@ -31,12 +31,15 @@ export class TurretPopup extends WELLY_Popup
         //     icon: 
         // });
 
-        const button = new WELLY_TextButton(this.scene, 0, 0, "Upgrade", {
+        const button = new WELLY_TextButton(this.scene, 0, 0, "UPGRADE", {
             textureNormal: "buttonConnectNormal", textOffsetNormalY: -1,
             texturePressed: "buttonConnectNormal", textOffsetHoveredY: -1,
-            textureHovered: "buttonConnectNormal", textOffsetPressedY: -1
+            textureHovered: "buttonConnectNormal", textOffsetPressedY: -1,
+            fontSize: "18px",
+            textColor: CST.STYLE.COLOR.BLUE,
+            textStrokeThickness: 0
         });
-        button.setPosition(background.x, background.y + background.displayHeight * 0.5 - button.displayHeight * 0.5 - 8);
+        button.setPosition(0, button.displayHeight + 8);
         this.add(button);
 
         button.onClicked(() => {

@@ -9,6 +9,10 @@ export declare type GPC_TextButtonStyle = {
     textOffsetHoveredY?: number;
     textOffsetPressedY?: number;
     pixelPerfect?: boolean;
+    fontSize?: string;
+    textColor?: string;
+    textStroke?: string;
+    textStrokeThickness?: number;
 }
 
 export class WELLY_TextButton extends Phaser.GameObjects.Container
@@ -48,6 +52,11 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.textOffsetNormalY = (style && (style.textOffsetNormalY !== undefined)) ? style.textOffsetNormalY : -12;
         this.textOffsetHoveredY = (style && (style.textOffsetHoveredY !== undefined)) ? style.textOffsetHoveredY : -10;
         this.textOffsetPressedY = (style && (style.textOffsetPressedY !== undefined)) ? style.textOffsetPressedY : -1;
+        
+        const fontSize = (style && (style.fontSize !== undefined)) ? style.fontSize : "20px";
+        const textColor = (style && (style.textColor !== undefined)) ? style.textColor : "0x000000";
+        const textStroke = (style && (style.textStroke !== undefined)) ? style.textStroke : "0x000000";
+        const textStrokeThickness = (style && (style.textStrokeThickness !== undefined)) ? style.textStrokeThickness : 0
 
         this.buttonImage = this.scene.add.image(0, 0, this.textureNormal);
         this.buttonImage.setOrigin(0.5);
@@ -55,7 +64,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.height = this.buttonImage.displayHeight;
         this.add(this.buttonImage);
 
-        this.buttonText = this.scene.add.text(0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "20px", color: "black", stroke: "black", strokeThickness: 1, align: "center" });
+        this.buttonText = this.scene.add.text(0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);
         this.updateTextPosition();

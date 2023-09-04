@@ -64,7 +64,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.initUI();
 
         this.setGold(100);
-        this.waveManager.startNextWave();
+        this.waveManager.start();
     }
 
     private createMap(): void

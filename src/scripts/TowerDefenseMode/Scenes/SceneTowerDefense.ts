@@ -4,12 +4,12 @@ import { SceneTowerDefenseUI } from "./SceneTowerDefenseUI";
 import { WaveSpawner } from "../WaveSystem/WaveSpawner";
 import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
-import { Turret } from "../Characters/Npcs/Turret";
+import { Turret } from "../Characters/Npcs/Turrets/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
 import { ModalBehavoir } from "phaser3-rex-plugins/plugins/modal";
 import { WELLY_Popup } from "../../Common/HUD/WELLY_Popup";
-import { TurretPopup } from "../HUD/TurretPopup";
+import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -206,20 +206,24 @@ export class SceneTowerDefense extends Welly_Scene
     private setGold(gold: number): void
     {
         this.gold = gold;
-
-        if (this.sceneUI)
-        {
-            this.sceneUI.onGoldChanged(this.gold);
-        }
+        this.sceneUI.onGoldChanged(this.gold);
     }
 
     private onTurretClicked(turret: Turret): void
     {
+        this.sceneUI.onTurretClicked(turret);
+
+        const fnOnTurretUpgrade = () => { this.sceneUI.updateTurretDataWidget(turret); };
+        turret.on("upgrade", fnOnTurretUpgrade, this);
+        turret.showRangeIndicator();
+
         const turretPopup = new TurretPopup(turret, turret.x, turret.y);
         turretPopup.on("requestUpgrade", () => { this.tryUpgradeTurret(turret); }, this);
-        turretPopup.on("destroyed", () => { turret.hideRangeIndicator(); }, this);
-
-        turret.showRangeIndicator();
+        turretPopup.once("destroyed", () => {
+            this.sceneUI.hideTurretDataWidget();
+            turret.hideRangeIndicator();
+            turret.off("upgrade", fnOnTurretUpgrade, this);
+        }, this); 
     }
 
     private tryUpgradeTurret(turret: Turret): void

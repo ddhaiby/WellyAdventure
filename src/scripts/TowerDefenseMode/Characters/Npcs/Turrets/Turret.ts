@@ -1,10 +1,11 @@
-import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
-import { Npc } from "../../../Common/Characters/Npcs/Npc";
-import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
-import { JunkMonster } from "./JunkMonster";
-import { CST } from "../../../Common/CST";
+import { SpawnData } from "../../../../Common/Characters/CharacterSpawner";
+import { Npc } from "../../../../Common/Characters/Npcs/Npc";
+import { Welly_Scene } from "../../../../Common/Scenes/WELLY_Scene";
+import { JunkMonster } from "../JunkMonster";
+import { CST } from "../../../../Common/CST";
+import { ITurretData } from "../../../HUD/TurretDataWidget";
 
-export class Turret extends Npc
+export class Turret extends Npc implements ITurretData
 {
     public scene: Welly_Scene;
 
@@ -18,7 +19,10 @@ export class Turret extends Npc
     protected isReloading: boolean = false;
 
     /** How many time the turret can attack per second */
-    protected attackSpeed: number = 1; 
+    protected attackSpeed: number = 1;
+
+    /** Base damage to inflict to a target */
+    protected damage: number = 50;
 
     protected waitingForUpgradeTween: Phaser.Tweens.Tween;
 
@@ -143,7 +147,7 @@ export class Turret extends Npc
                 onComplete: () => {
                     if (target)
                     {
-                        target.takeDamage(50);
+                        target.takeDamage(this.damage);
                     }
                     bullet.destroy();
                 }
@@ -167,9 +171,24 @@ export class Turret extends Npc
         }, undefined, this);
     }
 
+    public getDamage(): number
+    {
+        return this.damage;
+    }
+
+    public getAttackSpeed(): number
+    {
+        return this.attackSpeed;
+    }
+
     public getRange(): number
     {
         return (this.body as Phaser.Physics.Arcade.Body).width * 0.5;
+    }
+
+    public getLevel(): number
+    {
+        return this.level;
     }
 
     public showRangeIndicator(): void

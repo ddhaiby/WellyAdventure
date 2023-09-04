@@ -1,6 +1,7 @@
 import { CST } from "../../Common/CST";
 import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 
 declare type UIKeys = 
 {
@@ -9,8 +10,14 @@ declare type UIKeys =
 
 export class SceneTowerDefenseUI extends Welly_Scene
 {
+    /** Display the current golds */
     private goldText: Phaser.GameObjects.Text;
+
+    /** Display the current wave */
     private waveText: Phaser.GameObjects.Text;
+
+    /** Display the data of a given turret */
+    private turretDataWidget: TurretDataWidget;
     
     constructor()
     {
@@ -42,6 +49,10 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         this.goldText = this.add.text(24, 24, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" })
         this.waveText = this.add.text(24, 60, "Wave 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, fontSize: "24px" })
+        
+        this.turretDataWidget = new TurretDataWidget(this, 0, 0);
+        this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
+        this.turretDataWidget.setVisible(false);
     }
 
     private createShortcuts(): void
@@ -76,5 +87,22 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
     public onWaveCompleted(currentWave: number): void
     {
+    }
+
+    public onTurretClicked(turretData: ITurretData): void
+    {
+        this.turretDataWidget.setVisible(true);
+        this.updateTurretDataWidget(turretData);
+        
+    }
+
+    public updateTurretDataWidget(turretData: ITurretData): void
+    {
+        this.turretDataWidget.updateData(turretData);
+    }
+
+    public hideTurretDataWidget(): void
+    {
+        this.turretDataWidget.setVisible(false);
     }
 }

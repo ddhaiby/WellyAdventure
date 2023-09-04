@@ -9,6 +9,8 @@ export class Turret extends Npc implements ITurretData
 {
     public scene: Welly_Scene;
 
+    public body: Phaser.Physics.Arcade.Body;
+
     /** The level of this turret. The higher the stronger it is */
     protected level: number = 0;
 
@@ -114,7 +116,7 @@ export class Turret extends Npc implements ITurretData
         this.waitingForUpgradeTween.stop();
 
         const size = 200 + 10 * this.level;
-        (this.body as Phaser.Physics.Arcade.Body).setSize(size, size);
+        this.body.setSize(size, size);
 
         this.levelText.setText(`${this.level}`);
 
@@ -183,7 +185,7 @@ export class Turret extends Npc implements ITurretData
 
     public getRange(): number
     {
-        return (this.body as Phaser.Physics.Arcade.Body).width * 0.5;
+        return this.body.width * 0.5;
     }
 
     public getLevel(): number

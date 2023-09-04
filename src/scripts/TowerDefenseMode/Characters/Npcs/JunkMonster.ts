@@ -8,6 +8,8 @@ export class JunkMonster extends Npc
 {
     public scene: Welly_Scene;
 
+    public body: Phaser.Physics.Arcade.Body;
+
     /** Component showing the health */
     protected healthBar: WELLY_Bar;
 

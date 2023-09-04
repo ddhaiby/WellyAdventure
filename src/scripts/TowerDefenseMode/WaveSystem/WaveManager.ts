@@ -59,7 +59,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         // this.monsterCount = this.currentWaveSettings.Enemy.CountBase + this.currentWaveSettings.Enemy.CountIncreasePerWaveBase * (this.currentWave - 1);
         // this.spawnCooldown = Math.max(this.currentWaveSettings.Enemy.SpawnCooldownMin, (this.currentWaveSettings.Enemy.SpawnCooldownBase + this.currentWaveSettings.Enemy.SpawnCooldownIncreasePerWave * (this.currentWave - 1))) * 1000;
 
-        this.monsterCount = 2;
+        this.monsterCount = 3;
         this.spawnCooldown = 1000;
 
         for (const spawner of this.spawners)

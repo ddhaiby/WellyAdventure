@@ -7,8 +7,6 @@ import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Turret } from "../Characters/Npcs/Turrets/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
-import { ModalBehavoir } from "phaser3-rex-plugins/plugins/modal";
-import { WELLY_Popup } from "../../Common/HUD/WELLY_Popup";
 import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
 
 export class SceneTowerDefense extends Welly_Scene
@@ -180,7 +178,12 @@ export class SceneTowerDefense extends Welly_Scene
 
     private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
     {
-        return true;
+        // Check if the monster is in the disk inside the square body of the turret
+        const posBodyTurret = { x: turret.body.x + turret.body.width * 0.5, y: turret.body.y + turret.body.height * 0.5 };
+        const posBodyMonster = { x: monster.body.x + monster.body.width * 0.5, y: monster.body.y + monster.body.height * 0.5 };
+        const squareDistance = Phaser.Math.Distance.BetweenPointsSquared(posBodyTurret, posBodyMonster);
+        const squareRange = turret.getRange() * turret.getRange();
+        return (squareDistance <= squareRange);
     }
 
     private onMonsterInRange(turret: Turret, monster: JunkMonster): void

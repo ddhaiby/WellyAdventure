@@ -21,7 +21,7 @@ export class SceneTowerDefense extends Welly_Scene
     private waveManager: WaveManager;
     private currentWave: number;
 
-    private turrets: Phaser.Physics.Arcade.Group;
+    private turrets: Phaser.Physics.Arcade.StaticGroup;
 
     /** The gold to use to build turrets */
     private gold: number = 0;
@@ -125,7 +125,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createTurrets(): void
     {
-        this.turrets = this.physics.add.group();
+        this.turrets = this.physics.add.staticGroup();
 
         const turretArray = this.currentMap.createFromObjects("Wave", {name: "Turret", classType: Turret, key: "emptyTurret"}) as Turret[];
 

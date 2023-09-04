@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { ScenePreloadAssets } from './Common/Scenes/ScenePreloadAssets';
 import { CST } from './Common/CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
+import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
 
 document.body.style.margin = "0";
 document.body.style.padding = "0";
@@ -25,6 +26,9 @@ new Phaser.Game({
         }
     },
     plugins: {
+        global: [
+            { key: 'rexOutlinePipeline', plugin: OutlinePipelinePlugin, start: true },
+        ],
         scene: [
             {key: 'rexUI',  plugin: UIPlugin, mapping: 'rexUI'}
         ]

@@ -8,6 +8,9 @@ import { Turret } from "../Characters/Npcs/Turrets/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
 import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
+import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
+import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
+import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -216,6 +219,9 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.sceneUI.onTurretClicked(turret);
 
+        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
+        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE) });
+
         const fnOnTurretUpgrade = () => { this.sceneUI.updateTurretDataWidget(turret); };
         turret.on("upgrade", fnOnTurretUpgrade, this);
         turret.showRangeIndicator();
@@ -226,7 +232,10 @@ export class SceneTowerDefense extends Welly_Scene
             this.sceneUI.hideTurretDataWidget();
             turret.hideRangeIndicator();
             turret.off("upgrade", fnOnTurretUpgrade, this);
+            outlinePlugin.remove(turret);
         }, this); 
+
+        this.tweens.add({ targets: turret, scale: 1.08, yoyo: true, repeat: 0, duration: 100 });
     }
 
     private tryUpgradeTurret(turret: Turret): void

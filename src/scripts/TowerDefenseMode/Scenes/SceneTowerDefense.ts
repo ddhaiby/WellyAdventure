@@ -124,6 +124,9 @@ export class SceneTowerDefense extends Welly_Scene
             monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
 
             this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
+            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, () => {
+                this.waveManager.startNextWave();
+            }, this);
         }
 
         this.waveManager = new WaveManager(this, this.spawners);

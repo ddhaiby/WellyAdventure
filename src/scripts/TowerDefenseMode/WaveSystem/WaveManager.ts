@@ -25,12 +25,16 @@ export class WaveManager extends Phaser.GameObjects.GameObject
     /** Base cooldown to spawn a monster */
     protected spawnCooldown: number = 4000;
 
+    protected tickNextWaveTimerEvent: Phaser.Time.TimerEvent;
+
     protected currentWaveSettings: any;
 
     constructor(scene: Welly_Scene, spawners: WaveSpawner[])
     {
         super(scene, "WaveManager");
         this.addSpawners(spawners);
+
+        this.tickNextWaveTimerEvent = this.scene.time.addEvent({});
     }
 
     public addSpawners(newSpawners: WaveSpawner[])
@@ -54,6 +58,9 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     protected startNextWaveTimer(): void
     {
+        this.tickNextWaveTimerEvent.remove();
+        this.tickNextWaveTimerEvent.destroy();
+
         const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
         if (!allWavesCompleted)
         {
@@ -69,7 +76,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         {          
             const tickDuration = 100;
   
-            this.scene.time.delayedCall(tickDuration, () => {
+            this.tickNextWaveTimerEvent = this.scene.time.delayedCall(tickDuration, () => {
                 remainDuration -= tickDuration;
                 this.tickNextWaveTimer(remainDuration, totalDuration);
                 this.emit("WAVE_TIMER_TICK", remainDuration, totalDuration);
@@ -81,7 +88,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         }
     }
 
-    protected startNextWave(): void
+    public startNextWave(): void
     {
         ++this.currentWave;
 

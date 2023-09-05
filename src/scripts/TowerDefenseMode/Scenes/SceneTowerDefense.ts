@@ -29,6 +29,9 @@ export class SceneTowerDefense extends Welly_Scene
     /** The gold to use to build turrets */
     private gold: number = 0;
 
+    /** Shows when the next wave should start */
+    private waveCountdownWidget: Phaser.GameObjects.Text;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -123,7 +126,10 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.waveManager = new WaveManager(this, this.spawners);
         this.waveManager.onWaveStarted(this.onWaveStarted, this)
-        this.waveManager.onWaveCompleted(this.onWaveCompleted, this)
+        this.waveManager.onWaveCompleted(this.onWaveCompleted, this);
+        this.waveManager.onWaveTimerStarted(this.onWaveTimerStarted, this);
+
+        this.waveCountdownWidget = this.add.text(this.spawners[0].x - 100, this.spawners[0].y, "");
     }
 
     private createTurrets(): void
@@ -256,5 +262,29 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.addGold(100);
         this.sceneUI.onWaveCompleted(currentWave);
+    }
+
+    protected waveCountdownWidgetTimerAnimation:Phaser.Time.TimerEvent
+
+    private onWaveTimerStarted(waitWaveDuration: number): void
+    {
+        if (this.waveCountdownWidgetTimerAnimation)
+        {
+            this.waveCountdownWidgetTimerAnimation.remove();
+            this.waveCountdownWidgetTimerAnimation.destroy();
+        }
+
+        this.waveCountdownWidget.setText(`${(waitWaveDuration / 1000).toFixed(0)}`);
+
+        const tickFn = () => {
+            waitWaveDuration -= 100;
+            this.waveCountdownWidget.setText(`${(Phaser.Math.RoundTo(waitWaveDuration / 1000)).toFixed(0)}`);
+
+            if (waitWaveDuration >= 0)
+            {
+                this.waveCountdownWidgetTimerAnimation = this.time.delayedCall(100, tickFn, undefined, this);
+            }
+        }
+        tickFn();
     }
 }

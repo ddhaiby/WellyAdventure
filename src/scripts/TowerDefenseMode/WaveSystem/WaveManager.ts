@@ -47,7 +47,26 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         return this.currentWave;
     }
 
-    public startNextWave(): void
+    public start(): void
+    {
+        this.startNextWave();
+    }
+
+    protected startNextWaveTimer(): void
+    {
+        const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
+        if (!allWavesCompleted)
+        {
+            const waitWaveDuration = 6000;
+            this.scene.time.delayedCall(waitWaveDuration, () => {
+                this.startNextWave();
+            }, undefined, this);
+
+            this.emit("WAVE_TIMER_STARTED", waitWaveDuration);
+        }
+    }
+
+    protected startNextWave(): void
     {
         ++this.currentWave;
 
@@ -68,6 +87,8 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         }
 
         this.emit("WAVE_STARTED", this.currentWave);
+
+        this.startNextWaveTimer();
     }
 
     protected onMonsterDie(spawner: WaveSpawner, monster: JunkMonster): void
@@ -77,12 +98,6 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         if (this.isWaveCompleted())
         {
             this.emit("WAVE_COMPLETED", this.currentWave);
-
-            const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
-            if (!allWavesCompleted)
-            {
-                this.startNextWave();
-            }
         }
     }
 
@@ -122,5 +137,10 @@ export class WaveManager extends Phaser.GameObjects.GameObject
     public onWaveCompleted(fn: (currentWave: number) => void , context?: any): void
     {
         this.on("WAVE_COMPLETED", fn, context);
+    }
+
+    public onWaveTimerStarted(fn: (currentWave: number) => void , context?: any): void
+    {
+        this.on("WAVE_TIMER_STARTED", fn, context);
     }
 }

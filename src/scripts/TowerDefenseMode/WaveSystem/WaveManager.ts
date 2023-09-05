@@ -49,7 +49,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     public start(): void
     {
-        this.startNextWave();
+        this.startNextWaveTimer();
     }
 
     protected startNextWaveTimer(): void
@@ -57,12 +57,27 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
         if (!allWavesCompleted)
         {
-            const waitWaveDuration = 6000;
-            this.scene.time.delayedCall(waitWaveDuration, () => {
-                this.startNextWave();
-            }, undefined, this);
-
+            const waitWaveDuration = 10000;
+            this.tickNextWaveTimer(waitWaveDuration, waitWaveDuration);
             this.emit("WAVE_TIMER_STARTED", waitWaveDuration);
+        }
+    }
+
+    protected tickNextWaveTimer(remainDuration: number, totalDuration: number): void
+    {
+        if (remainDuration > 0)
+        {          
+            const tickDuration = 100;
+  
+            this.scene.time.delayedCall(tickDuration, () => {
+                remainDuration -= tickDuration;
+                this.tickNextWaveTimer(remainDuration, totalDuration);
+                this.emit("WAVE_TIMER_TICK", remainDuration, totalDuration);
+            }, undefined, this);
+        }
+        else
+        {
+            this.startNextWave();
         }
     }
 
@@ -139,8 +154,13 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         this.on("WAVE_COMPLETED", fn, context);
     }
 
-    public onWaveTimerStarted(fn: (currentWave: number) => void , context?: any): void
+    public onWaveTimerStarted(fn: () => void , context?: any): void
     {
         this.on("WAVE_TIMER_STARTED", fn, context);
+    }
+
+    public onWaveTimerTick(fn: (remainDuration: number, totalDuration: number) => void , context?: any): void
+    {
+        this.on("WAVE_TIMER_TICK", fn, context);
     }
 }

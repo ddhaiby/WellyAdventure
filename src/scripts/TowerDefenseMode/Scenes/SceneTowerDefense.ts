@@ -9,8 +9,8 @@ import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
 import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
-import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -30,7 +30,7 @@ export class SceneTowerDefense extends Welly_Scene
     private gold: number = 0;
 
     /** Shows when the next wave should start */
-    private waveCountdownWidget: Phaser.GameObjects.Text;
+    private waveCountdownWidget: WaveCountdownWidget;
 
     constructor()
     {
@@ -122,14 +122,15 @@ export class SceneTowerDefense extends Welly_Scene
 
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
             monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
+
+            this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
         }
 
         this.waveManager = new WaveManager(this, this.spawners);
         this.waveManager.onWaveStarted(this.onWaveStarted, this)
         this.waveManager.onWaveCompleted(this.onWaveCompleted, this);
         this.waveManager.onWaveTimerStarted(this.onWaveTimerStarted, this);
-
-        this.waveCountdownWidget = this.add.text(this.spawners[0].x - 100, this.spawners[0].y, "");
+        this.waveManager.onWaveTimerTick(this.onWaveTimerTick, this);
     }
 
     private createTurrets(): void
@@ -264,27 +265,12 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.onWaveCompleted(currentWave);
     }
 
-    protected waveCountdownWidgetTimerAnimation:Phaser.Time.TimerEvent
-
-    private onWaveTimerStarted(waitWaveDuration: number): void
+    private onWaveTimerStarted(): void
     {
-        if (this.waveCountdownWidgetTimerAnimation)
-        {
-            this.waveCountdownWidgetTimerAnimation.remove();
-            this.waveCountdownWidgetTimerAnimation.destroy();
-        }
+    }
 
-        this.waveCountdownWidget.setText(`${(waitWaveDuration / 1000).toFixed(0)}`);
-
-        const tickFn = () => {
-            waitWaveDuration -= 100;
-            this.waveCountdownWidget.setText(`${(Phaser.Math.RoundTo(waitWaveDuration / 1000)).toFixed(0)}`);
-
-            if (waitWaveDuration >= 0)
-            {
-                this.waveCountdownWidgetTimerAnimation = this.time.delayedCall(100, tickFn, undefined, this);
-            }
-        }
-        tickFn();
+    private onWaveTimerTick(remainDuration: number, totalDuration: number): void
+    {
+        this.waveCountdownWidget.onCountdownTick(remainDuration, totalDuration);
     }
 }

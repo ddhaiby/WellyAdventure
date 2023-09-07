@@ -262,7 +262,6 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onWaveCompleted(currentWave: number): void
     {
-        this.addGold(100);
         this.sceneUI.onWaveCompleted(currentWave);
     }
 

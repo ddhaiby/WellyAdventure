@@ -63,7 +63,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
         if (this.canSpawnMonster())
         {
             const rangeX = 10;
-            const rangeY = 70;
+            const rangeY = 30;
             const offsetX = Phaser.Math.FloatBetween(-rangeX, rangeX);
             const offsetY = Phaser.Math.FloatBetween(-rangeY, rangeY);
 
@@ -73,10 +73,13 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             const monster = new JunkMonster(this.scene, monsterX, monsterY);
             this.monsters.add(monster);
 
+            const rand = Math.random();
+            const texture = rand < 0.2 ? "Amalia" : ( rand < 0.5 ? "wellyWhite" : (rand < 0.75 ? "player": "wellyRed"))
+
             const monsterSpawnData: SpawnData = {
                 walkSpeed: 100,
                 runSpeed: 200,
-                characterTexture: "Amalia",
+                characterTexture: texture,
                 startDirection: DIRECTIONS.Up,
                 dialogueId: CST.NONE,
                 moveToPointId: this.moveToPointId,

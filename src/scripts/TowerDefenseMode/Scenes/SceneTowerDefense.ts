@@ -124,9 +124,7 @@ export class SceneTowerDefense extends Welly_Scene
             monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
 
             this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
-            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, () => {
-                this.waveManager.startNextWave();
-            }, this);
+            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, () => { this.onWaveCountdownWidgetClicked(); }, this);
         }
 
         this.waveManager = new WaveManager(this, this.spawners);
@@ -275,5 +273,31 @@ export class SceneTowerDefense extends Welly_Scene
     private onWaveTimerTick(remainDuration: number, totalDuration: number): void
     {
         this.waveCountdownWidget.onCountdownTick(remainDuration, totalDuration);
+    }
+
+    private onWaveCountdownWidgetClicked(): void
+    {
+        this.waveManager.startNextWave();
+
+        const bonusGold = 100;
+        this.addGold(bonusGold);
+
+        const goldText = this.add.text(this.waveCountdownWidget.x, this.waveCountdownWidget.y - 24, `+${bonusGold}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+        goldText.setOrigin(0.5, 1);
+
+        this.tweens.add({
+            targets: goldText,
+            duration: 150,
+            y: goldText.y - 10,
+            onComplete: () => {
+                this.tweens.add({
+                    targets: goldText,
+                    duration: 800,
+                    y: goldText.y + 30,
+                    alpha: 0,
+                    onComplete: () => { goldText.destroy(); }
+                });
+            }
+        });
     }
 }

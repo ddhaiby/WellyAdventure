@@ -83,7 +83,7 @@ export class SceneTowerDefense extends Welly_Scene
             if (layer1)
             {
                 const platformsBounds = layer1.getBounds();
-                this.physics.world.setBounds(0, 0, platformsBounds.width, platformsBounds.height);
+                this.physics.world.setBounds(-platformsBounds.width, -platformsBounds.height, platformsBounds.width * 2, platformsBounds.height * 2);
             }
         }
     }

@@ -8,22 +8,22 @@ export declare type SpawnData =
     walkSpeed: number;
 
     /** Run speed */
-    runSpeed: number;
+    runSpeed?: number;
 
     /** The texture to use for the character */
     characterTexture: string;
 
     /** Which direction this character should look at */
-    startDirection: DIRECTION;
+    startDirection?: DIRECTION;
 
     /** Id to determine the dialogues of this character */
-    dialogueId: string;
+    dialogueId?: string;
 
     /** The entity id we should move to */
-    moveToPointId: number;
+    moveToPointId?: number;
 
     /** Number of times to repeat the path to the move point entity (-1 for infinity). 1 means to go back and forth one time. */
-    moveToPointRepeat: number;
+    moveToPointRepeat?: number;
 };
 
 export class CharacterSpawner extends Phaser.Physics.Arcade.Image

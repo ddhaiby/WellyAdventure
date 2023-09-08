@@ -92,15 +92,16 @@ export class SceneExplorationGame extends Welly_Scene
             npc.init(npcSpawner.getSpawnData());
             
             let positions = [] as Phaser.Types.Math.Vector2Like[];
+            let moveToPointId = spawnData.moveToPointId ?? -1;
 
-            while (spawnData.moveToPointId >= 0)
+            while (moveToPointId >= 0)
             {
-                const moveToEntities = this.currentMap.createFromObjects("Characters", {id: spawnData.moveToPointId, classType: MoveToPoint}) as MoveToPoint[];
+                const moveToEntities = this.currentMap.createFromObjects("Characters", {id: moveToPointId, classType: MoveToPoint}) as MoveToPoint[];
 
                 if (moveToEntities.length > 0)
                 {
                     positions.push(new Phaser.Math.Vector2(moveToEntities[0].x, moveToEntities[0].y))
-                    spawnData.moveToPointId = moveToEntities[0].moveToPointId;
+                    moveToPointId = moveToEntities[0].moveToPointId;
 
                     for (const entity of moveToEntities)
                     {
@@ -109,7 +110,7 @@ export class SceneExplorationGame extends Welly_Scene
                 }
                 else
                 {
-                    spawnData.moveToPointId = -1;
+                    moveToPointId = -1;
                 }
             }
 

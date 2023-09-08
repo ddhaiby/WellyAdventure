@@ -64,8 +64,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
         this.characterMovementComponent.init(spawnData);
 
-        this.dialogueId = spawnData.dialogueId;
-        this.setDirection(spawnData.startDirection);
+        this.dialogueId = spawnData.dialogueId ?? CST.NONE;
+        this.setDirection(spawnData.startDirection ?? DIRECTIONS.Down);
         this.setName(spawnData.characterTexture);
 
         this.initAnimations(spawnData.characterTexture);
@@ -77,7 +77,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
     }
 
     protected initAnimations(texture: string): void
-    {        
+    {
     }
 
     // Update

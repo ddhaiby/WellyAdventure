@@ -58,7 +58,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     }
 
     /** Spawn a new monster if possible */
-    public spawnMonster(): JunkMonster | undefined
+    public spawnMonster(spawnData: SpawnData): JunkMonster | undefined
     {
         if (this.canSpawnMonster())
         {
@@ -76,17 +76,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             const rand = Math.random();
             const texture = rand < 0.2 ? "Amalia" : ( rand < 0.5 ? "wellyWhite" : (rand < 0.75 ? "player": "wellyRed"))
 
-            const monsterSpawnData: SpawnData = {
-                walkSpeed: 100,
-                runSpeed: 200,
-                characterTexture: texture,
-                startDirection: DIRECTIONS.Up,
-                dialogueId: CST.NONE,
-                moveToPointId: this.moveToPointId,
-                moveToPointRepeat: 0
-            };
-
-            monster.init(monsterSpawnData);
+            monster.init(spawnData);
             monster.onDie(() => {
                 this.emit("MONSTER_DIED", monster);
                 this.monsters.remove(monster, true, true);

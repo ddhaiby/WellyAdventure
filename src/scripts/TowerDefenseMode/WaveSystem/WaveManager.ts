@@ -1,6 +1,18 @@
+import { CST } from "../../Common/CST";
+import { DIRECTIONS } from "../../Common/Characters/CharacterMovementComponent";
+import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveSpawner } from "./WaveSpawner";
+
+declare type MonsterData = {
+    texture: string,
+    health: number,
+    bodyWidth: number,
+    bodyHeight: number,
+    gold: number,
+    moveSpeed: number
+}
 
 export class WaveManager extends Phaser.GameObjects.GameObject
 {
@@ -27,7 +39,8 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     protected tickNextWaveTimerEvent: Phaser.Time.TimerEvent;
 
-    protected currentWaveSettings: any;
+    /** All the data related to the monsters */
+    protected monstersData: any;
 
     constructor(scene: Welly_Scene, spawners: WaveSpawner[])
     {
@@ -35,6 +48,8 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         this.addSpawners(spawners);
 
         this.tickNextWaveTimerEvent = this.scene.time.addEvent({});
+
+        this.monstersData = this.scene.cache.json.get("monstersData");
     }
 
     public addSpawners(newSpawners: WaveSpawner[])
@@ -143,7 +158,18 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     protected spawnMonster(spawner: WaveSpawner): void
     {
-        spawner.spawnMonster();
+        const monsterKeys = Object.keys(this.monstersData);
+        const val = Phaser.Math.Between(0, monsterKeys.length - 1);
+        const monsterKey =  monsterKeys[val];
+        const monsterData = this.monstersData[monsterKey] as MonsterData;
+
+
+        const monsterSpawnData: SpawnData = {
+            walkSpeed: monsterData.moveSpeed,
+            characterTexture: monsterData.texture
+        };
+
+        spawner.spawnMonster(monsterSpawnData);
 
         if (this.canSpawnMonster())
         {

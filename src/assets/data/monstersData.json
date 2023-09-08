@@ -1,0 +1,42 @@
+{
+    "amalia": {
+        "texture": "Amalia",
+        "health": 500,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 250,
+        "moveSpeed": 60
+    },
+    "wellyYellow": {
+        "texture": "player",
+        "health": 160,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 100,
+        "moveSpeed": 90
+    },
+    "wellyRed": {
+        "texture": "wellyRed",
+        "health": 160,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 100,
+        "moveSpeed": 90
+    },
+    "wellyWhite": {
+        "texture": "wellyWhite",
+        "health": 100,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 50,
+        "moveSpeed": 100
+    },
+    "wellyItaly": {
+        "texture": "wellyItaly",
+        "health": 100,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 50,
+        "moveSpeed": 100
+    }
+}

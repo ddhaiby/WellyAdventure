@@ -6,6 +6,9 @@ import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 
 export declare type MonsterSpawnerData = SpawnData &
 {
+    /** To override the depth of the image */
+    depth?: number;
+
     /** Health of the monster on spawn */
     health: number;
 

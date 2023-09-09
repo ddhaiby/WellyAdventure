@@ -59,6 +59,7 @@ export class JunkMonster extends Npc
     {
         super.init(monseterSpawnData);
 
+        this.setDepth(monseterSpawnData.depth ?? 0);
         this.health = monseterSpawnData.health;
         this.maxHealth = this.health;
         this.gold = monseterSpawnData.gold;

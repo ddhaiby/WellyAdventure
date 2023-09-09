@@ -5,7 +5,8 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 500,
-        "moveSpeed": 40
+        "moveSpeed": 40,
+        "depth": 1
     },
     "amalia": {
         "texture": "Amalia",

@@ -1,11 +1,19 @@
 {
-    "amalia": {
-        "texture": "Amalia",
+    "boss1": {
+        "texture": "boss1",
         "health": 800,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 500,
         "moveSpeed": 40
+    },
+    "amalia": {
+        "texture": "Amalia",
+        "health": 100,
+        "bodyWidth": 48,
+        "bodyHeight": 64,
+        "gold": 40,
+        "moveSpeed": 120
     },
     "wellyYellow": {
         "texture": "player",

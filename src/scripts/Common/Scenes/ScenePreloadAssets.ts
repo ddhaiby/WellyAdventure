@@ -42,6 +42,7 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.spritesheet("wellyRed", "wellyRed.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyWhite", "wellyWhite.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyItaly", "wellyItaly.png", { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet("boss1", "boss1.png", { frameWidth: 128, frameHeight: 128 });
     }
 
     private preloadCity(): void

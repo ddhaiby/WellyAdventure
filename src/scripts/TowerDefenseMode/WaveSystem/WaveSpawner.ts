@@ -94,7 +94,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             monster.init(monsterSpawnData);
             monster.onDie(() => {
                 this.emit("MONSTER_DIED", monster);
-                this.monsters.remove(monster, true, true);
+                this.removeMonster(monster);
             }, this);
             monster.on("MOVE_TO_END", () => {
                 this.emit("MONSTER_MOVE_TO_END", monster);
@@ -118,6 +118,11 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             return monster;
         }
         return undefined;
+    }
+
+    public removeMonster(monster: JunkMonster): void
+    {
+        this.monsters.remove(monster, true, true);
     }
 
     public getAlivedMonsterCount(): number

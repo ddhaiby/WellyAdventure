@@ -182,6 +182,14 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         }
     }
 
+    public removeMonster(monster: JunkMonster): void
+    {
+        for (const spawner of this.spawners)
+        {
+            spawner.removeMonster(monster);
+        }
+    }
+
     public onWaveStarted(fn: (currentWave: number) => void , context?: any): void
     {
         this.on("WAVE_STARTED", fn, context);

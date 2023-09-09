@@ -121,11 +121,11 @@ export class SceneTowerDefense extends Welly_Scene
             positions.reverse();
 
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
-            monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
-            monsterSpawner.on("MONSTER_MOVE_TO_END", (monster: JunkMonster)=> { this.onMonsterReachEndPoint(monster); }, this);
+            monsterSpawner.onMonsterDie(this.onMonsterDie, this);
+            monsterSpawner.on("MONSTER_MOVE_TO_END", this.onMonsterReachEndPoint, this);
 
             this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
-            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, () => { this.onWaveCountdownWidgetClicked(); }, this);
+            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, this.onWaveCountdownWidgetClicked, this);
         }
 
         this.waveManager = new WaveManager(this, this.spawners);
@@ -211,6 +211,7 @@ export class SceneTowerDefense extends Welly_Scene
     private onMonsterReachEndPoint(monster: JunkMonster): void
     {
         this.removePlayerHealth(monster.getDamage());
+        this.waveManager.removeMonster(monster);
     }
 
     private addGold(gold: number): void

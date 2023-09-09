@@ -159,7 +159,7 @@ export class JunkMonster extends Npc
         this.setHealth(this.health - damage);
     }
 
-    protected die(): void
+    public die(): void
     {
         this.health = 0;
         this.stopWalking();

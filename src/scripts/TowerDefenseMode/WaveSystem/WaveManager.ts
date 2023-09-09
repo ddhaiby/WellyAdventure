@@ -3,7 +3,7 @@ import { DIRECTIONS } from "../../Common/Characters/CharacterMovementComponent";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
-import { WaveSpawner } from "./WaveSpawner";
+import { MonsterSpawnerData, WaveSpawner } from "./WaveSpawner";
 
 declare type MonsterData = {
     texture: string,
@@ -163,10 +163,11 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         const monsterKey =  monsterKeys[val];
         const monsterData = this.monstersData[monsterKey] as MonsterData;
 
-
-        const monsterSpawnData: SpawnData = {
+        const monsterSpawnData: MonsterSpawnerData = {
             walkSpeed: monsterData.moveSpeed,
-            characterTexture: monsterData.texture
+            characterTexture: monsterData.texture,
+            health: monsterData.health,
+            gold: monsterData.gold
         };
 
         spawner.spawnMonster(monsterSpawnData);

@@ -1,8 +1,17 @@
 import { CST } from "../../Common/CST";
-import { DIRECTIONS, PathFindingConfig } from "../../Common/Characters/CharacterMovementComponent";
+import { PathFindingConfig } from "../../Common/Characters/CharacterMovementComponent";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
+
+export declare type MonsterSpawnerData = SpawnData &
+{
+    /** Health of the monster on spawn */
+    health: number;
+
+    /** How much gold the player gets from killing this monster */
+    gold: number;
+};
 
 export class WaveSpawner extends Phaser.GameObjects.Image
 {
@@ -58,7 +67,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     }
 
     /** Spawn a new monster if possible */
-    public spawnMonster(spawnData: SpawnData): JunkMonster | undefined
+    public spawnMonster(monsterSpawnData: MonsterSpawnerData): JunkMonster | undefined
     {
         if (this.canSpawnMonster())
         {
@@ -76,7 +85,7 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             const rand = Math.random();
             const texture = rand < 0.2 ? "Amalia" : ( rand < 0.5 ? "wellyWhite" : (rand < 0.75 ? "player": "wellyRed"))
 
-            monster.init(spawnData);
+            monster.init(monsterSpawnData);
             monster.onDie(() => {
                 this.emit("MONSTER_DIED", monster);
                 this.monsters.remove(monster, true, true);

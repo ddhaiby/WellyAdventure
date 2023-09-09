@@ -204,7 +204,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        this.addGold(10);
+        this.addGold(monster.getGold());
     }
 
     private addGold(gold: number): void

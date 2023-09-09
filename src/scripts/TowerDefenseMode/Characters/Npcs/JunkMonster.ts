@@ -3,6 +3,7 @@ import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
+import { MonsterSpawnerData } from "../../WaveSystem/WaveSpawner";
 
 export class JunkMonster extends Npc
 {
@@ -18,6 +19,9 @@ export class JunkMonster extends Npc
 
     /** Max health of the monster */
     private maxHealth: number = 100;
+
+    /** How much gold the player gets from killing this monster */
+    private gold: number = 50;
 
     protected healthBarOffsetX: number = 0;
     protected healthBarOffsetY: number = -6;
@@ -51,9 +55,13 @@ export class JunkMonster extends Npc
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    public init(spawnData: SpawnData): void
+    public init(monseterSpawnData: MonsterSpawnerData): void
     {
-        super.init(spawnData);
+        super.init(monseterSpawnData);
+
+        this.health = monseterSpawnData.health;
+        this.maxHealth = this.health;
+        this.gold = monseterSpawnData.gold;
         
         this.initHealthBar();
     }
@@ -158,5 +166,10 @@ export class JunkMonster extends Npc
     public onDie(fn: () => void , context?: any): void
     {
         this.on("DIE", fn, context);
+    }
+
+    public getGold(): number
+    {
+        return this.gold;
     }
 }

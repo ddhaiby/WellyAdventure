@@ -30,7 +30,8 @@ export const CST = {
             ORANGE: "#f1966b",
             BLUE: "#2c4b7e",
             LIGHT_BLUE: "#6782e6",
-            WHITE: "#f7e6e6"
+            WHITE: "#f7e6e6",
+            BLACK: "#000000"
         }
     },
     EVENTS: {

@@ -1,6 +1,8 @@
 import { CST } from "../../Common/CST";
 import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
+import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 
 declare type UIKeys = 
@@ -19,6 +21,15 @@ export class SceneTowerDefenseUI extends Welly_Scene
     /** Display the data of a given turret */
     private turretDataWidget: TurretDataWidget;
     
+    /** Display the health of the player with a bar */
+    private playerHealthBar: WELLY_Bar;
+
+    /** Display the current health and max health of the player */
+    private healthText: Phaser.GameObjects.Text;
+
+    /** Player face near the health bar */
+    private playerFaceImage: Phaser.GameObjects.Image;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE_UI});
@@ -46,13 +57,16 @@ export class SceneTowerDefenseUI extends Welly_Scene
         super.create();
 
         this.createShortcuts(); 
+        this.initHealthBar();
 
-        this.goldText = this.add.text(24, 24, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" });
-        this.waveText = this.add.text(24, 60, "Wave 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, fontSize: "24px" });
+        this.goldText = this.add.text(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 8, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" });
+        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.goldText.y + this.goldText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, fontSize: "24px" });
         
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
+
+        this.onWaveStarted(1);
     }
 
     private createShortcuts(): void
@@ -68,6 +82,17 @@ export class SceneTowerDefenseUI extends Welly_Scene
         }
     }
 
+    private initHealthBar(): void
+    {
+        this.playerHealthBar = new WELLY_Bar(this, { x: 30, y: 32, width: 200, height: 22, radius: 2,  value: 1, color: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.ORANGE) });
+        
+        this.healthText = this.add.text(this.playerHealthBar.x +  this.playerHealthBar.width * 0.5, this.playerHealthBar.y + this.playerHealthBar.height * 0.5, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.WHITE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 5, fontSize: "20px" });
+        this.healthText.setOrigin(0.5, 0.5);
+
+        this.playerFaceImage = this.add.image(0, this.healthText.y - 6, "playerFace").setOrigin(0, 0.5);
+        this.playerFaceImage.setX(this.playerHealthBar.x - this.playerFaceImage.width * 0.5);
+    }
+
     // Update
     ////////////////////////////////////////////////////////////////////////
 
@@ -75,9 +100,15 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
     }
 
-    public onGoldChanged(gold: number): void
+    public onPlayerGoldChanged(gold: number): void
     {
         this.goldText.setText(`Gold: ${gold.toString()}`);
+    }
+
+    public onPlayerHealthChanged(health: number, maxHealth: number): void
+    {
+        this.playerHealthBar.setValue(health / maxHealth);
+        this.healthText.setText(`${health}/${maxHealth}`);
     }
 
     public onWaveStarted(currentWave: number): void

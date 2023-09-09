@@ -37,6 +37,7 @@ export class ScenePreloadAssets extends Welly_Scene
     private preloadCharacters(): void
     {
         this.load.setPath("./assets/characters/");
+        this.load.image("playerFace", "playerFace.png");
         this.load.spritesheet("player", "player.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("Amalia", "Amalia.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyRed", "wellyRed.png", { frameWidth: 64, frameHeight: 64 });

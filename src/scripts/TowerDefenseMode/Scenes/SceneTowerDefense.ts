@@ -22,12 +22,17 @@ export class SceneTowerDefense extends Welly_Scene
     // Waves
     private spawners: WaveSpawner[];
     private waveManager: WaveManager;
-    private currentWave: number;
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
 
     /** The gold to use to build turrets */
     private gold: number = 0;
+
+    /** The health of the player. The game is over when they reach 0 */
+    private playerHealth: number = 100;
+
+     /** The max health of the player. */
+     private playerMaxHealth: number = 100;
 
     /** Shows when the next wave should start */
     private waveCountdownWidget: WaveCountdownWidget;
@@ -66,7 +71,8 @@ export class SceneTowerDefense extends Welly_Scene
         this.createPhysics();
         this.initUI();
 
-        this.setGold(100);
+        this.setPlayerGold(100);
+        this.setPlayerHealth(100, 100);
         this.waveManager.start();
     }
 
@@ -90,7 +96,6 @@ export class SceneTowerDefense extends Welly_Scene
 
     private setupWaveSpawner(): void
     {
-        this.currentWave = 0;
         this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
         for (const monsterSpawner of this.spawners)
@@ -205,7 +210,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        this.addGold(monster.getGold());
+        this.addPlayerGold(monster.getGold());
     }
 
     private onMonsterReachEndPoint(monster: JunkMonster): void
@@ -214,30 +219,41 @@ export class SceneTowerDefense extends Welly_Scene
         this.waveManager.removeMonster(monster);
     }
 
-    private addGold(gold: number): void
+    private addPlayerGold(gold: number): void
     {
-        this.setGold(this.gold + gold);
+        this.setPlayerGold(this.gold + gold);
     }
 
-    private removeGold(cost: number): void
+    private removePlayerGold(cost: number): void
     {
-        this.setGold(this.gold - cost);
+        this.setPlayerGold(this.gold - cost);
     }
 
-    private setGold(gold: number): void
+    private setPlayerGold(gold: number): void
     {
         this.gold = gold;
-        this.sceneUI.onGoldChanged(this.gold);
+        this.sceneUI.onPlayerGoldChanged(this.gold);
     }
 
-    private setPlayerHealth(health: number): void
+    private addPlayerHealth(health: number): void
     {
+        this.setPlayerHealth(this.playerHealth + health);
+    }
+
+    private removePlayerHealth(damage: number): void
+    {
+        this.setPlayerHealth(this.playerHealth - damage);
+    }
+
+    private setPlayerHealth(health: number, maxHealth?: number): void
+    {
+        if ((maxHealth != undefined) && (maxHealth > 0))
+        {
+            this.playerMaxHealth = maxHealth;
+        }
         
-    }
-
-    private removePlayerHealth(health: number): void
-    {
-        console.log("health", health)
+        this.playerHealth = Phaser.Math.Clamp(health, 0, this.playerMaxHealth);
+        this.sceneUI.onPlayerHealthChanged(this.playerHealth, this.playerMaxHealth);
     }
 
     private onTurretClicked(turret: Turret): void
@@ -268,7 +284,7 @@ export class SceneTowerDefense extends Welly_Scene
         if (this.gold >= 50)
         {
             turret.upgrade();
-            this.removeGold(50);
+            this.removePlayerGold(50);
         }
     }
 
@@ -296,7 +312,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.waveManager.startNextWave();
 
         const bonusGold = 100;
-        this.addGold(bonusGold);
+        this.addPlayerGold(bonusGold);
 
         const goldText = this.add.text(this.waveCountdownWidget.x, this.waveCountdownWidget.y - 24, `+${bonusGold}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
         goldText.setOrigin(0.5, 1);

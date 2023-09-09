@@ -14,6 +14,9 @@ export declare type MonsterSpawnerData = SpawnData &
 
     /** How much gold the player gets from killing this monster */
     gold: number;
+
+    /** Damage of the monster when they reach the end */
+    damage: number;
 };
 
 export class WaveSpawner extends Phaser.GameObjects.Image
@@ -92,6 +95,9 @@ export class WaveSpawner extends Phaser.GameObjects.Image
             monster.onDie(() => {
                 this.emit("MONSTER_DIED", monster);
                 this.monsters.remove(monster, true, true);
+            }, this);
+            monster.on("MOVE_TO_END", () => {
+                this.emit("MONSTER_MOVE_TO_END", monster);
             }, this);
 
             const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];

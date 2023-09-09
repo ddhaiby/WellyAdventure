@@ -11,6 +11,7 @@ declare type MonsterData = {
     bodyWidth: number,
     bodyHeight: number,
     gold: number,
+    damage: number,
     moveSpeed: number
     depth: number
 }
@@ -169,6 +170,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
             characterTexture: monsterData.texture,
             health: monsterData.health,
             gold: monsterData.gold,
+            damage: monsterData.damage,
             depth: monsterData.depth
         };
 

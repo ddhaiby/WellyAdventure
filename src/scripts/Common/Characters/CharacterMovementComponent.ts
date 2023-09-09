@@ -267,6 +267,10 @@ export class CharacterMovementComponent
                 {
                     this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
                 }
+                else
+                {
+                    this.owner.emit("MOVE_TO_END");
+                }
             }
         };
 

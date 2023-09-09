@@ -23,6 +23,9 @@ export class JunkMonster extends Npc
     /** How much gold the player gets from killing this monster */
     private gold: number = 50;
 
+    /** Damage of the monster when they reach the end */
+    private damage: number = 10;
+
     protected healthBarOffsetX: number = 0;
     protected healthBarOffsetY: number = -6;
 
@@ -63,6 +66,7 @@ export class JunkMonster extends Npc
         this.health = monseterSpawnData.health;
         this.maxHealth = this.health;
         this.gold = monseterSpawnData.gold;
+        this.damage = monseterSpawnData.damage;
         
         this.initHealthBar();
     }
@@ -172,5 +176,10 @@ export class JunkMonster extends Npc
     public getGold(): number
     {
         return this.gold;
+    }
+
+    public getDamage(): number
+    {
+        return this.damage;
     }
 }

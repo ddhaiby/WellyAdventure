@@ -122,6 +122,7 @@ export class SceneTowerDefense extends Welly_Scene
 
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
             monsterSpawner.onMonsterDie((monster: JunkMonster)=> { this.onMonsterDie(monster); }, this);
+            monsterSpawner.on("MONSTER_MOVE_TO_END", (monster: JunkMonster)=> { this.onMonsterReachEndPoint(monster); }, this);
 
             this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
             this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, () => { this.onWaveCountdownWidgetClicked(); }, this);
@@ -207,6 +208,11 @@ export class SceneTowerDefense extends Welly_Scene
         this.addGold(monster.getGold());
     }
 
+    private onMonsterReachEndPoint(monster: JunkMonster): void
+    {
+        this.removePlayerHealth(monster.getDamage());
+    }
+
     private addGold(gold: number): void
     {
         this.setGold(this.gold + gold);
@@ -221,6 +227,16 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.gold = gold;
         this.sceneUI.onGoldChanged(this.gold);
+    }
+
+    private setPlayerHealth(health: number): void
+    {
+        
+    }
+
+    private removePlayerHealth(health: number): void
+    {
+        console.log("health", health)
     }
 
     private onTurretClicked(turret: Turret): void

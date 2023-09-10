@@ -3,15 +3,19 @@ import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
 import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 
 declare type UIKeys = 
 {
-    skip: Phaser.Input.Keyboard.Key;
+    escape: Phaser.Input.Keyboard.Key;
 }
 
 export class SceneTowerDefenseUI extends Welly_Scene
 {
+    /** Pause menu */
+    private pauseMenu: PauseMenu;
+
     /** Display the current golds */
     private goldText: Phaser.GameObjects.Text;
 
@@ -66,18 +70,22 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
 
+        this.pauseMenu = new PauseMenu(this, 0, 0);
+        this.pauseMenu.setVisible(false);
+
         this.onWaveStarted(1);
     }
 
     private createShortcuts(): void
     {
         const keys = this.input.keyboard?.addKeys({
-            skip: Phaser.Input.Keyboard.KeyCodes.ESC,
+            escape: Phaser.Input.Keyboard.KeyCodes.ESC
         }, false) as UIKeys;
 
         if (keys)
         {
-            keys.skip.on('down', () => {
+            keys.escape.on('down', () => {
+                this.pauseMenu.setVisible(!this.pauseMenu.visible);
             });
         }
     }

@@ -17,7 +17,7 @@ export class TurretPopup extends WELLY_Popup
             texturePressed: "buttonConnectNormal", textOffsetHoveredY: -1,
             textureHovered: "buttonConnectNormal", textOffsetPressedY: -1,
             fontSize: "18px",
-            textColor: CST.STYLE.COLOR.BLUE,
+            textColorNormal: CST.STYLE.COLOR.BLUE,
             textStrokeThickness: 0
         });
         button.setPosition(0, button.displayHeight + 8);

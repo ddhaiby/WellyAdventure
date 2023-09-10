@@ -1,16 +1,19 @@
 import { CST } from "../CST";
 
 export declare type GPC_TextButtonStyle = {
-    texturePressed?: string;
-    textureHovered?: string;
     textureNormal?: string;
+    textureHovered?: string;
+    texturePressed?: string;
     textureDisabled?: string;
     textOffsetNormalY?: number;
     textOffsetHoveredY?: number;
     textOffsetPressedY?: number;
     pixelPerfect?: boolean;
     fontSize?: string;
-    textColor?: string;
+    textColorNormal?: string;
+    textColorHovered?: string;
+    textColorPressed?: string;
+    textColorDisabled?: string;
     textStroke?: string;
     textStrokeThickness?: number;
 }
@@ -39,22 +42,36 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
     protected textureHovered: string;
     protected textureDisabled: string;
 
+    protected textColorNormal: string;
+    protected textColorHovered: string;
+    protected textColorPressed: string;
+    protected textColorDisabled: string;
+
+    protected pixelPerfect: boolean = false;
+
     constructor(scene: Phaser.Scene, x: number, y: number, text: string, style?: GPC_TextButtonStyle)
     {
         super(scene, x, y);
         scene.add.existing(this);
 
         this.textureNormal = (style && style.textureNormal) ? style.textureNormal : "buttonNormal";
-        this.texturePressed = (style && style.texturePressed) ? style.texturePressed : "buttonPressed";
-        this.textureHovered = (style && style.textureHovered) ? style.textureHovered : "buttonHovered";
-        this.textureDisabled = (style && style.textureDisabled) ? style.textureDisabled : "buttonDisabled";
+        this.texturePressed = (style && style.texturePressed) ? style.texturePressed : this.textureNormal;
+        this.textureHovered = (style && style.textureHovered) ? style.textureHovered : this.textureNormal;
+        this.textureDisabled = (style && style.textureDisabled) ? style.textureDisabled : this.textureNormal;
+
+        this.textColorNormal = (style && style.textColorNormal) ? style.textColorNormal : "#000000";
+        this.textColorHovered = (style && style.textColorHovered) ? style.textColorHovered : this.textColorNormal;
+        this.textColorPressed = (style && style.textColorPressed) ? style.textColorPressed : this.textColorNormal;
+        this.textColorDisabled = (style && style.textColorDisabled) ? style.textColorDisabled : this.textColorNormal;
 
         this.textOffsetNormalY = (style && (style.textOffsetNormalY !== undefined)) ? style.textOffsetNormalY : -12;
         this.textOffsetHoveredY = (style && (style.textOffsetHoveredY !== undefined)) ? style.textOffsetHoveredY : -10;
         this.textOffsetPressedY = (style && (style.textOffsetPressedY !== undefined)) ? style.textOffsetPressedY : -1;
-        
+
+        this.pixelPerfect = (style && (style.pixelPerfect !== undefined)) ? style.pixelPerfect : true
+
         const fontSize = (style && (style.fontSize !== undefined)) ? style.fontSize : "20px";
-        const textColor = (style && (style.textColor !== undefined)) ? style.textColor : "0x000000";
+        const textColor = (style && (style.textColorNormal !== undefined)) ? style.textColorNormal : "0x000000";
         const textStroke = (style && (style.textStroke !== undefined)) ? style.textStroke : "0x000000";
         const textStrokeThickness = (style && (style.textStrokeThickness !== undefined)) ? style.textStrokeThickness : 0
 
@@ -67,75 +84,110 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.buttonText = this.scene.add.text(0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);
-        this.updateTextPosition();
-
-        this.buttonImage.setInteractive({
-            hitArea: new Phaser.Geom.Rectangle(0, 0, this.displayWidth, this.displayHeight),
-            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-            pixelPerfect: style ? style.pixelPerfect : true,
-            //cursor: "url(assets/cursors/icono-selectedstatic.cur), pointer"
-        });
+        this.updateVisual();
 
         // Behaviors
-        this.buttonImage.on(Phaser.Input.Events.POINTER_OVER, () => {
+        this.on(Phaser.Input.Events.POINTER_OVER, () => {
             if (this._isEnabled)
             {
                 this.isHovered = true;
                 this.isPressed = false;
-
-                this.buttonImage.setTexture(this.textureHovered);
-                this.updateTextPosition();
+                this.updateVisual();
             }
-
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.buttonImage.on(Phaser.Input.Events.POINTER_OUT, () => {
-            this.isPressed = false;
-            this.isHovered = false;
-
+        this.on(Phaser.Input.Events.POINTER_OUT, () => {
             if (this._isEnabled)
             {
-                this.buttonImage.setTexture(this.textureNormal);
-                this.updateTextPosition();
+                this.isPressed = false;
+                this.isHovered = false;
+                this.updateVisual();
             }
-
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.buttonImage.on(Phaser.Input.Events.POINTER_DOWN, () => {
+        this.on(Phaser.Input.Events.POINTER_DOWN, () => {
             if (this._isEnabled)
             {
                 this.isPressed = true;
                 this.isHovered = false;
-                
-                this.buttonImage.setTexture(this.texturePressed);
-                this.updateTextPosition();
+                this.updateVisual();
             }
-
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.buttonImage.on(Phaser.Input.Events.POINTER_UP, () => {
+        this.on(Phaser.Input.Events.POINTER_UP, () => {
             if (this._isEnabled)
             {
                 this.isPressed = false;
                 this.isHovered = true;
-
-                this.buttonImage.setTexture(this.textureHovered);
-                this.updateTextPosition();
+                this.updateVisual();
             }
-
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.buttonImage.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
+        this.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.SHOW, this.toolTipText);
         }, this);
 
-        this.buttonImage.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
+        this.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
+    }
+
+    public setTextOffsets(textOffsetNormalY: number, textOffsetHoveredY?: number, textOffsetPressedY?: number): void
+    {
+        this.textOffsetNormalY = textOffsetNormalY;
+        this.textOffsetHoveredY = textOffsetHoveredY ?? textOffsetNormalY;
+        this.textOffsetPressedY = textOffsetPressedY ?? textOffsetNormalY;
+        this.updateVisual();
+    }
+
+    public setTextures(textureNormal: string, texturePressed?: string, textureHovered?: string, textureDisabled?: string): void
+    {
+        this.textureNormal = textureNormal;
+        this.textureHovered = textureHovered ?? textureNormal;
+        this.texturePressed = texturePressed ?? textureNormal;
+        this.textureDisabled = textureDisabled ?? textureNormal;
+        this.updateVisual();
+    }
+
+    private updateVisual(): void
+    {
+        if (!this._isEnabled)
+        {
+            this.buttonImage.setTexture(this.textureDisabled);
+            this.buttonText.setColor(this.textColorDisabled);
+        }
+        else if (this.isPressed)
+        {
+            this.buttonImage.setTexture(this.texturePressed);
+            this.buttonText.setColor(this.textColorPressed);
+        }
+        else if (this.isHovered)
+        {
+            this.buttonImage.setTexture(this.textureHovered);
+            this.buttonText.setColor(this.textColorHovered);
+        }
+        else
+        {
+            this.buttonImage.setTexture(this.textureNormal);
+            this.buttonText.setColor(this.textColorNormal);
+        }
+
+        this.buttonImage.setVisible((this.buttonImage.texture.key.length > 0) && (this.buttonImage.texture.key != "__MISSING"))
+        this.width = this.buttonImage.visible ? this.buttonImage.displayWidth : this.buttonText.displayWidth;
+        this.height = this.buttonImage.visible ? this.buttonImage.displayHeight : this.buttonText.displayHeight;
+
+        this.setInteractive({
+            hitArea: new Phaser.Geom.Rectangle(0, 0, this.displayWidth, this.displayHeight),
+            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+            pixelPerfect: this.pixelPerfect,
+            //cursor: "url(assets/cursors/icono-selectedstatic.cur), pointer"
+        });
+
+        this.updateTextPosition();
     }
 
     private updateTextPosition(): void
@@ -146,19 +198,19 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     public onClicked(fn: Function, context?: any) : this
     {
-        this.buttonImage.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
+        this.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
         return this;
     }
 
     public onHovered(fn: Function, context?: any) : this
     {
-        this.buttonImage.on(Phaser.Input.Events.POINTER_OVER, fn, context);
+        this.on(Phaser.Input.Events.POINTER_OVER, fn, context);
         return this;
     }
 
     public onPointerOut(fn: Function, context?: any) : this
     {
-        this.buttonImage.on(Phaser.Input.Events.POINTER_OUT, fn, context);
+        this.on(Phaser.Input.Events.POINTER_OUT, fn, context);
         return this;
     }
 

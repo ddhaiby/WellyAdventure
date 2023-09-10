@@ -65,7 +65,7 @@ export class SceneTowerDefense extends Welly_Scene
         super.create();
 
         this.createMap();
-        this.setupWaveSpawner();
+        this.createWaveSpawner();
         this.createTurrets();
         this.createCamera();
         this.createPhysics();
@@ -73,6 +73,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.setPlayerGold(100);
         this.setPlayerHealth(100, 100);
+        this.onWaveStarted(0);
         this.waveManager.start();
     }
 
@@ -94,7 +95,7 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
-    private setupWaveSpawner(): void
+    private createWaveSpawner(): void
     {
         this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
@@ -177,6 +178,12 @@ export class SceneTowerDefense extends Welly_Scene
     private initUI(): void
     {
         this.sceneUI = this.scene.get<SceneTowerDefenseUI>(CST.SCENES.TOWER_DEFENSE_UI);
+
+        this.sceneUI.events.removeAllListeners("requestRestart");
+
+        this.sceneUI.events.on("requestRestart", () => {
+            this.scene.restart();
+        }, this);
     }
 
     // Update

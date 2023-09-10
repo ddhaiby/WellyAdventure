@@ -58,34 +58,14 @@ export class PauseMenu extends Phaser.GameObjects.Container
         buttonColumn.layout();
     }
 
-    private updateButtonsAlignment() : void
-    {
-        // const buttons = [this.buttonResume, this.buttonRestart, this.buttonMainMenu];
-        // const visibleButtons = [];
-
-        // for (let button of buttons)
-        // {
-        //     if (button.visible)
-        //         visibleButtons.push(button);
-        // }
-
-        // const spacing = 36;
-        // const totalHeight = visibleButtons[0].height * visibleButtons.length + spacing * (visibleButtons.length - 1);
-        // this.centerItem(visibleButtons[0], 0, (visibleButtons[0].height -totalHeight) * 0.5);
-
-        // for (let i = 1; i < visibleButtons.length; ++i)
-        //     Phaser.Display.Align.To.BottomCenter(visibleButtons[i], visibleButtons[0], 0, spacing * i + visibleButtons[0].height * (i - 1));
-    }
-
     private onResumeClicked() : void
     {
-        console.log("Resume");
         this.setVisible(false);
     }
 
     private onRestartClicked() : void
     {
-        console.log("Restart");
         this.setVisible(false);
+        this.emit("requestRestart");
     }
 }

@@ -61,10 +61,10 @@ export class SceneTowerDefenseUI extends Welly_Scene
         super.create();
 
         this.createShortcuts(); 
-        this.initHealthBar();
+        this.createHealthBar();
 
-        this.goldText = this.add.text(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 8, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, fontSize: "24px" });
-        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.goldText.y + this.goldText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, fontSize: "24px" });
+        this.goldText = this.add.text(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 8, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.goldText.y + this.goldText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
         
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
@@ -72,8 +72,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
-
-        this.onWaveStarted(1);
+        this.pauseMenu.on("requestRestart", () => { this.events.emit("requestRestart"); }, this);
     }
 
     private createShortcuts(): void
@@ -90,7 +89,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
         }
     }
 
-    private initHealthBar(): void
+    private createHealthBar(): void
     {
         this.playerHealthBar = new WELLY_Bar(this, { x: 30, y: 32, width: 200, height: 22, radius: 2,  value: 1, color: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.ORANGE), strokeThickness: 1, strokeColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.BLUE) });
         

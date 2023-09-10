@@ -45,7 +45,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":1090,
+                 "x":1230,
                  "y":142
                 }, 
                 {
@@ -307,6 +307,17 @@
                  "width":32,
                  "x":960,
                  "y":96
+                }, 
+                {
+                 "height":0,
+                 "id":48,
+                 "name":"WaveCountdown",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1091,
+                 "y":141
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -327,7 +338,7 @@
          "y":0
         }],
  "nextlayerid":14,
- "nextobjectid":48,
+ "nextobjectid":54,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",

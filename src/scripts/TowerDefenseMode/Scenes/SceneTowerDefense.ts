@@ -36,7 +36,7 @@ export class SceneTowerDefense extends Welly_Scene
      private playerMaxHealth: number = 100;
 
     /** Shows when the next wave should start */
-    private waveCountdownWidget: WaveCountdownWidget;
+    private waveCountdownWidgets: WaveCountdownWidget[];
 
     constructor()
     {
@@ -127,9 +127,17 @@ export class SceneTowerDefense extends Welly_Scene
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
             monsterSpawner.onMonsterDie(this.onMonsterDie, this);
             monsterSpawner.on("MONSTER_MOVE_TO_END", this.onMonsterReachEndPoint, this);
+        }
 
-            this.waveCountdownWidget = new WaveCountdownWidget(this, monsterSpawner.x - 60, monsterSpawner.y);
-            this.waveCountdownWidget.on(Phaser.Input.Events.POINTER_UP, this.onWaveCountdownWidgetClicked, this);
+        const waveCountdownSpawners = this.currentMap.createFromObjects("Wave", {name: "WaveCountdown", classType: Phaser.GameObjects.Image}) as Phaser.GameObjects.Image[];
+        this.waveCountdownWidgets = [];
+        
+        for (const waveCountdownSpawner of waveCountdownSpawners)
+        {
+            const waveWidget = new WaveCountdownWidget(this, waveCountdownSpawner.x, waveCountdownSpawner.y);
+            this.waveCountdownWidgets.push(waveWidget);
+            waveWidget.on(Phaser.Input.Events.POINTER_UP, () => { this.onWaveCountdownWidgetClicked(waveWidget); }, this);
+            waveCountdownSpawner.destroy();
         }
 
         this.waveManager = new WaveManager(this, this.spawners);
@@ -309,17 +317,20 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onWaveTimerTick(remainDuration: number, totalDuration: number): void
     {
-        this.waveCountdownWidget.onCountdownTick(remainDuration, totalDuration);
+        for (const waveWidget of this.waveCountdownWidgets)
+        {
+            waveWidget.onCountdownTick(remainDuration, totalDuration);
+        }
     }
 
-    private onWaveCountdownWidgetClicked(): void
+    private onWaveCountdownWidgetClicked(waveWidget: WaveCountdownWidget): void
     {
         this.waveManager.startNextWave();
 
         const bonusGold = 100;
         this.addPlayerGold(bonusGold);
 
-        const goldText = this.add.text(this.waveCountdownWidget.x, this.waveCountdownWidget.y - 24, `+${bonusGold}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+        const goldText = this.add.text(waveWidget.x, waveWidget.y - 24, `+${bonusGold}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
         goldText.setOrigin(0.5, 1);
 
         this.tweens.add({

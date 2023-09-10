@@ -18,6 +18,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
+    protected layer1: Phaser.Tilemaps.TilemapLayer;
 
     // Waves
     private spawners: WaveSpawner[];
@@ -84,14 +85,11 @@ export class SceneTowerDefense extends Welly_Scene
         const tileset = this.currentMap.addTilesetImage("assetTowerDefenseMap", "assetTowerDefenseMap");
         if (tileset)
         {
-            const layer1 = this.currentMap.createLayer("Layer1", tileset, 0, 0);
-            const layer2 = this.currentMap.createLayer("Layer2", tileset, 0, 0);
+            this.layer1 = this.currentMap.createLayer("Layer1", tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
+            this.currentMap.createLayer("Layer2", tileset, 0, 0);
 
-            if (layer1)
-            {
-                const platformsBounds = layer1.getBounds();
-                this.physics.world.setBounds(-platformsBounds.width, -platformsBounds.height, platformsBounds.width * 2, platformsBounds.height * 2);
-            }
+            const platformsBounds = this.layer1.getBounds();
+            this.physics.world.setBounds(-platformsBounds.width, -platformsBounds.height, platformsBounds.width * 2, platformsBounds.height * 2);
         }
     }
 
@@ -166,8 +164,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createCamera(): void
     {
-        const worldBound = this.physics.world.bounds;
         this.cameras.main.zoomTo(CST.GAME.ZOOM.TOWER_DEFENSE, 0.0);
+        this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5);
     }
 
     private createPhysics(): void

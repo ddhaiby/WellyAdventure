@@ -15,7 +15,11 @@ export class WELLY_Bar extends Phaser.GameObjects.Graphics
     /** The radius of the bar */
     public radius: number;
 
-    constructor(scene: Phaser.Scene, options?: Phaser.Types.GameObjects.Graphics.Options & {width?: number, height?: number, radius?: number, value?: number, color?: number})
+    public strokeColor: number;
+
+    public strokeThickness: number;
+
+    constructor(scene: Phaser.Scene, options?: Phaser.Types.GameObjects.Graphics.Options & {width?: number, height?: number, radius?: number, value?: number, color?: number, strokeColor?: number, strokeThickness?: number})
     {
         super(scene, options);
         this.width = (options && options.width) ? options.width : 0;
@@ -23,6 +27,8 @@ export class WELLY_Bar extends Phaser.GameObjects.Graphics
         this.radius = (options && options.radius) ? options.radius : 0;
         this.value = (options && options.value != undefined) ? options.value : 1;
         this.color = (options && options.color != undefined) ? options.color : 0x000000;
+        this.strokeColor = (options && options.strokeColor != undefined) ? options.strokeColor : 0x000000;
+        this.strokeThickness = (options && options.strokeThickness != undefined) ? options.strokeThickness : 0;
         this.redraw();
         scene.add.existing(this);
     }
@@ -43,6 +49,9 @@ export class WELLY_Bar extends Phaser.GameObjects.Graphics
         this.clear();
         this.fillStyle(this.color);
         this.fillRoundedRect(0, 0, this.value * this.width, this.height, this.radius);
+
+        this.lineStyle(this.strokeThickness, this.strokeColor, 1);
+        this.strokeRoundedRect(0, 0, this.width, this.height, this.radius);
     }
 
     public get width(): number

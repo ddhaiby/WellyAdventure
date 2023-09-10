@@ -5,7 +5,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 500,
-        "moveSpeed": 400,
+        "moveSpeed": 40,
         "damage": 100,
         "depth": 1
     },
@@ -15,7 +15,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 40,
-        "moveSpeed": 420,
+        "moveSpeed": 120,
         "damage": 20
     },
     "wellyYellow": {
@@ -24,7 +24,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 150,
-        "moveSpeed": 480,
+        "moveSpeed": 80,
         "damage": 30
     },
     "wellyRed": {
@@ -33,7 +33,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 80,
-        "moveSpeed": 490,
+        "moveSpeed": 90,
         "damage": 15
     },
     "wellyWhite": {
@@ -42,7 +42,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 20,
-        "moveSpeed": 500,
+        "moveSpeed": 100,
         "damage": 10
     },
     "wellyItaly": {
@@ -51,7 +51,7 @@
         "bodyWidth": 48,
         "bodyHeight": 64,
         "gold": 20,
-        "moveSpeed": 500,
+        "moveSpeed": 100,
         "damage": 10
     }
 }

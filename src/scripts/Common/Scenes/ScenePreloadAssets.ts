@@ -4,6 +4,7 @@ import { SceneExplorationGame } from "../../ExplorationMode/Scenes/SceneExplorat
 import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplorationGameUI";
 import { SceneTowerDefense } from "../../TowerDefenseMode/Scenes/SceneTowerDefense";
 import { SceneTowerDefenseUI } from "../../TowerDefenseMode/Scenes/SceneTowerDefenseUI";
+import { LoadingScreen } from "../HUD/LoadingScreen";
 
 export class ScenePreloadAssets extends Welly_Scene
 {
@@ -24,17 +25,33 @@ export class ScenePreloadAssets extends Welly_Scene
 
     public preload() : void
     {
-        this.preloadCharacters();
-        this.preloadCity();
-        this.preloadTowerDefenseAssets();
+        this.preloadSplashScreen();
+    }
+
+    private preloadSplashScreen(): void
+    {
+        this.load.setPath("./assets/loadingScreen/");
+        this.load.spritesheet("loadingSpriteSheet", "loadingSpriteSheet.png", { frameWidth: 191, frameHeight: 201 });
+    }
+
+    // Load - Post create
+    ////////////////////////////////////////////////////////////////////////
+
+    private loadAssets(): void
+    {
+        this.loadCharacters();
+        this.loadCity();
+        this.loadTowerDefenseAssets();
 
         this.load.setPath("./assets/data/");
         this.load.json("dialogues", "dialogues.json");
         this.load.json("monstersData", "monstersData.json");
         this.load.json("waveData", "waveData.json");
+
+        this.load.start();
     }
 
-    private preloadCharacters(): void
+    private loadCharacters(): void
     {
         this.load.setPath("./assets/characters/");
         this.load.image("playerFace", "playerFace.png");
@@ -46,14 +63,14 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.spritesheet("boss1", "boss1.png", { frameWidth: 128, frameHeight: 128 });
     }
 
-    private preloadCity(): void
+    private loadCity(): void
     {
         this.load.setPath("./assets/maps/");
         this.load.image("assetCity", "assetCity.png");
         this.load.tilemapTiledJSON("cityMap", "cityMap.json");
     }
 
-    private preloadTowerDefenseAssets(): void
+    private loadTowerDefenseAssets(): void
     {
         this.load.setPath("./assets/maps/");
         this.load.image("assetTowerDefenseMap", "assetTowerDefenseMap.png");
@@ -66,9 +83,6 @@ export class ScenePreloadAssets extends Welly_Scene
 
         this.load.setPath("./assets/HUD/");
         this.load.image("buttonConnectNormal", "buttonConnectNormal.png");
-
-        this.load.setPath("./assets/loadingScreen/");
-        this.load.spritesheet("loadingSpriteSheet", "loadingSpriteSheet.png", { frameWidth: 191, frameHeight: 201 });
     }
 
     // Create
@@ -76,14 +90,21 @@ export class ScenePreloadAssets extends Welly_Scene
   
     public create() : void
     {
-        // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;
-        // this.scene.add(CST.SCENES.EXPLORATION_GAME, SceneExplorationGame, true, undefined);
-        // sceneUI.scene.bringToTop();
+        new LoadingScreen(this);
 
-        const sceneUI = this.scene.add(CST.SCENES.TOWER_DEFENSE_UI, SceneTowerDefenseUI, true, undefined) as SceneTowerDefenseUI;
-        this.scene.add(CST.SCENES.TOWER_DEFENSE, SceneTowerDefense, true, undefined);
-        sceneUI.scene.bringToTop();
+        this.time.delayedCall(2000, () => { this.loadAssets(); }, undefined, this); 
 
-        this.scene.remove(CST.SCENES.PRELOAD_ASSETS);
+        this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+            // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;
+            // this.scene.add(CST.SCENES.EXPLORATION_GAME, SceneExplorationGame, true, undefined);
+            // sceneUI.scene.bringToTop();
+
+            const sceneUI = this.scene.add(CST.SCENES.TOWER_DEFENSE_UI, SceneTowerDefenseUI, true, undefined) as SceneTowerDefenseUI;
+
+            this.scene.add(CST.SCENES.TOWER_DEFENSE, SceneTowerDefense, true, undefined);
+            sceneUI.scene.bringToTop();
+
+            this.scene.remove(CST.SCENES.PRELOAD_ASSETS);
+        }, this);
     }
 }

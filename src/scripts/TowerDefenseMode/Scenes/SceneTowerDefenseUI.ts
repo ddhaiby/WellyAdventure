@@ -77,8 +77,6 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
         this.pauseMenu.on("requestRestart", () => { this.events.emit("requestRestart"); }, this);
-
-        new LoadingScreen(this);
     }
 
     private createShortcuts(): void

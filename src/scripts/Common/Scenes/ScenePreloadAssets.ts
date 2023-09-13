@@ -66,6 +66,9 @@ export class ScenePreloadAssets extends Welly_Scene
 
         this.load.setPath("./assets/HUD/");
         this.load.image("buttonConnectNormal", "buttonConnectNormal.png");
+
+        this.load.setPath("./assets/loadingScreen/");
+        this.load.spritesheet("loadingSpriteSheet", "loadingSpriteSheet.png", { frameWidth: 191, frameHeight: 201 });
     }
 
     // Create

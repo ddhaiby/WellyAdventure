@@ -180,11 +180,11 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.width = this.buttonImage.visible ? this.buttonImage.displayWidth : this.buttonText.displayWidth;
         this.height = this.buttonImage.visible ? this.buttonImage.displayHeight : this.buttonText.displayHeight;
 
-        this.setInteractive({
+        this .setInteractive({
             hitArea: new Phaser.Geom.Rectangle(0, 0, this.displayWidth, this.displayHeight),
             hitAreaCallback: Phaser.Geom.Rectangle.Contains,
             pixelPerfect: this.pixelPerfect,
-            //cursor: "url(assets/cursors/icono-selectedstatic.cur), pointer"
+            //cursor: "url(assets/cursors/icono-selectedstatic.q²cur), pointer"
         });
 
         this.updateTextPosition();

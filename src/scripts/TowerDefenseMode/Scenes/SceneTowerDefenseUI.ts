@@ -5,6 +5,7 @@ import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
+import { WellyBoostSelection } from "../HUD/WellyBoostSelection";
 
 declare type UIKeys = 
 {
@@ -65,10 +66,12 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         this.goldText = this.add.text(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 8, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
         this.waveText = this.add.text(this.playerFaceImage.x + 2, this.goldText.y + this.goldText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
-        
+
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
+
+        const wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
 
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);

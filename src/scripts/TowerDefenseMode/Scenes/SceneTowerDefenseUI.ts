@@ -1,5 +1,6 @@
 import { CST } from "../../Common/CST";
 import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
+import { LoadingScreen } from "../../Common/HUD/LoadingScreen";
 import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
@@ -76,26 +77,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
         this.pauseMenu.on("requestRestart", () => { this.events.emit("requestRestart"); }, this);
-        
-        const width = this.scale.displaySize.width;
-        const height = this.scale.displaySize.height;
 
-        const background = this.add.graphics();
-        background.fillStyle(WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE), 1.0);
-        background.fillRect(0, 0, width, height);
-        background.setInteractive(new Phaser.Geom.Rectangle(0, 0, width, height), Phaser.Geom.Rectangle.Contains);
-
-        const loadingSprite = this.add.sprite(width - 12, height - 8, "loadingSpriteSheet");
-        loadingSprite.setOrigin(1, 1);
-        loadingSprite.anims.create({
-            key: "Loading",
-            frames: this.anims.generateFrameNumbers("loadingSpriteSheet", { start: 0, end: 121 }),
-            frameRate: 24,
-            repeat: -1
-        });
-        loadingSprite.play("Loading", true);
-
-        this.add.text(width * 0.5, height * 0.5, "LOADING", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "70px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "right" }).setOrigin(0.5, 0.5);
+        new LoadingScreen(this);
     }
 
     private createShortcuts(): void

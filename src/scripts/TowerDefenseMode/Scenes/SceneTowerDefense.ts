@@ -11,10 +11,13 @@ import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
+import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
 
 export class SceneTowerDefense extends Welly_Scene
 {
     private sceneUI: SceneTowerDefenseUI;
+
+    private boostManager: WellyBoostManager;
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
@@ -72,13 +75,9 @@ export class SceneTowerDefense extends Welly_Scene
         this.createPhysics();
         this.initUI();
 
-        this.setPlayerGold(100);
-        this.setPlayerHealth(100, 100);
-        this.onWaveStarted(0);
-        this.waveManager.start();
+        this.boostManager = new WellyBoostManager(this);
 
-        // Wait a few milliseconds to let the camera update correctly
-        this.time.delayedCall(100, () => { this.showWellyBoostSelection() }, undefined, this);
+        this.startGame();
     }
 
     private createMap(): void
@@ -193,6 +192,17 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.sceneUI.events.on("requestRestart", () => { this.scene.restart(); }, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
+    }
+
+    private startGame(): void
+    {
+        this.setPlayerGold(100);
+        this.setPlayerHealth(100, 100);
+        this.onWaveStarted(0);
+        this.waveManager.start();
+
+        // Wait a few milliseconds to let the camera update correctly
+        this.time.delayedCall(100, () => { this.showWellyBoostSelection() }, undefined, this);
     }
 
     // Update
@@ -354,8 +364,10 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected showWellyBoostSelection(): void
     {
+        const boostIds = this.boostManager.generateRandomBoosts(3);
+
         this.scene.pause();
-        this.sceneUI.showWellyBoostSelection();
+        this.sceneUI.showWellyBoostSelection(boostIds);
     }
 
     protected onWellyBoostSelected(): void

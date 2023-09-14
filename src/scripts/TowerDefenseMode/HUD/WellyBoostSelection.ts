@@ -7,6 +7,8 @@ import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-p
 export class BoostButtonWidget extends Phaser.GameObjects.Container
 {
     public scene: Welly_Scene;
+
+    protected title: Phaser.GameObjects.Text;
     protected background: RoundRectangle;
 
     constructor(scene: Welly_Scene, x: number, y: number)
@@ -20,9 +22,9 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         this.background = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 8, WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE));
         this.add(this.background);
 
-        const title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 12, "BONUS 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "26px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "center" });
-        title.setOrigin(0.5, 0);
-        this.add(title);
+        this.title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 12, "BONUS 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "26px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "center" });
+        this.title.setOrigin(0.5, 0);
+        this.add(this.title);
 
         const outlinePlugin = this.scene.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
         const scaleNormal = 1;
@@ -51,6 +53,11 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
     {
         this.background.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
         return this;
+    }
+
+    public setBoostData(boostId: string): void
+    {
+        this.title.setText(boostId);
     }
 }
 
@@ -100,8 +107,17 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         buttonColumn.layout();
     }
 
-    public show(): void
+    public show(boostIds: string[]): void
     {
+        if (boostIds.length < 3)
+        {
+            return;
+        }
+
+        this.boostWidget1.setBoostData(boostIds[0]);
+        this.boostWidget2.setBoostData(boostIds[1]);
+        this.boostWidget3.setBoostData(boostIds[2]);
+
         this.setVisible(true);
     }
 

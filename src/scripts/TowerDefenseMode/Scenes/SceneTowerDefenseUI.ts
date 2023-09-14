@@ -152,9 +152,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget.setVisible(false);
     }
 
-    public showWellyBoostSelection(): void
+    public showWellyBoostSelection(boostIds: string[]): void
     {
-        this.wellyBoostSelection.show();
+        this.wellyBoostSelection.show(boostIds);
     }
 
     public hideWellyBoostSelection(): void

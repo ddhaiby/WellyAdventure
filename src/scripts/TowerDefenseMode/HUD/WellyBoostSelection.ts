@@ -25,6 +25,8 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         this.add(title);
 
         const outlinePlugin = this.scene.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
+        const scaleNormal = 1;
+        const scalePressed = 0.95;
 
         this.background.setInteractive();
         this.background.on(Phaser.Input.Events.POINTER_OVER, () => {
@@ -33,6 +35,15 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         
         this.background.on(Phaser.Input.Events.POINTER_OUT, () => {
             outlinePlugin.remove(this.background);
+            this.setScale(scaleNormal);
+        }, this);
+
+        this.background.on(Phaser.Input.Events.POINTER_DOWN, () => {
+            this.setScale(scalePressed);
+        }, this);
+
+        this.background.on(Phaser.Input.Events.POINTER_UP, () => {
+            this.setScale(scaleNormal);
         }, this);
     }
 

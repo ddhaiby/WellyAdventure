@@ -92,7 +92,7 @@ export class ScenePreloadAssets extends Welly_Scene
     {
         new LoadingScreen(this);
 
-        this.time.delayedCall(2000, () => { this.loadAssets(); }, undefined, this); 
+        this.time.delayedCall(2000, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;

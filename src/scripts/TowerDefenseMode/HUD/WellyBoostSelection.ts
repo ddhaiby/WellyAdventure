@@ -67,20 +67,13 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         this.add(background);
 
         this.boostWidget1 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget1.onClicked(() => {
-            this.setVisible(false);
-        }, this);
+        this.boostWidget1.onClicked(() => { this.onBoostSelected(); }, this);
 
         this.boostWidget2 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget2.onClicked(() => {
-            this.setVisible(false);
-            console.log(this)
-        }, this);
-        
+        this.boostWidget2.onClicked(() => { this.onBoostSelected(); }, this);
+
         this.boostWidget3 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget3.onClicked(() => {
-            this.setVisible(false);
-        }, this);
+        this.boostWidget3.onClicked(() => { this.onBoostSelected(); }, this);
 
         const buttonColumn = this.scene.rexUI.add.sizer({
             orientation: "horizontal",
@@ -94,5 +87,21 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         buttonColumn.add(this.boostWidget2);
         buttonColumn.add(this.boostWidget3);
         buttonColumn.layout();
+    }
+
+    public show(): void
+    {
+        this.setVisible(true);
+    }
+
+    public hide(): void
+    {
+        this.setVisible(false);
+    }
+
+    protected onBoostSelected(): void
+    {
+        this.emit("wellyBoostSelected");
+        this.setVisible(false);
     }
 }

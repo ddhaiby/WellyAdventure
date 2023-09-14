@@ -36,6 +36,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
     /** Player face near the health bar */
     private playerFaceImage: Phaser.GameObjects.Image;
 
+    private wellyBoostSelection: WellyBoostSelection;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE_UI});
@@ -72,7 +74,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
 
-        const wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
+        this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
+        this.wellyBoostSelection.setVisible(false);
+        this.wellyBoostSelection.on("wellyBoostSelected", this.onWellyBoostSelected, this);
 
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
@@ -146,5 +150,21 @@ export class SceneTowerDefenseUI extends Welly_Scene
     public hideTurretDataWidget(): void
     {
         this.turretDataWidget.setVisible(false);
+    }
+
+    public showWellyBoostSelection(): void
+    {
+        this.wellyBoostSelection.show();
+    }
+
+    public hideWellyBoostSelection(): void
+    {
+        this.wellyBoostSelection.hide();
+    }
+
+    protected onWellyBoostSelected(): void
+    {
+        this.wellyBoostSelection.hide();
+        this.events.emit("wellyBoostSelected");
     }
 }

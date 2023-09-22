@@ -4,6 +4,7 @@ import { Welly_Scene } from "../../../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "../JunkMonster";
 import { CST } from "../../../../Common/CST";
 import { ITurretData } from "../../../HUD/TurretDataWidget";
+import { DIRECTIONS } from "../../../../Common/Characters/CharacterMovementComponent";
 
 export class Turret extends Npc implements ITurretData
 {
@@ -51,6 +52,8 @@ export class Turret extends Npc implements ITurretData
         super.init(spawnData);
 
         this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "28px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
+
+        this.disableBody();
     }
 
     protected initPhysic(): void
@@ -111,9 +114,26 @@ export class Turret extends Npc implements ITurretData
     {
         this.level += levelIncrease;
 
-        this.setTexture("canon");
-        this.setAlpha(1);
-        this.waitingForUpgradeTween.stop();
+        if (this.level == 1)
+        {
+            this.setTexture(Math.random() > 0.5 ? "Amalia" : "player");
+            this.setAlpha(1);
+            this.waitingForUpgradeTween.stop();
+
+            this.enableBody();
+
+            const directions = Object.keys(DIRECTIONS);
+            for (let i = 0; i < directions.length; ++i)
+            {
+                const direction = directions[i];
+                this.anims.create({
+                    key: `Idle${direction}`,
+                    frames: this.anims.generateFrameNumbers(this.texture.key, { start: i * 4, end: i * 4 }),
+                    frameRate: 1,
+                    repeat: 0
+                });
+            }
+        }
 
         const size = 200 + 10 * this.level;
         this.body.setSize(size, size);
@@ -156,6 +176,54 @@ export class Turret extends Npc implements ITurretData
             });
 
             this.reload();
+
+            const rotation = Math.atan2(this.y - this.currentFocus.y, this.x - this.currentFocus.x) * 180 / Math.PI;
+            const threshold = 22.5;
+            if (rotation > 0)
+            {
+                if (rotation < threshold)
+                {
+                    this.setDirection(DIRECTIONS.Left);
+                }
+                else if (rotation < 90 - threshold)
+                {
+                    this.setDirection(DIRECTIONS.UpLeft);
+                }
+                else if (rotation < 90 + threshold)
+                {
+                    this.setDirection(DIRECTIONS.Up);
+                }
+                else if (rotation < 180 - threshold)
+                {
+                    this.setDirection(DIRECTIONS.UpRight);
+                }
+                else
+                {
+                    this.setDirection(DIRECTIONS.Right);
+                }
+            }
+            else if (rotation > -threshold)
+            {
+                this.setDirection(DIRECTIONS.Left);
+            }
+            else if (rotation > -90 + threshold)
+            {
+                this.setDirection(DIRECTIONS.DownLeft);
+            }
+            else if (rotation > -90 - threshold)
+            {
+                this.setDirection(DIRECTIONS.Down);
+            }
+            else if (rotation > -180 + threshold)
+            {
+                this.setDirection(DIRECTIONS.DownRight);
+            }
+            else
+            {
+                this.setDirection(DIRECTIONS.Right);
+            }
+
+            this.anims.play(`Idle${this.currentDirection}`, true);
         }
     }
 

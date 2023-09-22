@@ -42,11 +42,13 @@ export class ScenePreloadAssets extends Welly_Scene
         this.loadCharacters();
         this.loadCity();
         this.loadTowerDefenseAssets();
+        this.loadWellyBonus();
 
         this.load.setPath("./assets/data/");
         this.load.json("dialogues", "dialogues.json");
         this.load.json("monstersData", "monstersData.json");
         this.load.json("waveData", "waveData.json");
+        this.load.json("wellyBoostData", "wellyBoostData.json");
 
         this.load.start();
     }
@@ -83,6 +85,12 @@ export class ScenePreloadAssets extends Welly_Scene
 
         this.load.setPath("./assets/HUD/");
         this.load.image("buttonConnectNormal", "buttonConnectNormal.png");
+    }
+
+    private loadWellyBonus():void
+    {
+        this.load.setPath("./assets/wellyBonus/");
+        this.load.image("wellyBonusTemplate", "wellyBonusTemplate.png");
     }
 
     // Create

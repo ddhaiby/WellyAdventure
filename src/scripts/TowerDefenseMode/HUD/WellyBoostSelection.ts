@@ -3,12 +3,14 @@ import { CST } from "../../Common/CST";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
+import { WellyBoostData } from "../WellyBoost/WellyBoostManager";
 
 export class BoostButtonWidget extends Phaser.GameObjects.Container
 {
     public scene: Welly_Scene;
 
     protected title: Phaser.GameObjects.Text;
+    protected description: Phaser.GameObjects.Text;
     protected background: RoundRectangle;
 
     constructor(scene: Welly_Scene, x: number, y: number)
@@ -25,6 +27,14 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         this.title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 12, "BONUS 1", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "26px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "center" });
         this.title.setOrigin(0.5, 0);
         this.add(this.title);
+
+        const image = scene.add.image(0, 0, "wellyBonusTemplate");
+        this.add(image);
+
+        this.description = scene.add.text(0, this.background.y + this.background.displayHeight * 0.5 - 24, "f", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "14px", color: CST.STYLE.COLOR.BLUE, strokeThickness: 0, align: "center" });
+        this.description.setOrigin(0.5, 1);
+        this.description.setWordWrapWidth(this.background.width)
+        this.add(this.description);
 
         const outlinePlugin = this.scene.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
         const scaleNormal = 1;
@@ -55,9 +65,10 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         return this;
     }
 
-    public setBoostData(boostId: string): void
+    public setBoostData(boostData: WellyBoostData): void
     {
-        this.title.setText(boostId);
+        this.title.setText(boostData.name);
+        this.description.setText(boostData.description);
     }
 }
 
@@ -107,16 +118,16 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         buttonColumn.layout();
     }
 
-    public show(boostIds: string[]): void
+    public show(boostDatArray: WellyBoostData[]): void
     {
-        if (boostIds.length < 3)
+        if (boostDatArray.length < 3)
         {
             return;
         }
 
-        this.boostWidget1.setBoostData(boostIds[0]);
-        this.boostWidget2.setBoostData(boostIds[1]);
-        this.boostWidget3.setBoostData(boostIds[2]);
+        this.boostWidget1.setBoostData(boostDatArray[0]);
+        this.boostWidget2.setBoostData(boostDatArray[1]);
+        this.boostWidget3.setBoostData(boostDatArray[2]);
 
         this.setVisible(true);
     }

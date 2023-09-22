@@ -1,0 +1,44 @@
+[
+    {
+        "id": "damageBonus",
+        "name": "Bonus Damage",
+        "description": "Add extra damage to all towers",
+        "image": "",
+        "rarity": "Common"
+    },
+    {
+        "id": "attackSpeedBonus",
+        "name": "Attack Speed Bonus",
+        "description": "Add extra attack speed",
+        "image": "",
+        "rarity": "Common"
+    },
+    {
+        "id": "rangeBonus",
+        "name": "Range Bonus",
+        "description": "Add extra range to all towers",
+        "image": "",
+        "rarity": "Common"
+    },
+    {
+        "id": "moneyBonus",
+        "name": "Money money!",
+        "description": "Get more money from all monsters",
+        "image": "",
+        "rarity": "Rare"
+    },
+    {
+        "id": "wellyBoom",
+        "name": "Welly Boom",
+        "description": "Monsters explode when they die",
+        "image": "",
+        "rarity": "Rare"
+    },
+    {
+        "id": "slowDown",
+        "name": "Slow down",
+        "description": "Slow down monsters when they get hit",
+        "image": "",
+        "rarity": "Rare"
+    }
+]

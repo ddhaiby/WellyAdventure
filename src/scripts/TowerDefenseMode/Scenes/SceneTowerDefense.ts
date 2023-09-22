@@ -364,10 +364,10 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected showWellyBoostSelection(): void
     {
-        const boostIds = this.boostManager.generateRandomBoosts(3);
+        const boostDatArray = this.boostManager.generateRandomBoosts(3);
 
         this.scene.pause();
-        this.sceneUI.showWellyBoostSelection(boostIds);
+        this.sceneUI.showWellyBoostSelection(boostDatArray);
     }
 
     protected onWellyBoostSelected(): void

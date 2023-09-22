@@ -7,6 +7,7 @@ import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 import { WellyBoostSelection } from "../HUD/WellyBoostSelection";
+import { WellyBoostData } from "../WellyBoost/WellyBoostManager";
 
 declare type UIKeys = 
 {
@@ -152,9 +153,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget.setVisible(false);
     }
 
-    public showWellyBoostSelection(boostIds: string[]): void
+    public showWellyBoostSelection(boostDatArray: WellyBoostData[]): void
     {
-        this.wellyBoostSelection.show(boostIds);
+        this.wellyBoostSelection.show(boostDatArray);
     }
 
     public hideWellyBoostSelection(): void

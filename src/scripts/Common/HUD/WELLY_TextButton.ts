@@ -49,6 +49,9 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     protected pixelPerfect: boolean = false;
 
+    /** The gameobject to use for the button interactions (press, hover etc...) */
+    private interactiveObject: Phaser.GameObjects.GameObject;
+
     constructor(scene: Phaser.Scene, x: number, y: number, text: string, style?: GPC_TextButtonStyle)
     {
         super(scene, x, y);
@@ -84,10 +87,22 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.buttonText = this.scene.add.text(0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);
+
         this.updateVisual();
+        this.setupInteractions();
+    }
+
+    protected setupInteractions(): void
+    {
+        this.interactiveObject = this.buttonImage.visible ? this.buttonImage : this.buttonText;
+
+        this.interactiveObject.setInteractive({
+            pixelPerfect: this.pixelPerfect && (this.interactiveObject == this.buttonImage),
+            //cursor: "url(assets/cursors/icono-selectedstatic.cur), pointer"
+        });
 
         // Behaviors
-        this.on(Phaser.Input.Events.POINTER_OVER, () => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_OVER, () => {
             if (this._isEnabled)
             {
                 this.isHovered = true;
@@ -97,7 +112,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.on(Phaser.Input.Events.POINTER_OUT, () => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_OUT, () => {
             if (this._isEnabled)
             {
                 this.isPressed = false;
@@ -107,7 +122,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.on(Phaser.Input.Events.POINTER_DOWN, () => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_DOWN, () => {
             if (this._isEnabled)
             {
                 this.isPressed = true;
@@ -117,7 +132,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.on(Phaser.Input.Events.POINTER_UP, () => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_UP, () => {
             if (this._isEnabled)
             {
                 this.isPressed = false;
@@ -127,11 +142,11 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
-        this.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.SHOW, this.toolTipText);
         }, this);
 
-        this.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
     }
@@ -180,13 +195,6 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.width = this.buttonImage.visible ? this.buttonImage.displayWidth : this.buttonText.displayWidth;
         this.height = this.buttonImage.visible ? this.buttonImage.displayHeight : this.buttonText.displayHeight;
 
-        this .setInteractive({
-            hitArea: new Phaser.Geom.Rectangle(0, 0, this.displayWidth, this.displayHeight),
-            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-            pixelPerfect: this.pixelPerfect,
-            //cursor: "url(assets/cursors/icono-selectedstatic.q²cur), pointer"
-        });
-
         this.updateTextPosition();
     }
 
@@ -198,19 +206,19 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     public onClicked(fn: Function, context?: any) : this
     {
-        this.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
         return this;
     }
 
     public onHovered(fn: Function, context?: any) : this
     {
-        this.on(Phaser.Input.Events.POINTER_OVER, fn, context);
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_OVER, fn, context);
         return this;
     }
 
     public onPointerOut(fn: Function, context?: any) : this
     {
-        this.on(Phaser.Input.Events.POINTER_OUT, fn, context);
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_OUT, fn, context);
         return this;
     }
 

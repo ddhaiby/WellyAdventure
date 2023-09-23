@@ -87,7 +87,7 @@ export class SceneExplorationGame extends Welly_Scene
         {
             const spawnData = npcSpawner.getSpawnData();
 
-            const npc = new Npc(this, npcSpawner.x, npcSpawner.y);
+            const npc = new WellyNpc(this, npcSpawner.x, npcSpawner.y);
             this.npcs.add(npc);
             npc.init(npcSpawner.getSpawnData());
             

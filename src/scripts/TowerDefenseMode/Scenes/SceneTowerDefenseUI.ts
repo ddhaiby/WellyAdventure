@@ -1,9 +1,9 @@
 import { CST } from "../../Common/CST";
 import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
-import { LoadingScreen } from "../../Common/HUD/LoadingScreen";
 import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { BottomMenu } from "../HUD/BottomMenu";
 import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 import { WellyBoostSelection } from "../HUD/WellyBoostSelection";
@@ -18,6 +18,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
 {
     /** Pause menu */
     private pauseMenu: PauseMenu;
+
+     /** Bottom menu */
+    private bottomMenu: BottomMenu;
 
     /** Display the current golds */
     private goldText: Phaser.GameObjects.Text;
@@ -74,6 +77,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
+
+        this.bottomMenu = new BottomMenu(this, (this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET) * 0.5, this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET * 0.5); // Display the bottomMenu below the game 
 
         this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
         this.wellyBoostSelection.setVisible(false);

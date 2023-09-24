@@ -174,8 +174,14 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createCamera(): void
     {
+        const vieportOffsetX = CST.GAME.VIEWPORT.OFFSET_X;
+        const vieportWidth = this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET;
+        const vieportOffsetY = CST.GAME.VIEWPORT.OFFSET_Y;
+        const vieportHeight = this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET;
+
         this.cameras.main.zoomTo(CST.GAME.ZOOM.TOWER_DEFENSE, 0.0);
-        this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5);
+        this.cameras.main.setViewport(vieportOffsetX, vieportOffsetY, vieportWidth, vieportHeight);
+        this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5 - 78);
     }
 
     private createPhysics(): void

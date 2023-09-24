@@ -40,5 +40,12 @@
         "description": "Slow down monsters when they get hit",
         "image": "",
         "rarity": "Rare"
+    },
+    {
+        "id": "fullTraining",
+        "name": "Full Training",
+        "description": "All chefs in game level up",
+        "image": "",
+        "rarity": "Rare"
     }
 ]

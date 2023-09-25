@@ -35,9 +35,9 @@
         "rarity": "Rare"
     },
     {
-        "id": "slowDown",
-        "name": "Slow down",
-        "description": "Slow down monsters when they get hit",
+        "id": "brainfreeze",
+        "name": "BrainFreeze",
+        "description": "Slow down whoever drink this",
         "image": "",
         "rarity": "Rare"
     },

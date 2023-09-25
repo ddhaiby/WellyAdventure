@@ -168,6 +168,12 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.updateVisual();
     }
 
+    public setText(value: string): this
+    {
+        this.buttonText.setText(value);
+        return this;
+    }
+
     private updateVisual(): void
     {
         if (!this._isEnabled)

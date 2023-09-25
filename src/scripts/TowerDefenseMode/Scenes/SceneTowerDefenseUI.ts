@@ -1,7 +1,8 @@
 import { CST } from "../../Common/CST";
 import { WELLY_DialogueBox } from "../../Common/HUD/DialogueBox";
 import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
-import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
+import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { BottomMenu } from "../HUD/BottomMenu";
 import { PauseMenu } from "../HUD/PauseMenu";
@@ -40,6 +41,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
     /** Player face near the health bar */
     private playerFaceImage: Phaser.GameObjects.Image;
 
+    private gameSpeedButton: WELLY_TextButton;
+
     private wellyBoostSelection: WellyBoostSelection;
 
     constructor()
@@ -77,6 +80,16 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
         this.turretDataWidget.setVisible(false);
+
+        this.gameSpeedButton = new WELLY_TextButton(this, this.scale.displaySize.width - 30, 36, "X1", {
+            fontSize: "30px",
+            textOffsetNormalY: -1,
+            textOffsetHoveredY: -2,
+            textOffsetPressedY: 0,
+            textColorNormal: CST.STYLE.COLOR.BLUE,
+            textStrokeThickness: 0
+        });
+        this.gameSpeedButton.onClicked(() => { this.onGameSpeedButtonClicked(); }, this);
 
         this.bottomMenu = new BottomMenu(this, (this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET) * 0.5, this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET * 0.5); // Display the bottomMenu below the game 
 
@@ -172,5 +185,21 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
         this.wellyBoostSelection.hide();
         this.events.emit("wellyBoostSelected");
+    }
+
+    protected onGameSpeedButtonClicked(): void
+    {
+        this.events.emit("requestUpdateGameSpeed");
+    }
+
+    public onSpeedModeChanged(speedMode: SpeedMode): void
+    {
+        switch(speedMode)
+        {
+            case SpeedMode.SLOW: this.gameSpeedButton.setText("X1"); break;
+            case SpeedMode.NORMAL: this.gameSpeedButton.setText("X2"); break;
+            case SpeedMode.FAST: this.gameSpeedButton.setText("X3"); break;
+            default: console.error("SceneTowerDefenseUI::onSpeedModeChanged - Invalid speed mode"); break;   
+        }
     }
 }

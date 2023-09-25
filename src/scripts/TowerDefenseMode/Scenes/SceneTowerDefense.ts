@@ -1,5 +1,5 @@
 import { CST } from "../../Common/CST";
-import { Welly_Scene, SceneData } from "../../Common/Scenes/WELLY_Scene";
+import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Scene";
 import { SceneTowerDefenseUI } from "./SceneTowerDefenseUI";
 import { WaveSpawner } from "../WaveSystem/WaveSpawner";
 import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
@@ -41,6 +41,8 @@ export class SceneTowerDefense extends Welly_Scene
     /** Shows when the next wave should start */
     private waveCountdownWidgets: WaveCountdownWidget[];
 
+    private speedMode: SpeedMode = SpeedMode.SLOW;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -74,6 +76,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.createCamera();
         this.createPhysics();
         this.initUI();
+        this.updateSpeedMode(SpeedMode.SLOW);
 
         this.boostManager = new WellyBoostManager(this);
 
@@ -198,6 +201,40 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.sceneUI.events.on("requestRestart", () => { this.scene.restart(); }, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
+        this.sceneUI.events.on("requestUpdateGameSpeed", this.onUpdateGameSpeedRequested, this);
+    }
+
+    private setSpeedMode(inSpeedMode: SpeedMode): void
+    {
+        this.speedMode = inSpeedMode;
+        this.sceneUI.onSpeedModeChanged(inSpeedMode);
+    }
+
+    private updateSpeedMode(inSpeedMode: SpeedMode): void
+    {
+        this.setSpeedMode(inSpeedMode);
+
+        switch (this.speedMode)
+        {
+            case SpeedMode.SLOW:
+                this.physics.world.timeScale = 1;
+                this.time.timeScale = 1;
+                break;
+
+            case SpeedMode.NORMAL:
+                this.physics.world.timeScale = 0.5;
+                this.time.timeScale = 2;
+                break;
+
+            case SpeedMode.FAST:
+                this.physics.world.timeScale = 0.25;
+                this.time.timeScale = 4;
+                break;
+
+            default:
+                console.error("SceneTowerDefense::updateSpeedMode - Invalid speed mode");
+                break;
+        }
     }
 
     private startGame(): void
@@ -380,5 +417,16 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.sceneUI.hideWellyBoostSelection();
         this.sceneUI.scene.resume(CST.SCENES.TOWER_DEFENSE);
+    }
+
+    protected onUpdateGameSpeedRequested(): void
+    {
+        switch (this.speedMode)
+        {
+            case SpeedMode.SLOW: this.updateSpeedMode(SpeedMode.NORMAL); break;
+            case SpeedMode.NORMAL: this.updateSpeedMode(SpeedMode.FAST); break;
+            case SpeedMode.FAST: this.updateSpeedMode(SpeedMode.SLOW); break;
+            default: console.error("SceneTowerDefense::onUpdateGameSpeedRequested - Invalid speed mode"); break;
+        }
     }
 }

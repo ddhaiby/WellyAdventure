@@ -98,6 +98,8 @@ export class ScenePreloadAssets extends Welly_Scene
   
     public create() : void
     {
+        this.input.setDefaultCursor("url(assets/cursors/cursorWellyNormal.cur), pointer");
+
         new LoadingScreen(this);
 
         this.time.delayedCall(2000, () => { this.loadAssets(); }, undefined, this);

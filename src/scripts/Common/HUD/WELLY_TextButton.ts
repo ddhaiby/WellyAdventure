@@ -98,7 +98,6 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
         this.interactiveObject.setInteractive({
             pixelPerfect: this.pixelPerfect && (this.interactiveObject == this.buttonImage),
-            //cursor: "url(assets/cursors/icono-selectedstatic.cur), pointer"
         });
 
         // Behaviors

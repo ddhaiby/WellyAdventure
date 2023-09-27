@@ -100,7 +100,11 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
-        this.pauseMenu.on("requestRestart", () => { this.events.emit("requestRestart"); }, this);
+        this.pauseMenu.on("requestResume", () => { this.togglePauseMenu(); }, this);
+        this.pauseMenu.on("requestRestart", () => {
+            this.pauseMenu.setVisible(false)
+            this.events.emit("requestRestart");
+        }, this);
     }
 
     private createShortcuts(): void
@@ -111,9 +115,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         if (keys)
         {
-            keys.escape.on('down', () => {
-                this.pauseMenu.setVisible(!this.pauseMenu.visible);
-            });
+            keys.escape.on('down', () => { this.togglePauseMenu(); }, this);
         }
     }
 
@@ -157,6 +159,12 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
     public update(): void
     {
+    }
+
+    private togglePauseMenu(): void
+    {
+        this.pauseMenu.setVisible(!this.pauseMenu.visible);
+        this.events.emit("pauseMenuToggled", this.pauseMenu.visible);
     }
 
     public onPlayerCoinChanged(coin: number): void
@@ -223,6 +231,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
             case SpeedMode.SLOW: this.gameSpeedButton.setText("X1"); break;
             case SpeedMode.NORMAL: this.gameSpeedButton.setText("X2"); break;
             case SpeedMode.FAST: this.gameSpeedButton.setText("X3"); break;
+            case SpeedMode.PAUSE: break;
             default: console.error("SceneTowerDefenseUI::onSpeedModeChanged - Invalid speed mode"); break;   
         }
     }

@@ -3,7 +3,8 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 export const enum SpeedMode {
     SLOW,
     NORMAL,
-    FAST
+    FAST,
+    PAUSE
 }
 
 export declare type SceneData = {

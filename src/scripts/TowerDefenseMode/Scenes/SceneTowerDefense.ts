@@ -43,6 +43,8 @@ export class SceneTowerDefense extends Welly_Scene
     private waveCountdownWidgets: WaveCountdownWidget[];
 
     private speedMode: SpeedMode = SpeedMode.SLOW;
+    
+    private lastSpeedMode: SpeedMode = SpeedMode.SLOW;
 
     /** The turret that the player wants to spawn in the game */
     private turretPreview: Phaser.GameObjects.Image;
@@ -85,7 +87,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.createCamera();
         this.createPhysics();
         this.initUI();
-        this.updateSpeedMode(SpeedMode.SLOW);
+        this.setSpeedMode(SpeedMode.SLOW);
 
         this.boostManager = new WellyBoostManager(this);
 
@@ -178,6 +180,11 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.sceneUI.events.removeAllListeners("requestRestart");
         this.sceneUI.events.removeAllListeners("wellyBoostSelected");
+        this.sceneUI.events.removeAllListeners("requestUpdateGameSpeed");
+        this.sceneUI.events.removeAllListeners("startDragTurret");
+        this.sceneUI.events.removeAllListeners("dragTurret");
+        this.sceneUI.events.removeAllListeners("endDragTurret");
+        this.sceneUI.events.removeAllListeners("pauseMenuToggled");
 
         this.sceneUI.events.on("requestRestart", () => { this.scene.restart(); }, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
@@ -186,39 +193,46 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.events.on("startDragTurret", this.onStartDragTurret, this);
         this.sceneUI.events.on("dragTurret", this.onDragTurret, this);
         this.sceneUI.events.on("endDragTurret", this.onEnDragTurret, this);
+
+        this.sceneUI.events.on("pauseMenuToggled", this.onPauseMenuToggled, this);
+    }
+
+    private onPauseMenuToggled(isPauseMenuVisible: boolean): void
+    {
+        this.setSpeedMode(isPauseMenuVisible ? SpeedMode.PAUSE: this.lastSpeedMode);
     }
 
     private setSpeedMode(inSpeedMode: SpeedMode): void
     {
+        this.lastSpeedMode = this.speedMode;
         this.speedMode = inSpeedMode;
         this.sceneUI.onSpeedModeChanged(inSpeedMode);
-    }
-
-    private updateSpeedMode(inSpeedMode: SpeedMode): void
-    {
-        this.setSpeedMode(inSpeedMode);
 
         switch (this.speedMode)
         {
             case SpeedMode.SLOW:
-                this.physics.world.timeScale = 1;
                 this.time.timeScale = 1;
+                this.anims.globalTimeScale = 1;
                 break;
-
             case SpeedMode.NORMAL:
-                this.physics.world.timeScale = 0.5;
                 this.time.timeScale = 2;
+                this.anims.globalTimeScale = 1;
                 break;
-
             case SpeedMode.FAST:
-                this.physics.world.timeScale = 0.25;
                 this.time.timeScale = 4;
+                this.anims.globalTimeScale = 1;
+                break;
+            case SpeedMode.PAUSE:
+                this.time.timeScale = 0.0625;
+                this.anims.globalTimeScale = 0.3;
                 break;
 
             default:
                 console.error("SceneTowerDefense::updateSpeedMode - Invalid speed mode");
                 break;
         }
+
+        this.physics.world.timeScale = 1 / this.time.timeScale;
     }
 
     private startGame(): void
@@ -420,9 +434,10 @@ export class SceneTowerDefense extends Welly_Scene
     {
         switch (this.speedMode)
         {
-            case SpeedMode.SLOW: this.updateSpeedMode(SpeedMode.NORMAL); break;
-            case SpeedMode.NORMAL: this.updateSpeedMode(SpeedMode.FAST); break;
-            case SpeedMode.FAST: this.updateSpeedMode(SpeedMode.SLOW); break;
+            case SpeedMode.SLOW: this.setSpeedMode(SpeedMode.NORMAL); break;
+            case SpeedMode.NORMAL: this.setSpeedMode(SpeedMode.FAST); break;
+            case SpeedMode.FAST: this.setSpeedMode(SpeedMode.SLOW); break;
+            case SpeedMode.PAUSE: break;
             default: console.error("SceneTowerDefense::onUpdateGameSpeedRequested - Invalid speed mode"); break;
         }
     }

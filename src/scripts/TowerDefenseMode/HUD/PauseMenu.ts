@@ -60,12 +60,11 @@ export class PauseMenu extends Phaser.GameObjects.Container
 
     private onResumeClicked() : void
     {
-        this.setVisible(false);
+        this.emit("requestResume")
     }
 
     private onRestartClicked() : void
     {
-        this.setVisible(false);
         this.emit("requestRestart");
     }
 }

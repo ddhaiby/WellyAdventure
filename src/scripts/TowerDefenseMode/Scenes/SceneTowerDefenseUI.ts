@@ -23,8 +23,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
      /** Bottom menu */
     private bottomMenu: BottomMenu;
 
-    /** Display the current golds */
-    private goldText: Phaser.GameObjects.Text;
+    /** Display the current coins */
+    private coinText: Phaser.GameObjects.Text;
 
     /** Display the current wave */
     private waveText: Phaser.GameObjects.Text;
@@ -74,8 +74,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.createShortcuts(); 
         this.createHealthBar();
 
-        this.goldText = this.add.text(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 8, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
-        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.goldText.y + this.goldText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        const coinIcon = this.add.image(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 12, "coin_24").setOrigin(0, 0);
+        this.coinText = this.add.text(coinIcon.x + coinIcon.displayWidth + 8, coinIcon.y - 3, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.coinText.y + this.coinText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
 
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
@@ -129,9 +130,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
     private createBottomMenu(): void
     {
-        // this.bottomMenu = new BottomMenu(this, (this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET) * 0.5, this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET * 0.5); // Display the bottomMenu below the game 
         const menuWidth = this.scale.displaySize.width;
-        const menuHeight = 84;
+        const menuHeight = 110;
         this.bottomMenu = new BottomMenu(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height - menuHeight * 0.5, menuWidth, menuHeight); // Display the bottomMenu below the game
 
         const turretButtonsData = this.bottomMenu.getTurretButtonsData();
@@ -159,9 +159,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
     }
 
-    public onPlayerGoldChanged(gold: number): void
+    public onPlayerCoinChanged(coin: number): void
     {
-        this.goldText.setText(`Gold: ${gold.toString()}`);
+        this.coinText.setText(`${coin.toString()}`);
     }
 
     public onPlayerHealthChanged(health: number, maxHealth: number): void

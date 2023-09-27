@@ -163,13 +163,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createCamera(): void
     {
-        const vieportOffsetX = CST.GAME.VIEWPORT.OFFSET_X;
-        const vieportWidth = this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET;
-        const vieportOffsetY = CST.GAME.VIEWPORT.OFFSET_Y;
-        const vieportHeight = this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET;
-
         this.cameras.main.zoomTo(CST.GAME.ZOOM.TOWER_DEFENSE, 0.0);
-        // this.cameras.main.setViewport(vieportOffsetX, vieportOffsetY, vieportWidth, vieportHeight);
         this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5);
     }
 
@@ -291,7 +285,7 @@ export class SceneTowerDefense extends Welly_Scene
     private setPlayerGold(gold: number): void
     {
         this.gold = gold;
-        this.sceneUI.onPlayerGoldChanged(this.gold);
+        this.sceneUI.onPlayerCoinChanged(this.gold);
     }
 
     private addPlayerHealth(health: number): void
@@ -320,7 +314,8 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.onTurretClicked(turret);
 
         const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
-        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE) });
+        outlinePlugin.remove(turret, "hoverTurret");
+        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
 
         const fnOnTurretUpgrade = () => { this.sceneUI.updateTurretDataWidget(turret); };
         turret.on("upgrade", fnOnTurretUpgrade, this);
@@ -336,6 +331,18 @@ export class SceneTowerDefense extends Welly_Scene
         }, this); 
 
         this.tweens.add({ targets: turret, scale: 1.08, yoyo: true, repeat: 0, duration: 100 });
+    }
+
+    private onTurretHoverStarted(turret: Turret): void
+    {
+        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
+        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE), name: "hoverTurret" });
+    }
+
+    private onTurretHoverEnded(turret: Turret): void
+    {
+        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
+        outlinePlugin.remove(turret, "hoverTurret");
     }
 
     private tryUpgradeTurret(turret: Turret): void
@@ -480,5 +487,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         turret.setInteractive();
         turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);
+        turret.on(Phaser.Input.Events.POINTER_OVER, () => { this.onTurretHoverStarted(turret); }, this);
+        turret.on(Phaser.Input.Events.POINTER_OUT, () => { this.onTurretHoverEnded(turret); }, this);
     }
 }

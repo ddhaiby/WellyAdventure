@@ -25,17 +25,17 @@ export class BottomMenu extends Phaser.GameObjects.Container
     protected initTurretList(): void
     {
         const turretDataList = [
-            { texture: "Amalia", name: "Amalia" },
-            { texture: "player", name: "Welly Friend"},
-            { texture: "wellyItaly", name: "Welly Italian Friend"},
+            { texture: "Amalia", name: "Amalia", price: 50 },
+            { texture: "player", name: "Welly Friend", price: 50 },
+            { texture: "wellyItaly", name: "Welly Italian Friend", price: 40 }
         ];
 
         const turretList = this.scene.rexUI.add.sizer({
             orientation: "left-to-right",
             space: { item: 20 },
             x: 0,
-            y: 0
-        }).setOrigin(0.5);
+            y: -this.height * 0.5 + 12
+        }).setOrigin(0.5, 0);
 
         this.turretButtonsData = [];
 
@@ -50,7 +50,21 @@ export class BottomMenu extends Phaser.GameObjects.Container
             this.scene.input.setDraggable(turretButton);
             this.turretButtonsData.push({ button: turretButton, texture: turretData.texture });
 
-            turretList.add(turretButton);
+            const priceWidget = this.scene.rexUI.add.sizer({
+                height: 30,
+                orientation: "left-to-right",
+            });
+            priceWidget.add(this.scene.add.text(0, 0, turretData.price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY }));
+            priceWidget.add(this.scene.add.image(0, 0, "coin_16"));
+
+            const previewWidget = this.scene.rexUI.add.sizer({
+                orientation: "top-to-bottom",
+                space: { item: 0 }
+            });
+
+            previewWidget.add(turretButton);
+            previewWidget.add(priceWidget);
+            turretList.add(previewWidget);
         }
         this.add(turretList);
         turretList.layout();

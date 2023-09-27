@@ -85,6 +85,9 @@ export class ScenePreloadAssets extends Welly_Scene
 
         this.load.setPath("./assets/HUD/");
         this.load.image("buttonConnectNormal", "buttonConnectNormal.png");
+        this.load.image("coin_16", "coin_16.png");
+        this.load.image("coin_24", "coin_24.png");
+        this.load.image("coin_48", "coin_48.png");
     }
 
     private loadWellyBonus():void
@@ -102,7 +105,7 @@ export class ScenePreloadAssets extends Welly_Scene
 
         new LoadingScreen(this);
 
-        this.time.delayedCall(2000, () => { this.loadAssets(); }, undefined, this);
+        this.time.delayedCall(200, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;

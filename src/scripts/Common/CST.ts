@@ -2,12 +2,6 @@ export const CST = {
     GAME: {
         WIDTH: 960,
         HEIGHT: 704,
-        VIEWPORT: {
-            OFFSET_X: 0,
-            OFFSET_Y: 0,
-            WIDTH_OFFSET: 0,
-            HEIGHT_OFFSET: -96,
-        },
         ZOOM: {
             CITY: 1.2,
             TOWER_DEFENSE: 0.86

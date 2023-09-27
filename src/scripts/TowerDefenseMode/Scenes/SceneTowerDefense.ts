@@ -12,6 +12,7 @@ import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-p
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
 import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
+import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -43,6 +44,12 @@ export class SceneTowerDefense extends Welly_Scene
 
     private speedMode: SpeedMode = SpeedMode.SLOW;
 
+    /** The turret that the player wants to spawn in the game */
+    private turretPreview: Phaser.GameObjects.Image;
+
+    /** Indicates where the turret will be spawned. Used with turretPreview */
+    private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -70,9 +77,11 @@ export class SceneTowerDefense extends Welly_Scene
     {
         super.create();
 
+        this.turrets = this.physics.add.staticGroup();
+        this.turretPreview = this.add.image(0, 0, "").setVisible(false).setAlpha(0.8).setDepth(9999);
+
         this.createMap();
         this.createWaveSpawner();
-        this.createTurrets();
         this.createCamera();
         this.createPhysics();
         this.initUI();
@@ -152,29 +161,6 @@ export class SceneTowerDefense extends Welly_Scene
         this.waveManager.onWaveTimerTick(this.onWaveTimerTick, this);
     }
 
-    private createTurrets(): void
-    {
-        this.turrets = this.physics.add.staticGroup();
-
-        const turretArray = this.currentMap.createFromObjects("Wave", {name: "Turret", classType: Turret, key: "emptyTurret"}) as Turret[];
-
-        for (const turret of turretArray)
-        {
-            this.turrets.add(turret);
-
-            turret.init();
-
-            for (const spawner of this.spawners)
-            {
-                // @ts-ignore
-                this.physics.add.overlap(this.turrets, spawner.getMonsters(), this.onMonsterInRange, this.isMonsterTargetable, this);
-            }
-
-            turret.setInteractive();
-            turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);
-        }
-    }
-
     private createCamera(): void
     {
         const vieportOffsetX = CST.GAME.VIEWPORT.OFFSET_X;
@@ -183,8 +169,8 @@ export class SceneTowerDefense extends Welly_Scene
         const vieportHeight = this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET;
 
         this.cameras.main.zoomTo(CST.GAME.ZOOM.TOWER_DEFENSE, 0.0);
-        this.cameras.main.setViewport(vieportOffsetX, vieportOffsetY, vieportWidth, vieportHeight);
-        this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5 - 78);
+        // this.cameras.main.setViewport(vieportOffsetX, vieportOffsetY, vieportWidth, vieportHeight);
+        this.cameras.main.centerOn(this.layer1.x + this.layer1.width * 0.5, this.layer1.y + this.layer1.height * 0.5);
     }
 
     private createPhysics(): void
@@ -202,6 +188,10 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.events.on("requestRestart", () => { this.scene.restart(); }, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
         this.sceneUI.events.on("requestUpdateGameSpeed", this.onUpdateGameSpeedRequested, this);
+
+        this.sceneUI.events.on("startDragTurret", this.onStartDragTurret, this);
+        this.sceneUI.events.on("dragTurret", this.onDragTurret, this);
+        this.sceneUI.events.on("endDragTurret", this.onEnDragTurret, this);
     }
 
     private setSpeedMode(inSpeedMode: SpeedMode): void
@@ -428,5 +418,67 @@ export class SceneTowerDefense extends Welly_Scene
             case SpeedMode.FAST: this.updateSpeedMode(SpeedMode.SLOW); break;
             default: console.error("SceneTowerDefense::onUpdateGameSpeedRequested - Invalid speed mode"); break;
         }
+    }
+
+    protected onStartDragTurret(previewTexture: string): void
+    {
+        this.input.activePointer.updateWorldPoint(this.cameras.main);
+        this.turretPreview.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
+        this.turretPreview.setTexture(previewTexture);
+        this.turretPreview.setVisible(true);
+        this.turretSpawnAreaPreview = this.add.graphics();
+    }
+
+    protected onDragTurret(): void
+    {
+        this.input.activePointer.updateWorldPoint(this.cameras.main);
+        const worldX = this.input.activePointer.worldX;
+        const worldY = this.input.activePointer.worldY;
+
+        this.turretPreview.setPosition(worldX, worldY);
+
+        const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
+        const color = tile.properties.towerField ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
+
+        this.turretSpawnAreaPreview.clear();
+        this.turretSpawnAreaPreview.fillStyle(color);
+        this.turretSpawnAreaPreview.fillRect(tile.pixelX, tile.pixelY, tile.width, tile.height);
+    }
+
+    protected onEnDragTurret(): void
+    {
+        this.input.activePointer.updateWorldPoint(this.cameras.main);
+        const worldX = this.input.activePointer.worldX;
+        const worldY = this.input.activePointer.worldY;
+
+        const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
+        if (tile.properties.towerField && this.turretPreview && (this.gold >= 50))
+        {
+            this.spawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, this.turretPreview.texture.key);
+            this.removePlayerGold(50);
+        }
+
+        this.turretPreview.setVisible(false);
+        this.turretSpawnAreaPreview.destroy();
+    }
+
+    private spawnTurret(x: number, y: number, texture: string): void
+    {
+        const turret = new Turret(this, 0, 0);
+        turret.setPosition(x, y - turret.height * 0.5);
+
+        this.turrets.add(turret);
+
+        const spawnData = { characterTexture: texture, walkSpeed: 0 } as SpawnData;
+        turret.init(spawnData);
+
+        for (const spawner of this.spawners)
+        {
+            // @ts-ignore
+            this.physics.add.overlap(this.turrets, spawner.getMonsters(), this.onMonsterInRange, this.isMonsterTargetable, this);
+        }
+
+        turret.setInteractive();
+        turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);
     }
 }

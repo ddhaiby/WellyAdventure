@@ -91,7 +91,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
         });
         this.gameSpeedButton.onClicked(() => { this.onGameSpeedButtonClicked(); }, this);
 
-        this.bottomMenu = new BottomMenu(this, (this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET) * 0.5, this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET * 0.5); // Display the bottomMenu below the game 
+        this.createBottomMenu();
 
         this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
         this.wellyBoostSelection.setVisible(false);
@@ -127,6 +127,31 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.playerFaceImage.setX(this.playerHealthBar.x - this.playerFaceImage.width * 0.5);
     }
 
+    private createBottomMenu(): void
+    {
+        // this.bottomMenu = new BottomMenu(this, (this.scale.displaySize.width + CST.GAME.VIEWPORT.WIDTH_OFFSET) * 0.5, this.scale.displaySize.height + CST.GAME.VIEWPORT.HEIGHT_OFFSET * 0.5); // Display the bottomMenu below the game 
+        const menuWidth = this.scale.displaySize.width;
+        const menuHeight = 84;
+        this.bottomMenu = new BottomMenu(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height - menuHeight * 0.5, menuWidth, menuHeight); // Display the bottomMenu below the game
+
+        const turretButtonsData = this.bottomMenu.getTurretButtonsData();
+
+        for (const buttonData of turretButtonsData)
+        {
+            buttonData.button.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                this.events.emit("startDragTurret", buttonData.texture);
+            }, this);
+
+            buttonData.button.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                this.events.emit("dragTurret");
+            }, this);
+
+            buttonData.button.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                this.events.emit("endDragTurret");
+            }, this);
+        }
+    }
+
     // Update
     ////////////////////////////////////////////////////////////////////////
 
@@ -158,7 +183,6 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
         this.turretDataWidget.setVisible(true);
         this.updateTurretDataWidget(turretData);
-        
     }
 
     public updateTurretDataWidget(turretData: ITurretData): void

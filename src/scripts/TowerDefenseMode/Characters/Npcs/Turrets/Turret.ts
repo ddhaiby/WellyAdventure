@@ -27,8 +27,6 @@ export class Turret extends Npc implements ITurretData
     /** Base damage to inflict to a target */
     protected damage: number = 50;
 
-    protected waitingForUpgradeTween: Phaser.Tweens.Tween;
-
     /** Text that shows the current level of the turret */
     protected levelText: Phaser.GameObjects.Text;
 
@@ -37,11 +35,22 @@ export class Turret extends Npc implements ITurretData
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
-        
-        this.waitingForUpgradeTween = this.scene.tweens.add({ targets: this, alpha: 0.3, yoyo: true, duration: 600, repeat: -1 });
+
+        this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "28px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
 
         this.rangeIndicator = this.scene.add.graphics();
         this.hideRangeIndicator();
+    }
+
+    public setPosition(x?: number | undefined, y?: number | undefined, z?: number | undefined, w?: number | undefined): this
+    {
+        super.setPosition(x, y, z, w);
+        if (this.levelText)
+        {
+            this.levelText.setPosition(this.x + 8, this.y + 8);
+        }
+        
+        return this;
     }
 
     // Init
@@ -51,9 +60,8 @@ export class Turret extends Npc implements ITurretData
     {
         super.init(spawnData);
 
-        this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: "28px", color: CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
+        this.upgradeTo(1);
 
-        this.disableBody();
     }
 
     protected initPhysic(): void
@@ -62,6 +70,24 @@ export class Turret extends Npc implements ITurretData
 
     protected initAnimations(texture: string): void
     {
+        if (texture == undefined || texture == "__MISSING")
+        {
+            return;
+        }
+
+        this.setTexture(texture);
+
+        const directions = Object.keys(DIRECTIONS);
+        for (let i = 0; i < directions.length; ++i)
+        {
+            const direction = directions[i];
+            this.anims.create({
+                key: `Idle${direction}`,
+                frames: this.anims.generateFrameNumbers(texture, { start: i * 4, end: i * 4 }),
+                frameRate: 1,
+                repeat: 0
+            });
+        }
     }
 
     // Upgrade
@@ -112,28 +138,12 @@ export class Turret extends Npc implements ITurretData
 
     public upgrade(levelIncrease: number = 1): void
     {
-        this.level += levelIncrease;
+        this.upgradeTo(this.level + levelIncrease);
+    }
 
-        if (this.level == 1)
-        {
-            this.setTexture(Math.random() > 0.5 ? "Amalia" : "player");
-            this.setAlpha(1);
-            this.waitingForUpgradeTween.stop();
-
-            this.enableBody();
-
-            const directions = Object.keys(DIRECTIONS);
-            for (let i = 0; i < directions.length; ++i)
-            {
-                const direction = directions[i];
-                this.anims.create({
-                    key: `Idle${direction}`,
-                    frames: this.anims.generateFrameNumbers(this.texture.key, { start: i * 4, end: i * 4 }),
-                    frameRate: 1,
-                    repeat: 0
-                });
-            }
-        }
+    public upgradeTo(level: number): void
+    {
+        this.level = level;
 
         const size = 200 + 10 * this.level;
         this.body.setSize(size, size);

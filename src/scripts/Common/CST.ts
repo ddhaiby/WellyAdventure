@@ -39,6 +39,7 @@ export const CST = {
             WHITE: "#f7e6e6",
             BLACK: "#000000",
             GREY: "#C6B8B8",
+            RED: "#FF0000"
         }
     },
     EVENTS: {

@@ -17,8 +17,8 @@ new Phaser.Game({
     height: CST.GAME.HEIGHT,
     dom: { createContainer: true },
     scene: [ScenePreloadAssets],
-    render: { pixelArt: false, transparent: false },
-    backgroundColor: "#f7e6e6",
+    render: { pixelArt: false, transparent: true },
+    backgroundColor: "#ffffff",
     physics: { 
         default: "arcade",
         arcade: {

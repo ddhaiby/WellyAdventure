@@ -29,7 +29,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
         const body = this.body as Phaser.Physics.Arcade.Body;
         body.allowGravity = false;
-        this.setCollideWorldBounds(true);
+        this.setCollideWorldBounds(false);
 
         this.characterMovementComponent = new CharacterMovementComponent(this);
     }

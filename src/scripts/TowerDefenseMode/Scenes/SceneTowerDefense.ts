@@ -13,6 +13,7 @@ import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
 import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
+import { TurretData } from "../Data/TurretData";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -30,8 +31,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
 
-    /** The gold to use to build turrets */
-    private gold: number = 0;
+    /** The coins to use to build turrets */
+    private coin: number = 0;
 
     /** The health of the player. The game is over when they reach 0 */
     private playerHealth: number = 100;
@@ -51,6 +52,10 @@ export class SceneTowerDefense extends Welly_Scene
 
     /** Indicates where the turret will be spawned. Used with turretPreview */
     private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
+
+    private turretsData: any;
+
+    private turretPreviewData: TurretData;
 
     constructor()
     {
@@ -79,6 +84,7 @@ export class SceneTowerDefense extends Welly_Scene
     {
         super.create();
 
+        this.turretsData = this.cache.json.get("turretsData");
         this.turrets = this.physics.add.staticGroup();
         this.turretPreview = this.add.image(0, 0, "").setVisible(false).setAlpha(0.8).setDepth(9999);
 
@@ -237,7 +243,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private startGame(): void
     {
-        this.setPlayerGold(100);
+        this.setPlayerCoin(100);
         this.setPlayerHealth(100, 100);
         this.onWaveStarted(0);
         this.waveManager.start();
@@ -277,7 +283,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        this.addPlayerGold(monster.getGold());
+        this.addPlayerCoin(monster.getCoin());
     }
 
     private onMonsterReachEndPoint(monster: JunkMonster): void
@@ -286,20 +292,20 @@ export class SceneTowerDefense extends Welly_Scene
         this.waveManager.removeMonster(monster);
     }
 
-    private addPlayerGold(gold: number): void
+    private addPlayerCoin(coin: number): void
     {
-        this.setPlayerGold(this.gold + gold);
+        this.setPlayerCoin(this.coin + coin);
     }
 
-    private removePlayerGold(cost: number): void
+    private removePlayerCoin(cost: number): void
     {
-        this.setPlayerGold(this.gold - cost);
+        this.setPlayerCoin(this.coin - cost);
     }
 
-    private setPlayerGold(gold: number): void
+    private setPlayerCoin(coin: number): void
     {
-        this.gold = gold;
-        this.sceneUI.onPlayerCoinChanged(this.gold);
+        this.coin = coin;
+        this.sceneUI.onPlayerCoinChanged(this.coin);
     }
 
     private addPlayerHealth(health: number): void
@@ -361,10 +367,10 @@ export class SceneTowerDefense extends Welly_Scene
 
     private tryUpgradeTurret(turret: Turret): void
     {
-        if (this.gold >= 50)
+        if (this.coin >= 50)
         {
             turret.upgrade();
-            this.removePlayerGold(50);
+            this.removePlayerCoin(50);
         }
     }
 
@@ -394,23 +400,23 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.waveManager.startNextWave();
 
-        const bonusGold = 100;
-        this.addPlayerGold(bonusGold);
+        const bonusCoin = 100;
+        this.addPlayerCoin(bonusCoin);
 
-        const goldText = this.add.text(waveWidget.x, waveWidget.y - 24, `+${bonusGold}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
-        goldText.setOrigin(0.5, 1);
+        const coinText = this.add.text(waveWidget.x, waveWidget.y - 24, `+${bonusCoin}`, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+        coinText.setOrigin(0.5, 1);
 
         this.tweens.add({
-            targets: goldText,
+            targets: coinText,
             duration: 150,
-            y: goldText.y - 10,
+            y: coinText.y - 10,
             onComplete: () => {
                 this.tweens.add({
-                    targets: goldText,
+                    targets: coinText,
                     duration: 800,
-                    y: goldText.y + 30,
+                    y: coinText.y + 30,
                     alpha: 0,
-                    onComplete: () => { goldText.destroy(); }
+                    onComplete: () => { coinText.destroy(); }
                 });
             }
         });
@@ -442,12 +448,17 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
-    protected onStartDragTurret(previewTexture: string): void
+    protected onStartDragTurret(turretData: TurretData): void
     {
         this.input.activePointer.updateWorldPoint(this.cameras.main);
+        
+        this.turretPreviewData = turretData;
+        
         this.turretPreview.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
-        this.turretPreview.setTexture(previewTexture);
+        this.turretPreview.setTexture(turretData.texture);
         this.turretPreview.setVisible(true);
+
+
         this.turretSpawnAreaPreview = this.add.graphics();
     }
 
@@ -474,14 +485,22 @@ export class SceneTowerDefense extends Welly_Scene
         const worldY = this.input.activePointer.worldY;
 
         const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-        if (tile.properties.towerField && this.turretPreview && (this.gold >= 50))
+        if (tile.properties.towerField)
         {
-            this.spawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, this.turretPreview.texture.key);
-            this.removePlayerGold(50);
+            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, this.turretPreviewData.texture, this.turretPreviewData.price);
         }
 
         this.turretPreview.setVisible(false);
         this.turretSpawnAreaPreview.destroy();
+    }
+
+    private trySpawnTurret(x: number, y: number, texture: string, price: number = 0)
+    {
+        if (this.coin >= price)
+        {
+            this.spawnTurret(x, y, texture);
+            this.removePlayerCoin(price);
+        }
     }
 
     private spawnTurret(x: number, y: number, texture: string): void

@@ -47,6 +47,7 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.setPath("./assets/data/");
         this.load.json("dialogues", "dialogues.json");
         this.load.json("monstersData", "monstersData.json");
+        this.load.json("turretsData", "turretsData.json");
         this.load.json("waveData", "waveData.json");
         this.load.json("wellyBoostData", "wellyBoostData.json");
 

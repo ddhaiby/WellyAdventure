@@ -141,7 +141,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
         for (const buttonData of turretButtonsData)
         {
             buttonData.button.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-                this.events.emit("startDragTurret", buttonData.texture);
+                this.events.emit("startDragTurret", buttonData.turretData);
             }, this);
 
             buttonData.button.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {

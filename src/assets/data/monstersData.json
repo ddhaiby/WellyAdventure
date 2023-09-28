@@ -4,7 +4,7 @@
         "health": 800,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 500,
+        "coin": 500,
         "moveSpeed": 40,
         "damage": 100,
         "depth": 1
@@ -14,7 +14,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 40,
+        "coin": 40,
         "moveSpeed": 120,
         "damage": 20
     },
@@ -23,7 +23,7 @@
         "health": 200,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 150,
+        "coin": 150,
         "moveSpeed": 80,
         "damage": 30
     },
@@ -32,7 +32,7 @@
         "health": 160,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 80,
+        "coin": 80,
         "moveSpeed": 90,
         "damage": 15
     },
@@ -41,7 +41,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 20,
+        "coin": 20,
         "moveSpeed": 100,
         "damage": 10
     },
@@ -50,7 +50,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "gold": 20,
+        "coin": 20,
         "moveSpeed": 100,
         "damage": 10
     }

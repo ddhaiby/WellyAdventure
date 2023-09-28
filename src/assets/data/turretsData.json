@@ -1,0 +1,26 @@
+{
+    "Amalia": [
+       { "texture": "Amalia", "price": 50, "attack": 50, "attackspeed": 1, "range": 100 },
+       { "texture": "Amalia", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 100 },
+       { "texture": "Amalia", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 100 },
+       { "texture": "Amalia", "price": 100, "attack": 100, "attackspeed": 2, "range": 100 },
+       { "texture": "Amalia", "price": 120, "attack": 110, "attackspeed": 2, "range": 100 },
+       { "texture": "Amalia", "price": 250, "attack": 130, "attackspeed": 2, "range": 100 }
+    ],
+    "player": [
+        { "texture": "player", "price": 30, "attack": 50, "attackspeed": 1, "range": 100 },
+        { "texture": "player", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 100 },
+        { "texture": "player", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 100 },
+        { "texture": "player", "price": 100, "attack": 100, "attackspeed": 2, "range": 100 },
+        { "texture": "player", "price": 120, "attack": 110, "attackspeed": 2, "range": 100 },
+        { "texture": "player", "price": 250, "attack": 130, "attackspeed": 2, "range": 100 }
+    ],
+    "wellyItaly": [
+        { "texture": "wellyItaly", "price": 40, "attack": 50, "attackspeed": 1, "range": 300 },
+        { "texture": "wellyItaly", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 300 },
+        { "texture": "wellyItaly", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 340 },
+        { "texture": "wellyItaly", "price": 100, "attack": 100, "attackspeed": 2, "range": 350 },
+        { "texture": "wellyItaly", "price": 120, "attack": 110, "attackspeed": 2, "range": 380 },
+        { "texture": "wellyItaly", "price": 250, "attack": 130, "attackspeed": 2, "range": 400 }
+    ]
+}

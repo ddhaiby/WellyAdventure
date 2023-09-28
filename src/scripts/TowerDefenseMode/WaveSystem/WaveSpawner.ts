@@ -12,8 +12,8 @@ export declare type MonsterSpawnerData = SpawnData &
     /** Health of the monster on spawn */
     health: number;
 
-    /** How much gold the player gets from killing this monster */
-    gold: number;
+    /** How much coin the player gets from killing this monster */
+    coin: number;
 
     /** Damage of the monster when they reach the end */
     damage: number;

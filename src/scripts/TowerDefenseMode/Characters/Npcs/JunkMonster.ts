@@ -20,8 +20,8 @@ export class JunkMonster extends Npc
     /** Max health of the monster */
     private maxHealth: number = 100;
 
-    /** How much gold the player gets from killing this monster */
-    private gold: number = 50;
+    /** How much coin the player gets from killing this monster */
+    private coin: number = 50;
 
     /** Damage of the monster when they reach the end */
     private damage: number = 10;
@@ -65,7 +65,7 @@ export class JunkMonster extends Npc
         this.setDepth(monseterSpawnData.depth ?? 0);
         this.health = monseterSpawnData.health;
         this.maxHealth = this.health;
-        this.gold = monseterSpawnData.gold;
+        this.coin = monseterSpawnData.coin;
         this.damage = monseterSpawnData.damage;
         
         this.initHealthBar();
@@ -173,9 +173,9 @@ export class JunkMonster extends Npc
         this.on("DIE", fn, context);
     }
 
-    public getGold(): number
+    public getCoin(): number
     {
-        return this.gold;
+        return this.coin;
     }
 
     public getDamage(): number

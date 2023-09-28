@@ -2,7 +2,7 @@ import Label from "phaser3-rex-plugins/templates/ui/label/Label";
 import { CST } from "../../Common/CST";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
-import { TurretData } from "../Data/TurretData";
+import { TurretData } from "../Turrets/TurretData";
 
 declare type ButtonData = { button: Label, turretData: TurretData };
 

@@ -13,7 +13,8 @@ import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
 import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
-import { TurretData } from "../Data/TurretData";
+import { TurretData } from "../Turrets/TurretData";
+import { TurretPreviewWidget } from "../HUD/TurretPreviewWidget";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -48,7 +49,7 @@ export class SceneTowerDefense extends Welly_Scene
     private lastSpeedMode: SpeedMode = SpeedMode.SLOW;
 
     /** The turret that the player wants to spawn in the game */
-    private turretPreview: Phaser.GameObjects.Image;
+    private turretPreviewWidget: TurretPreviewWidget;
 
     /** Indicates where the turret will be spawned. Used with turretPreview */
     private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
@@ -86,7 +87,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.turretsData = this.cache.json.get("turretsData");
         this.turrets = this.physics.add.staticGroup();
-        this.turretPreview = this.add.image(0, 0, "").setVisible(false).setAlpha(0.8).setDepth(9999);
+        this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
 
         this.createMap();
         this.createWaveSpawner();
@@ -454,10 +455,10 @@ export class SceneTowerDefense extends Welly_Scene
         
         this.turretPreviewData = turretData;
         
-        this.turretPreview.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
-        this.turretPreview.setTexture(turretData.texture);
-        this.turretPreview.setVisible(true);
-
+        this.turretPreviewWidget.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
+        this.turretPreviewWidget.setTurretData(turretData);
+        this.turretPreviewWidget.setValid(true);
+        this.turretPreviewWidget.setVisible(true);
 
         this.turretSpawnAreaPreview = this.add.graphics();
     }
@@ -468,10 +469,13 @@ export class SceneTowerDefense extends Welly_Scene
         const worldX = this.input.activePointer.worldX;
         const worldY = this.input.activePointer.worldY;
 
-        this.turretPreview.setPosition(worldX, worldY);
+        this.turretPreviewWidget.setPosition(worldX, worldY);
 
         const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-        const color = tile.properties.towerField ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
+        const isTurretPositionValid = tile.properties.towerField;
+        const color = isTurretPositionValid ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
+
+        this.turretPreviewWidget.setValid(isTurretPositionValid);
 
         this.turretSpawnAreaPreview.clear();
         this.turretSpawnAreaPreview.fillStyle(color);
@@ -490,7 +494,7 @@ export class SceneTowerDefense extends Welly_Scene
             this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, this.turretPreviewData.texture, this.turretPreviewData.price);
         }
 
-        this.turretPreview.setVisible(false);
+        this.turretPreviewWidget.setVisible(false);
         this.turretSpawnAreaPreview.destroy();
     }
 

@@ -5,7 +5,7 @@ import { DIRECTION, DIRECTIONS } from "./CharacterMovementComponent";
 export declare type SpawnData =
 {
     /** Walk speed */
-    walkSpeed: number;
+    walkSpeed?: number;
 
     /** Run speed */
     runSpeed?: number;

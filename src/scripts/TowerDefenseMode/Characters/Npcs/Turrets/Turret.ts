@@ -5,6 +5,13 @@ import { JunkMonster } from "../JunkMonster";
 import { CST } from "../../../../Common/CST";
 import { ITurretData } from "../../../HUD/TurretDataWidget";
 import { DIRECTIONS } from "../../../../Common/Characters/CharacterMovementComponent";
+import { TurretData } from "../../../Turrets/TurretData";
+
+export declare type TurretSpawnData = SpawnData & 
+{
+    level: number;
+    turretDataPerLevel: TurretData[];
+};
 
 export class Turret extends Npc implements ITurretData
 {
@@ -14,6 +21,9 @@ export class Turret extends Npc implements ITurretData
 
     /** The level of this turret. The higher the stronger it is */
     protected level: number = 0;
+
+    /** The max level of this turret. It will be determine with turretDataPerLevel */
+    protected maxLevel: number = 0;
 
     /** The monster this turret should attack */
     protected currentFocus: JunkMonster | undefined;
@@ -32,6 +42,8 @@ export class Turret extends Npc implements ITurretData
 
     protected rangeIndicator: Phaser.GameObjects.Graphics;
 
+    protected turretDataPerLevel: TurretData[];
+
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
@@ -49,19 +61,45 @@ export class Turret extends Npc implements ITurretData
         {
             this.levelText.setPosition(this.x + 8, this.y + 8);
         }
-        
+
+        return this;
+    }
+
+    public setTexture(key: string, frame?: string | number | undefined): this
+    {
+        super.setTexture(key, frame);
+
+        if (key != undefined && key != "__MISSING" && key != "")
+        {
+            const directions = Object.keys(DIRECTIONS);
+            for (let i = 0; i < directions.length; ++i)
+            {
+                const direction = directions[i];
+                const animKey = `Idle${direction}`;
+
+                this.anims.remove(animKey);
+                this.anims.create({
+                    key: animKey,
+                    frames: this.anims.generateFrameNumbers(key, { start: i * 4, end: i * 4 }),
+                    frameRate: 1,
+                    repeat: 0
+                });
+            }
+        }
         return this;
     }
 
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    public init(spawnData?: SpawnData): void
+    public init(spawnData: TurretSpawnData): void
     {
         super.init(spawnData);
 
-        this.upgradeTo(1);
+        this.turretDataPerLevel = spawnData.turretDataPerLevel;
+        this.maxLevel = this.turretDataPerLevel.length - 1;
 
+        this.upgradeTo(spawnData.level);
     }
 
     protected initPhysic(): void
@@ -70,27 +108,10 @@ export class Turret extends Npc implements ITurretData
 
     protected initAnimations(texture: string): void
     {
-        if (texture == undefined || texture == "__MISSING")
-        {
-            return;
-        }
-
         this.setTexture(texture);
-
-        const directions = Object.keys(DIRECTIONS);
-        for (let i = 0; i < directions.length; ++i)
-        {
-            const direction = directions[i];
-            this.anims.create({
-                key: `Idle${direction}`,
-                frames: this.anims.generateFrameNumbers(texture, { start: i * 4, end: i * 4 }),
-                frameRate: 1,
-                repeat: 0
-            });
-        }
     }
 
-    // Upgrade
+    // Update
     ////////////////////////////////////////////////////////////////////////
 
     public update(): void
@@ -143,15 +164,26 @@ export class Turret extends Npc implements ITurretData
 
     public upgradeTo(level: number): void
     {
-        this.level = level;
+        if ((level >= 0) && (level < this.maxLevel))
+        {
+            this.level = level;
+            this.levelText.setText(`${this.level + 1}`);
 
-        const size = 200 + 10 * this.level;
-        this.body.setSize(size, size);
+            const turretData = this.turretDataPerLevel[level];
+            
+            this.damage = turretData.damage;
+            this.attackSpeed = turretData.attackSpeed;
+            this.setRange(turretData.range);
+            this.setTexture(turretData.texture)
 
-        this.levelText.setText(`${this.level}`);
+            this.emit("upgrade");
+            this.onUpgrade();
+        }
+    }
 
-        this.emit("upgrade");
-        this.onUpgrade();
+    public canUpgrade(): boolean
+    {
+        return !this.isLevelMax();
     }
 
     protected onUpgrade(): void
@@ -161,6 +193,16 @@ export class Turret extends Npc implements ITurretData
             this.hideRangeIndicator();
             this.showRangeIndicator();
         }
+    }
+
+    public getUpgradePrice(): number
+    {
+        return this.isLevelMax() ? Infinity : this.turretDataPerLevel[this.level].price;
+    }
+
+    public isLevelMax(): boolean
+    {
+        return (this.level >= this.maxLevel);
     }
 
     protected attack(): void
@@ -241,6 +283,7 @@ export class Turret extends Npc implements ITurretData
     {
         this.isReloading = true;
 
+        console.log(this.attackSpeed)
         this.scene.time.delayedCall(1000 / this.attackSpeed, () => {
             this.isReloading = false;
 
@@ -264,6 +307,12 @@ export class Turret extends Npc implements ITurretData
     public getRange(): number
     {
         return this.body.width * 0.5;
+    }
+
+    protected setRange(range: number): void
+    {
+        const bodySize = range;
+        this.body.setSize(bodySize, bodySize);
     }
 
     public getLevel(): number

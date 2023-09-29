@@ -4,7 +4,7 @@ import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { TurretData } from "../Turrets/TurretData";
 
-declare type ButtonData = { button: Label, turretData: TurretData };
+declare type ButtonData = { button: Label, turretDataId: string };
 
 export class BottomMenu extends Phaser.GameObjects.Container
 {
@@ -36,9 +36,9 @@ export class BottomMenu extends Phaser.GameObjects.Container
 
         const turretsData = this.scene.cache.json.get("turretsData");
 
-        for (const key of Object.keys(turretsData))
+        for (const turretDataId of Object.keys(turretsData))
         {
-            const turretData = turretsData[key][0] as TurretData;
+            const turretData = turretsData[turretDataId][0] as TurretData;
 
             const turretButton = this.scene.rexUI.add.label({
                 background: this.scene.rexUI.add.roundRectangle(0, 0, 80, 80, 10, WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE), WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.BLUE)),
@@ -47,7 +47,7 @@ export class BottomMenu extends Phaser.GameObjects.Container
             });
             turretButton.setInteractive();
             this.scene.input.setDraggable(turretButton);
-            this.turretButtonsData.push({ button: turretButton, turretData: turretData });
+            this.turretButtonsData.push({ button: turretButton, turretDataId: turretDataId });
 
             const priceWidget = this.scene.rexUI.add.sizer({ height: 30, orientation: "left-to-right" });
             priceWidget.add(this.scene.add.text(0, 0, turretData.price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY }));

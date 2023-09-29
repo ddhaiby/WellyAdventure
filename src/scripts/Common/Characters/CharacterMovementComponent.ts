@@ -81,7 +81,7 @@ export class CharacterMovementComponent
 
     public init(spawnData: SpawnData): void
     {
-        this.walkSpeed = spawnData.walkSpeed;
+        this.walkSpeed = spawnData.walkSpeed ?? 0;
         this.runSpeed = spawnData.runSpeed ?? this.walkSpeed;
     }
 

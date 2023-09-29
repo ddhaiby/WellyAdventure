@@ -22,7 +22,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
-        super(scene, x, y, "");
+        super(scene, x, y, "__MISSING");
 
         scene.add.existing(this);
         scene.physics.add.existing(this);

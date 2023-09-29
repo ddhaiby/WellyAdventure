@@ -4,7 +4,7 @@ import { SceneTowerDefenseUI } from "./SceneTowerDefenseUI";
 import { WaveSpawner } from "../WaveSystem/WaveSpawner";
 import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
 import { Npc } from "../../Common/Characters/Npcs/Npc";
-import { Turret } from "../Characters/Npcs/Turrets/Turret";
+import { Turret, TurretSpawnData } from "../Characters/Npcs/Turrets/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
 import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
@@ -48,15 +48,16 @@ export class SceneTowerDefense extends Welly_Scene
     
     private lastSpeedMode: SpeedMode = SpeedMode.SLOW;
 
-    /** The turret that the player wants to spawn in the game */
+    private turretsData: any;
+
+    /**The id of the turret to get from turretsdata for the preview */
+    private turretPreviewDataId: string;
+
+    /** A preview of the turret that the player wants to spawn in the game */
     private turretPreviewWidget: TurretPreviewWidget;
 
     /** Indicates where the turret will be spawned. Used with turretPreview */
     private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
-
-    private turretsData: any;
-
-    private turretPreviewData: TurretData;
 
     constructor()
     {
@@ -368,10 +369,11 @@ export class SceneTowerDefense extends Welly_Scene
 
     private tryUpgradeTurret(turret: Turret): void
     {
-        if (this.coin >= 50)
+        const upgradePrice = turret.getUpgradePrice();
+        if (turret.canUpgrade() && (this.coin >= upgradePrice))
         {
             turret.upgrade();
-            this.removePlayerCoin(50);
+            this.removePlayerCoin(upgradePrice);
         }
     }
 
@@ -449,14 +451,16 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
-    protected onStartDragTurret(turretData: TurretData): void
+    protected onStartDragTurret(turretDataId: string): void
     {
         this.input.activePointer.updateWorldPoint(this.cameras.main);
         
-        this.turretPreviewData = turretData;
+        this.turretPreviewDataId = turretDataId;
+        const turretLevel = 0; 
+        const turretPreviewData = this.turretsData[this.turretPreviewDataId][turretLevel];
         
         this.turretPreviewWidget.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
-        this.turretPreviewWidget.setTurretData(turretData);
+        this.turretPreviewWidget.setTurretData(turretPreviewData);
         this.turretPreviewWidget.setValid(true);
         this.turretPreviewWidget.setVisible(true);
 
@@ -491,30 +495,37 @@ export class SceneTowerDefense extends Welly_Scene
         const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
         if (tile.properties.towerField)
         {
-            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, this.turretPreviewData.texture, this.turretPreviewData.price);
+            const turretLevel = 0; 
+            const turretPreviewData = this.turretsData[this.turretPreviewDataId];
+            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, turretPreviewData[turretLevel].price);
         }
 
         this.turretPreviewWidget.setVisible(false);
         this.turretSpawnAreaPreview.destroy();
     }
 
-    private trySpawnTurret(x: number, y: number, texture: string, price: number = 0)
+    private trySpawnTurret(x: number, y: number, turretDataPerLevel: TurretData[], level: number = 0, price: number = 0)
     {
         if (this.coin >= price)
         {
-            this.spawnTurret(x, y, texture);
+            this.spawnTurret(x, y, turretDataPerLevel, level);
             this.removePlayerCoin(price);
         }
     }
 
-    private spawnTurret(x: number, y: number, texture: string): void
+    private spawnTurret(x: number, y: number, turretDataPerLevel: TurretData[], level: number = 0): void
     {
         const turret = new Turret(this, 0, 0);
         turret.setPosition(x, y - turret.height * 0.5);
 
         this.turrets.add(turret);
 
-        const spawnData = { characterTexture: texture, walkSpeed: 0 } as SpawnData;
+        const spawnData: TurretSpawnData = {
+            level: level,
+            turretDataPerLevel: turretDataPerLevel,
+            characterTexture: "",
+            walkSpeed: 0
+        };
         turret.init(spawnData);
 
         for (const spawner of this.spawners)

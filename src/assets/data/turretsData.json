@@ -1,26 +1,26 @@
 {
     "Amalia": [
-       { "texture": "Amalia", "price": 50, "attack": 50, "attackspeed": 1, "range": 100 },
-       { "texture": "Amalia", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 100 },
-       { "texture": "Amalia", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 100 },
-       { "texture": "Amalia", "price": 100, "attack": 100, "attackspeed": 2, "range": 100 },
-       { "texture": "Amalia", "price": 120, "attack": 110, "attackspeed": 2, "range": 100 },
-       { "texture": "Amalia", "price": 250, "attack": 130, "attackspeed": 2, "range": 100 }
+       { "texture": "Amalia", "price": 50, "damage": 50, "attackSpeed": 1, "range": 240 },
+       { "texture": "Amalia", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 240 },
+       { "texture": "Amalia", "price": 80, "damage": 80, "attackSpeed": 1.5, "range": 250 },
+       { "texture": "Amalia", "price": 100, "damage": 100, "attackSpeed": 2, "range": 250 },
+       { "texture": "Amalia", "price": 120, "damage": 110, "attackSpeed": 2, "range": 260 },
+       { "texture": "Amalia", "price": 250, "damage": 130, "attackSpeed": 2, "range": 300 }
     ],
     "player": [
-        { "texture": "player", "price": 30, "attack": 50, "attackspeed": 1, "range": 100 },
-        { "texture": "player", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 100 },
-        { "texture": "player", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 100 },
-        { "texture": "player", "price": 100, "attack": 100, "attackspeed": 2, "range": 100 },
-        { "texture": "player", "price": 120, "attack": 110, "attackspeed": 2, "range": 100 },
-        { "texture": "player", "price": 250, "attack": 130, "attackspeed": 2, "range": 100 }
+        { "texture": "player", "price": 30, "damage": 50, "attackSpeed": 1, "range": 180 },
+        { "texture": "player", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 180 },
+        { "texture": "player", "price": 80, "damage": 80, "attackSpeed": 1.5, "range": 220 },
+        { "texture": "player", "price": 100, "damage": 100, "attackSpeed": 2, "range": 220 },
+        { "texture": "player", "price": 120, "damage": 110, "attackSpeed": 2, "range": 220 },
+        { "texture": "player", "price": 250, "damage": 130, "attackSpeed": 2, "range": 250 }
     ],
     "wellyItaly": [
-        { "texture": "wellyItaly", "price": 40, "attack": 50, "attackspeed": 1, "range": 300 },
-        { "texture": "wellyItaly", "price": 60, "attack": 60, "attackspeed": 1.1, "range": 300 },
-        { "texture": "wellyItaly", "price": 80, "attack": 80, "attackspeed": 1.5, "range": 340 },
-        { "texture": "wellyItaly", "price": 100, "attack": 100, "attackspeed": 2, "range": 350 },
-        { "texture": "wellyItaly", "price": 120, "attack": 110, "attackspeed": 2, "range": 380 },
-        { "texture": "wellyItaly", "price": 250, "attack": 130, "attackspeed": 2, "range": 400 }
+        { "texture": "wellyItaly", "price": 40, "damage": 50, "attackSpeed": 1, "range": 300 },
+        { "texture": "wellyItaly", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 340 },
+        { "texture": "wellyItaly", "price": 80, "damage": 80, "attackSpeed": 1.5, "range": 350 },
+        { "texture": "wellyItaly", "price": 100, "damage": 100, "attackSpeed": 2, "range": 360 },
+        { "texture": "wellyItaly", "price": 120, "damage": 110, "attackSpeed": 2, "range": 360 },
+        { "texture": "wellyItaly", "price": 250, "damage": 130, "attackSpeed": 2, "range": 400 }
     ]
 }

@@ -1,10 +1,14 @@
 import { CST } from "../CST";
+import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext.js';
 
 export declare type GPC_TextButtonStyle = {
     textureNormal?: string;
     textureHovered?: string;
     texturePressed?: string;
     textureDisabled?: string;
+    textOffsetNormalX?: number;
+    textOffsetHoveredX?: number;
+    textOffsetPressedX?: number;
     textOffsetNormalY?: number;
     textOffsetHoveredY?: number;
     textOffsetPressedY?: number;
@@ -30,11 +34,15 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     protected toolTipText: string = "";
 
+    protected textOffsetNormalX: number = 0;
+    protected textOffsetHoveredX: number = 0;
+    protected textOffsetPressedX: number = 0;
+
     protected textOffsetNormalY: number = -12;
     protected textOffsetHoveredY: number = -10;
     protected textOffsetPressedY: number = -1;
 
-    protected buttonText: Phaser.GameObjects.Text;
+    protected buttonText: BBCodeText;
     protected buttonImage: Phaser.GameObjects.Image;
 
     protected textureNormal: string;
@@ -67,9 +75,13 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.textColorPressed = (style && style.textColorPressed) ? style.textColorPressed : this.textColorNormal;
         this.textColorDisabled = (style && style.textColorDisabled) ? style.textColorDisabled : this.textColorNormal;
 
-        this.textOffsetNormalY = (style && (style.textOffsetNormalY !== undefined)) ? style.textOffsetNormalY : -12;
-        this.textOffsetHoveredY = (style && (style.textOffsetHoveredY !== undefined)) ? style.textOffsetHoveredY : -10;
-        this.textOffsetPressedY = (style && (style.textOffsetPressedY !== undefined)) ? style.textOffsetPressedY : -1;
+        this.textOffsetNormalX = (style && (style.textOffsetNormalX !== undefined)) ? style.textOffsetNormalX : 0;
+        this.textOffsetHoveredX = (style && (style.textOffsetHoveredX !== undefined)) ? style.textOffsetHoveredX : 0;
+        this.textOffsetPressedX = (style && (style.textOffsetPressedX !== undefined)) ? style.textOffsetPressedX : 0;
+        
+        this.textOffsetNormalY = (style && (style.textOffsetNormalY !== undefined)) ? style.textOffsetNormalY : 0;
+        this.textOffsetHoveredY = (style && (style.textOffsetHoveredY !== undefined)) ? style.textOffsetHoveredY : 0;
+        this.textOffsetPressedY = (style && (style.textOffsetPressedY !== undefined)) ? style.textOffsetPressedY : 0;
 
         this.pixelPerfect = (style && (style.pixelPerfect !== undefined)) ? style.pixelPerfect : true
 
@@ -84,7 +96,8 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.height = this.buttonImage.displayHeight;
         this.add(this.buttonImage);
 
-        this.buttonText = this.scene.add.text(0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
+        this.buttonText =  new BBCodeText(this.scene, 0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
+        this.scene.add.existing(this.buttonText);
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);
 
@@ -150,7 +163,15 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         }, this);
     }
 
-    public setTextOffsets(textOffsetNormalY: number, textOffsetHoveredY?: number, textOffsetPressedY?: number): void
+    public setTextOffsetsX(textOffsetNormalX: number, textOffsetHoveredX?: number, textOffsetPressedX?: number): void
+    {
+        this.textOffsetNormalX = textOffsetNormalX;
+        this.textOffsetHoveredX = textOffsetHoveredX ?? textOffsetNormalX;
+        this.textOffsetPressedX = textOffsetPressedX ?? textOffsetNormalX;
+        this.updateVisual();
+    }
+
+    public setTextOffsetsY(textOffsetNormalY: number, textOffsetHoveredY?: number, textOffsetPressedY?: number): void
     {
         this.textOffsetNormalY = textOffsetNormalY;
         this.textOffsetHoveredY = textOffsetHoveredY ?? textOffsetNormalY;
@@ -205,8 +226,9 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     private updateTextPosition(): void
     {
+        const offsetX = this._isEnabled ? (this.isPressed ? this.textOffsetPressedX : (this.isHovered ? this.textOffsetHoveredX : this.textOffsetNormalX)) : this.textOffsetNormalX;
         const offsetY = this._isEnabled ? (this.isPressed ? this.textOffsetPressedY : (this.isHovered ? this.textOffsetHoveredY : this.textOffsetNormalY)) : this.textOffsetNormalY;
-        this.buttonText.setY(offsetY);
+        this.buttonText.setPosition(offsetX, offsetY);
     }
 
     public onClicked(fn: Function, context?: any) : this

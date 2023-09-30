@@ -176,7 +176,7 @@ export class Turret extends Npc implements ITurretData
             this.setRange(turretData.range);
             this.setTexture(turretData.texture)
 
-            this.emit("upgrade");
+            this.emit("upgrade", this);
             this.onUpgrade();
         }
     }
@@ -202,7 +202,7 @@ export class Turret extends Npc implements ITurretData
 
     public isLevelMax(): boolean
     {
-        return (this.level >= this.maxLevel);
+        return (this.level >= this.maxLevel - 1);
     }
 
     protected attack(): void
@@ -283,7 +283,6 @@ export class Turret extends Npc implements ITurretData
     {
         this.isReloading = true;
 
-        console.log(this.attackSpeed)
         this.scene.time.delayedCall(1000 / this.attackSpeed, () => {
             this.isReloading = false;
 

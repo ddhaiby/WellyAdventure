@@ -237,4 +237,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
             default: console.error("SceneTowerDefenseUI::onSpeedModeChanged - Invalid speed mode"); break;   
         }
     }
+
+    public onTurretSpawned(turretId: string, turretRemainInstances: number): void
+    {
+        this.bottomMenu.updateButtons(turretId, turretRemainInstances);
+    }
 }

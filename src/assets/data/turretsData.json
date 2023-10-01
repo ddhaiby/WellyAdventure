@@ -1,9 +1,9 @@
 [
-    { 
+    {
         "id": "Amalia",
         "turretName": "Amalia Turret",
-        "maxInstances": 4,
-        "gameStatsPerLevel": 
+        "maxInstances": 5,
+        "gameStatsPerLevel":
         [
             { "texture": "Amalia", "price": 50, "damage": 50, "attackSpeed": 1, "range": 240 },
             { "texture": "Amalia", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 240 },
@@ -13,11 +13,11 @@
             { "texture": "Amalia", "price": 250, "damage": 130, "attackSpeed": 2, "range": 300 }
         ]
     },
-    { 
+    {
         "id": "YellowTurret",
         "turretName": "Yellow guy",
         "maxInstances": 5,
-        "gameStatsPerLevel": 
+        "gameStatsPerLevel":
         [
             { "texture": "player", "price": 30, "damage": 50, "attackSpeed": 1, "range": 180 },
             { "texture": "player", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 180 },
@@ -27,11 +27,11 @@
             { "texture": "player", "price": 250, "damage": 130, "attackSpeed": 2, "range": 250 }
         ]
     },
-    { 
+    {
         "id": "ItalianTurret",
         "turretName": "Italian Turret",
-        "maxInstances": 6,
-        "gameStatsPerLevel": 
+        "maxInstances": 5,
+        "gameStatsPerLevel":
         [
             { "texture": "wellyItaly", "price": 40, "damage": 50, "attackSpeed": 1, "range": 300 },
             { "texture": "wellyItaly", "price": 60, "damage": 60, "attackSpeed": 1.1, "range": 340 },

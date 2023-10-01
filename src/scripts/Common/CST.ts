@@ -1,4 +1,5 @@
 export const CST = {
+    INDEX_INVALID: -1,
     GAME: {
         WIDTH: 960,
         HEIGHT: 704,

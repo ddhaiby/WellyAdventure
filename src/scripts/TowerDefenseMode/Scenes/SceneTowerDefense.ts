@@ -59,6 +59,8 @@ export class SceneTowerDefense extends Welly_Scene
     /** Indicates where the turret will be spawned. Used with turretPreview */
     private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
 
+    private spawnedTurrets: Map<string /** turretId */, number /** turretCount */>;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -90,7 +92,12 @@ export class SceneTowerDefense extends Welly_Scene
 
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
-        
+        this.spawnedTurrets = new Map<string, number>();
+        for (const turretData of this.turretsData)
+        {
+            this.spawnedTurrets.set(turretData.id, 0);
+        }
+
         this.createMap();
         this.createWaveSpawner();
         this.createCamera();
@@ -143,7 +150,7 @@ export class SceneTowerDefense extends Welly_Scene
                 }
                 else
                 {
-                    moveToPointId = -1;
+                    moveToPointId = CST.INDEX_INVALID;
                 }
             }
 
@@ -454,9 +461,32 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected onStartDragTurret(turretIndex: number): void
     {
+        if ((turretIndex >= 0) && (turretIndex < this.turretsData.length))
+        {
+            const turretData = this.turretsData[turretIndex];
+            const turretCount = this.spawnedTurrets.get(turretData.id);
+
+            if ((turretCount != undefined) && (turretCount < this.turretsData[turretIndex].maxInstances))
+            {
+                this.initTurretPreview(turretIndex);
+            }
+            else
+            {
+                this.turretPrewiewIndex = CST.INDEX_INVALID;
+            }
+        }
+        else
+        {
+            this.turretPrewiewIndex = CST.INDEX_INVALID;
+        }
+    }
+
+    protected initTurretPreview(turretIndex: number)
+    {
+        this.turretPrewiewIndex = turretIndex;
+
         const activePointer = this.input.activePointer;
         activePointer.updateWorldPoint(this.cameras.main);
-        this.turretPrewiewIndex = turretIndex;
         
         this.turretPreviewWidget.setPosition(activePointer.worldX, activePointer.worldY);
         this.turretPreviewWidget.setTurretData(this.turretsData[this.turretPrewiewIndex]);
@@ -468,50 +498,65 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected onDragTurret(): void
     {
-        const activePointer = this.input.activePointer;
-        activePointer.updateWorldPoint(this.cameras.main);
-        const worldX = activePointer.worldX;
-        const worldY = activePointer.worldY;
+        if (this.turretPrewiewIndex != CST.INDEX_INVALID)
+        {
+            const activePointer = this.input.activePointer;
+            activePointer.updateWorldPoint(this.cameras.main);
+            const worldX = activePointer.worldX;
+            const worldY = activePointer.worldY;
 
-        this.turretPreviewWidget.setPosition(worldX, worldY);
+            this.turretPreviewWidget.setPosition(worldX, worldY);
 
-        const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-        const isTurretPositionValid = tile.properties.towerField;
-        const color = isTurretPositionValid ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
+            const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
+            const isTurretPositionValid = tile.properties.towerField;
+            const color = isTurretPositionValid ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
 
-        this.turretPreviewWidget.setValid(isTurretPositionValid);
+            this.turretPreviewWidget.setValid(isTurretPositionValid);
 
-        this.turretSpawnAreaPreview.clear();
-        this.turretSpawnAreaPreview.fillStyle(color);
-        this.turretSpawnAreaPreview.fillRect(tile.pixelX, tile.pixelY, tile.width, tile.height);
+            this.turretSpawnAreaPreview.clear();
+            this.turretSpawnAreaPreview.fillStyle(color);
+            this.turretSpawnAreaPreview.fillRect(tile.pixelX, tile.pixelY, tile.width, tile.height);
+        }
     }
 
     protected onEnDragTurret(): void
     {
-        this.input.activePointer.updateWorldPoint(this.cameras.main);
-        const worldX = this.input.activePointer.worldX;
-        const worldY = this.input.activePointer.worldY;
-
-        const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-        if (tile.properties.towerField)
+        if (this.turretPrewiewIndex != CST.INDEX_INVALID)
         {
-            const turretLevel = 0; 
-            const turretPreviewData = this.turretsData[this.turretPrewiewIndex];
-            const price = turretPreviewData.gameStatsPerLevel[turretLevel].price
-            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, price);
-        }
+            this.input.activePointer.updateWorldPoint(this.cameras.main);
+            const worldX = this.input.activePointer.worldX;
+            const worldY = this.input.activePointer.worldY;
 
-        this.turretPreviewWidget.setVisible(false);
-        this.turretSpawnAreaPreview.destroy();
+            const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
+            if (tile.properties.towerField)
+            {
+                const turretLevel = 0; 
+                const turretPreviewData = this.turretsData[this.turretPrewiewIndex];
+                const price = turretPreviewData.gameStatsPerLevel[turretLevel].price
+                this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, price);
+            }
+
+            this.turretPreviewWidget.setVisible(false);
+            this.turretSpawnAreaPreview.destroy();
+
+            this.turretPrewiewIndex = CST.INDEX_INVALID;
+        }
+        
     }
 
     private trySpawnTurret(x: number, y: number, turretData: TurretData, level: number = 0, price: number = 0)
     {
-        if (this.coin >= price)
+        if (this.canSpawnTurret(turretData, price))
         {
             this.spawnTurret(x, y, turretData, level);
             this.removePlayerCoin(price);
         }
+    }
+
+    private canSpawnTurret(turretData: TurretData, price: number): boolean
+    {
+        const turretCount = this.spawnedTurrets.get(turretData.id) ?? 0;
+        return (this.coin >= price) && (turretCount < turretData.maxInstances)
     }
 
     private spawnTurret(x: number, y: number, turretData: TurretData, level: number = 0): void
@@ -529,6 +574,10 @@ export class SceneTowerDefense extends Welly_Scene
         };
         turret.init(spawnData);
 
+        let turretCount = this.spawnedTurrets.get(turretData.id) ?? 0;
+        ++turretCount;
+        this.spawnedTurrets.set(turretData.id, turretCount);
+
         for (const spawner of this.spawners)
         {
             // @ts-ignore
@@ -539,5 +588,7 @@ export class SceneTowerDefense extends Welly_Scene
         turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);
         turret.on(Phaser.Input.Events.POINTER_OVER, () => { this.onTurretHoverStarted(turret); }, this);
         turret.on(Phaser.Input.Events.POINTER_OUT, () => { this.onTurretHoverEnded(turret); }, this);
+
+        this.sceneUI.onTurretSpawned(turretData.id, turretData.maxInstances - turretCount);
     }
 }

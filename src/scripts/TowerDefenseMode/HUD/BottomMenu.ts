@@ -4,6 +4,7 @@ import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { TurretData } from "../Turrets/TurretData";
 import { Turret } from "../Characters/Npcs/Turrets/Turret";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 export class BottomMenu extends Phaser.GameObjects.Container
 {
@@ -11,6 +12,7 @@ export class BottomMenu extends Phaser.GameObjects.Container
     protected turretButtons: Label[];
     protected turretsData: TurretData[];
     protected turretCounterTexts: Phaser.GameObjects.Text[];
+    protected turretPriceTexts: Phaser.GameObjects.Text[];
 
     constructor(scene: Welly_Scene, x: number, y: number, width: number, height: number)
     {
@@ -35,6 +37,7 @@ export class BottomMenu extends Phaser.GameObjects.Container
 
         this.turretButtons = [];
         this.turretCounterTexts = [];
+        this.turretPriceTexts = [];
 
         this.turretsData = this.scene.cache.json.get("turretsData");
 
@@ -60,7 +63,9 @@ export class BottomMenu extends Phaser.GameObjects.Container
             this.turretCounterTexts.push(turretCounterText);
 
             const priceWidget = this.scene.rexUI.add.sizer({ height: 24, orientation: "left-to-right" });
-            priceWidget.add(this.scene.add.text(0, 0, turretData.gameStatsPerLevel[0].price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY }));
+            const priceText = this.scene.add.text(0, 0, turretData.gameStatsPerLevel[0].price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY });
+            priceWidget.add(priceText);
+            this.turretPriceTexts.push(priceText);
             priceWidget.add(this.scene.add.image(0, 0, "coin_16"));
 
             const previewWidget = this.scene.rexUI.add.sizer({ orientation: "top-to-bottom" });
@@ -83,7 +88,19 @@ export class BottomMenu extends Phaser.GameObjects.Container
         const index = this.turretsData.findIndex((value: TurretData) => { return value.id == turretId }, this);
         if ((index != undefined) && (index >= 0) && (index < this.turretCounterTexts.length))
         {
-            this.turretCounterTexts[index].setText(`x${turretRemainInstances}`);
+            this.turretCounterTexts[index].setText(`x${Math.max(0, turretRemainInstances)}`);
+
+            if (turretRemainInstances <= 0)
+            {
+                const tint = 0x555555;
+                const background = this.turretButtons[index].getElement("background") as RoundRectangle;
+                const icon = this.turretButtons[index].getElement("icon") as Phaser.GameObjects.Image;
+                const priceText = this.turretPriceTexts[index];
+
+                background.setFillStyle(tint);
+                icon.setTint(tint);
+                priceText.setTint(tint);
+            }
         }
     }
 }

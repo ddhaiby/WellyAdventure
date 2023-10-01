@@ -31,8 +31,8 @@ export class TurretPreviewWidget extends Phaser.GameObjects.Container
     public setTurretData(turretData: TurretData): void
     {
         this.turretData = turretData;
-        this.turretImage.setTexture(turretData.texture);
-        this.drawRangeIndicator(turretData.range);
+        this.turretImage.setTexture(turretData.gameStatsPerLevel[0].texture);
+        this.drawRangeIndicator(turretData.gameStatsPerLevel[0].range);
     }
 
     private drawRangeIndicator(range: number) : void
@@ -47,6 +47,6 @@ export class TurretPreviewWidget extends Phaser.GameObjects.Container
     public setValid(isValid: boolean): void
     {
         this.isValid = isValid;
-        this.drawRangeIndicator(this.turretData.range);
+        this.drawRangeIndicator(this.turretData.gameStatsPerLevel[0].range);
     }
 }

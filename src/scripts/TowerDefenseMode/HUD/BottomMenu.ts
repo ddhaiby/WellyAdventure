@@ -4,12 +4,10 @@ import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { TurretData } from "../Turrets/TurretData";
 
-declare type ButtonData = { button: Label, turretDataId: string };
-
 export class BottomMenu extends Phaser.GameObjects.Container
 {
     public scene: Welly_Scene;
-    protected turretButtonsData: ButtonData[];
+    protected turretButtons: Label[];
 
     constructor(scene: Welly_Scene, x: number, y: number, width: number, height: number)
     {
@@ -32,25 +30,23 @@ export class BottomMenu extends Phaser.GameObjects.Container
             y: -this.height * 0.5 + 12
         }).setOrigin(0.5, 0);
 
-        this.turretButtonsData = [];
+        this.turretButtons = [];
 
-        const turretsData = this.scene.cache.json.get("turretsData");
+        const turretsData = this.scene.cache.json.get("turretsData") as TurretData[];
 
-        for (const turretDataId of Object.keys(turretsData))
+        for (const turretData of turretsData)
         {
-            const turretData = turretsData[turretDataId][0] as TurretData;
-
             const turretButton = this.scene.rexUI.add.label({
                 background: this.scene.rexUI.add.roundRectangle(0, 0, 80, 80, 10, WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE), WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.BLUE)),
-                icon: this.scene.add.image(0, 0, turretData.texture),
+                icon: this.scene.add.image(0, 0, turretData.gameStatsPerLevel[0].texture),
                 space: { left: 0, right: 0, top: 0, bottom: 0, icon: 0 }
             });
             turretButton.setInteractive();
             this.scene.input.setDraggable(turretButton);
-            this.turretButtonsData.push({ button: turretButton, turretDataId: turretDataId });
+            this.turretButtons.push(turretButton);
 
             const priceWidget = this.scene.rexUI.add.sizer({ height: 30, orientation: "left-to-right" });
-            priceWidget.add(this.scene.add.text(0, 0, turretData.price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY }));
+            priceWidget.add(this.scene.add.text(0, 0, turretData.gameStatsPerLevel[0].price.toString(), { fontSize: "16px", color: CST.STYLE.COLOR.BLUE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY }));
             priceWidget.add(this.scene.add.image(0, 0, "coin_16"));
 
             const previewWidget = this.scene.rexUI.add.sizer({ orientation: "top-to-bottom" });
@@ -63,8 +59,8 @@ export class BottomMenu extends Phaser.GameObjects.Container
         turretList.layout();
     }
 
-    public getTurretButtonsData(): ButtonData[]
+    public getTurretButtons(): Label[]
     {
-        return this.turretButtonsData;
+        return this.turretButtons;
     }
 }

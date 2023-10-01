@@ -136,19 +136,21 @@ export class SceneTowerDefenseUI extends Welly_Scene
         const menuHeight = 110;
         this.bottomMenu = new BottomMenu(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height - menuHeight * 0.5, menuWidth, menuHeight); // Display the bottomMenu below the game
 
-        const turretButtonsData = this.bottomMenu.getTurretButtonsData();
+        const turretButtons = this.bottomMenu.getTurretButtons();
 
-        for (const buttonData of turretButtonsData)
+        for (let i = 0; i < turretButtons.length; ++i)
         {
-            buttonData.button.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
-                this.events.emit("startDragTurret", buttonData.turretDataId);
+            const button = turretButtons[i];
+
+            button.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                this.events.emit("startDragTurret", i);
             }, this);
 
-            buttonData.button.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            button.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
                 this.events.emit("dragTurret");
             }, this);
 
-            buttonData.button.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            button.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
                 this.events.emit("endDragTurret");
             }, this);
         }

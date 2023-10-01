@@ -10,7 +10,7 @@ import { TurretData } from "../../../Turrets/TurretData";
 export declare type TurretSpawnData = SpawnData & 
 {
     level: number;
-    turretDataPerLevel: TurretData[];
+    turretData: TurretData;
 };
 
 export class Turret extends Npc implements ITurretData
@@ -22,7 +22,7 @@ export class Turret extends Npc implements ITurretData
     /** The level of this turret. The higher the stronger it is */
     protected level: number = 0;
 
-    /** The max level of this turret. It will be determine with turretDataPerLevel */
+    /** The max level of this turret. It will be determine with the turretData */
     protected maxLevel: number = 0;
 
     /** The monster this turret should attack */
@@ -42,7 +42,7 @@ export class Turret extends Npc implements ITurretData
 
     protected rangeIndicator: Phaser.GameObjects.Graphics;
 
-    protected turretDataPerLevel: TurretData[];
+    protected turretData: TurretData;
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
@@ -96,8 +96,8 @@ export class Turret extends Npc implements ITurretData
     {
         super.init(spawnData);
 
-        this.turretDataPerLevel = spawnData.turretDataPerLevel;
-        this.maxLevel = this.turretDataPerLevel.length - 1;
+        this.turretData = spawnData.turretData;
+        this.maxLevel = this.turretData.gameStatsPerLevel.length - 1;
 
         this.upgradeTo(spawnData.level);
     }
@@ -169,12 +169,12 @@ export class Turret extends Npc implements ITurretData
             this.level = level;
             this.levelText.setText(`${this.level + 1}`);
 
-            const turretData = this.turretDataPerLevel[level];
+            const gameStats = this.turretData.gameStatsPerLevel[level];
             
-            this.damage = turretData.damage;
-            this.attackSpeed = turretData.attackSpeed;
-            this.setRange(turretData.range);
-            this.setTexture(turretData.texture)
+            this.damage = gameStats.damage;
+            this.attackSpeed = gameStats.attackSpeed;
+            this.setRange(gameStats.range);
+            this.setTexture(gameStats.texture)
 
             this.emit("upgrade", this);
             this.onUpgrade();
@@ -197,7 +197,7 @@ export class Turret extends Npc implements ITurretData
 
     public getUpgradePrice(): number
     {
-        return this.isLevelMax() ? Infinity : this.turretDataPerLevel[this.level].price;
+        return this.isLevelMax() ? Infinity : this.turretData.gameStatsPerLevel[this.level].price;
     }
 
     public isLevelMax(): boolean

@@ -48,10 +48,10 @@ export class SceneTowerDefense extends Welly_Scene
     
     private lastSpeedMode: SpeedMode = SpeedMode.SLOW;
 
-    private turretsData: any;
+    private turretsData: TurretData[];
 
-    /**The id of the turret to get from turretsdata for the preview */
-    private turretPreviewDataId: string;
+    /** Index from turretsData for the preview */
+    private turretPrewiewIndex: number;
 
     /** A preview of the turret that the player wants to spawn in the game */
     private turretPreviewWidget: TurretPreviewWidget;
@@ -87,9 +87,10 @@ export class SceneTowerDefense extends Welly_Scene
         super.create();
 
         this.turretsData = this.cache.json.get("turretsData");
+
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
-
+        
         this.createMap();
         this.createWaveSpawner();
         this.createCamera();
@@ -451,16 +452,14 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
-    protected onStartDragTurret(turretDataId: string): void
+    protected onStartDragTurret(turretIndex: number): void
     {
-        this.input.activePointer.updateWorldPoint(this.cameras.main);
+        const activePointer = this.input.activePointer;
+        activePointer.updateWorldPoint(this.cameras.main);
+        this.turretPrewiewIndex = turretIndex;
         
-        this.turretPreviewDataId = turretDataId;
-        const turretLevel = 0; 
-        const turretPreviewData = this.turretsData[this.turretPreviewDataId][turretLevel];
-        
-        this.turretPreviewWidget.setPosition(this.input.activePointer.worldX, this.input.activePointer.worldY);
-        this.turretPreviewWidget.setTurretData(turretPreviewData);
+        this.turretPreviewWidget.setPosition(activePointer.worldX, activePointer.worldY);
+        this.turretPreviewWidget.setTurretData(this.turretsData[this.turretPrewiewIndex]);
         this.turretPreviewWidget.setValid(true);
         this.turretPreviewWidget.setVisible(true);
 
@@ -469,9 +468,10 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected onDragTurret(): void
     {
-        this.input.activePointer.updateWorldPoint(this.cameras.main);
-        const worldX = this.input.activePointer.worldX;
-        const worldY = this.input.activePointer.worldY;
+        const activePointer = this.input.activePointer;
+        activePointer.updateWorldPoint(this.cameras.main);
+        const worldX = activePointer.worldX;
+        const worldY = activePointer.worldY;
 
         this.turretPreviewWidget.setPosition(worldX, worldY);
 
@@ -496,24 +496,25 @@ export class SceneTowerDefense extends Welly_Scene
         if (tile.properties.towerField)
         {
             const turretLevel = 0; 
-            const turretPreviewData = this.turretsData[this.turretPreviewDataId];
-            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, turretPreviewData[turretLevel].price);
+            const turretPreviewData = this.turretsData[this.turretPrewiewIndex];
+            const price = turretPreviewData.gameStatsPerLevel[turretLevel].price
+            this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, price);
         }
 
         this.turretPreviewWidget.setVisible(false);
         this.turretSpawnAreaPreview.destroy();
     }
 
-    private trySpawnTurret(x: number, y: number, turretDataPerLevel: TurretData[], level: number = 0, price: number = 0)
+    private trySpawnTurret(x: number, y: number, turretData: TurretData, level: number = 0, price: number = 0)
     {
         if (this.coin >= price)
         {
-            this.spawnTurret(x, y, turretDataPerLevel, level);
+            this.spawnTurret(x, y, turretData, level);
             this.removePlayerCoin(price);
         }
     }
 
-    private spawnTurret(x: number, y: number, turretDataPerLevel: TurretData[], level: number = 0): void
+    private spawnTurret(x: number, y: number, turretData: TurretData, level: number = 0): void
     {
         const turret = new Turret(this, 0, 0);
         turret.setPosition(x, y - turret.height * 0.5);
@@ -522,7 +523,7 @@ export class SceneTowerDefense extends Welly_Scene
 
         const spawnData: TurretSpawnData = {
             level: level,
-            turretDataPerLevel: turretDataPerLevel,
+            turretData: turretData,
             characterTexture: "",
             walkSpeed: 0
         };

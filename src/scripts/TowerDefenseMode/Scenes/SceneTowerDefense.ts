@@ -305,6 +305,7 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.removePlayerHealth(monster.getDamage());
         this.waveManager.removeMonster(monster);
+        this.cameras.main.shake(80, 0.003);
     }
 
     private addPlayerCoin(coin: number): void

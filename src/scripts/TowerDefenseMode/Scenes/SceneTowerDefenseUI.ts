@@ -5,6 +5,7 @@ import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { BottomMenu } from "../HUD/BottomMenu";
+import { EndRunWidget } from "../HUD/EndRunWidget";
 import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
 import { WellyBoostSelection } from "../HUD/WellyBoostSelection";
@@ -44,6 +45,8 @@ export class SceneTowerDefenseUI extends Welly_Scene
     private gameSpeedButton: WELLY_TextButton;
 
     private wellyBoostSelection: WellyBoostSelection;
+
+    private endRunWidget: EndRunWidget;
 
     constructor()
     {
@@ -105,6 +108,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
             this.pauseMenu.setVisible(false)
             this.events.emit("requestRestart");
         }, this);
+
+        this.endRunWidget = new EndRunWidget(this, 0, 0);
+        this.endRunWidget.setVisible(false);
     }
 
     private createShortcuts(): void
@@ -167,6 +173,11 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
         this.pauseMenu.setVisible(!this.pauseMenu.visible);
         this.events.emit("pauseMenuToggled", this.pauseMenu.visible);
+    }
+
+    public onGameOver(): void
+    {
+        this.endRunWidget.show();
     }
 
     public onPlayerCoinChanged(coin: number): void

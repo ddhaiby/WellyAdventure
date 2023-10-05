@@ -89,6 +89,12 @@ export class Turret extends Npc implements ITurretData
         return this;
     }
 
+    public disableBody(disableGameObject?: boolean | undefined, hideGameObject?: boolean | undefined): this
+    {
+        this.setCurrentFocus(undefined);
+        return super.disableBody(disableGameObject, hideGameObject);
+    }
+
     // Init
     ////////////////////////////////////////////////////////////////////////
 

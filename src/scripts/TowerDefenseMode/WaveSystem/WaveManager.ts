@@ -75,8 +75,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     protected startNextWaveTimer(): void
     {
-        this.tickNextWaveTimerEvent.remove();
-        this.tickNextWaveTimerEvent.destroy();
+        this.clearWaveTimer();
 
         const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
         if (!allWavesCompleted)
@@ -188,6 +187,22 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         {
             spawner.removeMonster(monster);
         }
+    }
+
+    public clear(): void
+    {
+        this.clearWaveTimer();
+
+        for (const spawner of this.spawners)
+        {
+            spawner.clear();
+        }
+    }
+
+    protected clearWaveTimer(): void
+    {
+        this.tickNextWaveTimerEvent.remove();
+        this.tickNextWaveTimerEvent.destroy();
     }
 
     public onWaveStarted(fn: (currentWave: number) => void , context?: any): void

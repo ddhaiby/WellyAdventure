@@ -139,4 +139,9 @@ export class WaveSpawner extends Phaser.GameObjects.Image
     {
         return this.moveToPointId;
     }
+
+    public clear(): void
+    {
+        this.monsters.clear(true, true);
+    }
 }

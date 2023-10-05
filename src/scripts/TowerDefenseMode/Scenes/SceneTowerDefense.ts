@@ -32,14 +32,17 @@ export class SceneTowerDefense extends Welly_Scene
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
 
+    /** Whether the game is over or still running */
+    private isGameOver: boolean = false;
+
     /** The coins to use to build turrets */
     private coin: number = 0;
 
     /** The health of the player. The game is over when they reach 0 */
-    private playerHealth: number = 100;
+    private playerHealth: number = 0;
 
      /** The max health of the player. */
-     private playerMaxHealth: number = 100;
+     private playerMaxHealth: number = 0;
 
     /** Shows when the next wave should start */
     private waveCountdownWidgets: WaveCountdownWidget[];
@@ -258,6 +261,8 @@ export class SceneTowerDefense extends Welly_Scene
         this.onWaveStarted(0);
         this.waveManager.start();
 
+        this.setGameOver(false);
+
         // Wait a few milliseconds to let the camera update correctly
         this.time.delayedCall(100, () => { this.showWellyBoostSelection() }, undefined, this);
     }
@@ -272,8 +277,8 @@ export class SceneTowerDefense extends Welly_Scene
         for (const spawner of this.spawners)
         {
             (spawner.getMonsters().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
-            (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => { turret.update(); }, this);
         }
+        (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => { turret.update(); }, this);
     }
 
     private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
@@ -335,8 +340,16 @@ export class SceneTowerDefense extends Welly_Scene
             this.playerMaxHealth = maxHealth;
         }
         
-        this.playerHealth = Phaser.Math.Clamp(health, 0, this.playerMaxHealth);
-        this.sceneUI.onPlayerHealthChanged(this.playerHealth, this.playerMaxHealth);
+        if (this.playerHealth != health)
+        {
+            this.playerHealth = Phaser.Math.Clamp(health, 0, this.playerMaxHealth);
+            this.sceneUI.onPlayerHealthChanged(this.playerHealth, this.playerMaxHealth);
+
+            if (this.playerHealth <= 0)
+            {
+                this.setGameOver(true);
+            }
+        }
     }
 
     private onTurretClicked(turret: Turret): void
@@ -590,5 +603,26 @@ export class SceneTowerDefense extends Welly_Scene
         turret.on(Phaser.Input.Events.POINTER_OUT, () => { this.onTurretHoverEnded(turret); }, this);
 
         this.sceneUI.onTurretSpawned(turretData.id, turretData.maxInstances - turretCount);
+    }
+
+    private setGameOver(isGameOver: boolean): void
+    {
+        this.isGameOver = isGameOver;
+
+        if (this.isGameOver)
+        {
+            (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => {
+                turret.disableBody(false, false);
+            }, this);
+
+            for (const widget of this.waveCountdownWidgets)
+            {
+                widget.setVisible(false);
+            }
+
+            this.waveManager.clear();
+
+            this.sceneUI.onGameOver();
+        }
     }
 }

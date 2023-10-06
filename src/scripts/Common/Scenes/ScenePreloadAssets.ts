@@ -5,6 +5,7 @@ import { SceneExplorationGameUI } from "../../ExplorationMode/Scenes/SceneExplor
 import { SceneTowerDefense } from "../../TowerDefenseMode/Scenes/SceneTowerDefense";
 import { SceneTowerDefenseUI } from "../../TowerDefenseMode/Scenes/SceneTowerDefenseUI";
 import { LoadingScreen } from "../HUD/LoadingScreen";
+import { GameAnalytics } from "../../TowerDefenseMode/Analytics/GameAnalytics";
 
 export class ScenePreloadAssets extends Welly_Scene
 {
@@ -18,6 +19,7 @@ export class ScenePreloadAssets extends Welly_Scene
 
     public init() : void
     {
+        GameAnalytics.init();
     }
 
     // Preload

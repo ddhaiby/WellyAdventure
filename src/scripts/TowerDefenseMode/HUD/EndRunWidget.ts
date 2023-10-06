@@ -3,6 +3,7 @@ import { CST } from "../../Common/CST";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { GPC_TextButtonStyle, WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
+import { gameStatistics as GameStatistics } from "../Analytics/GameAnalytics";
 
 export class EndRunWidget extends Phaser.GameObjects.Container
 {
@@ -70,7 +71,7 @@ export class EndRunWidget extends Phaser.GameObjects.Container
         this.mainButtons.layout();
     }
 
-    public show(): void
+    public show(gameStatistics: GameStatistics): void
     {
         this.mainButtons.setVisible(false);
 
@@ -91,12 +92,18 @@ export class EndRunWidget extends Phaser.GameObjects.Container
                 });
 
                 this.scene.time.delayedCall(800, () => {
+                    this.showStatistics(gameStatistics);
                     this.mainButtons.setVisible(true);
                 }, undefined, this);
             },
             callbackScope: this
         });
         this.setVisible(true);
+    }
+
+    private showStatistics(gameStatistics: GameStatistics): void
+    {
+        console.log(gameStatistics);
     }
 
     private onRestartClicked() : void

@@ -12,9 +12,9 @@ import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-p
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
 import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
-import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { TurretData } from "../Turrets/TurretData";
 import { TurretPreviewWidget } from "../HUD/TurretPreviewWidget";
+import { GameAnalytics } from "../Analytics/GameAnalytics";
 
 export class SceneTowerDefense extends Welly_Scene
 {
@@ -74,6 +74,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     public init(data?: SceneData): void
     {
+        GameAnalytics.resetGameplay();
         this.spawners = [];
     }
 
@@ -96,6 +97,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
         this.spawnedTurrets = new Map<string, number>();
+
         for (const turretData of this.turretsData)
         {
             this.spawnedTurrets.set(turretData.id, 0);
@@ -298,6 +300,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
+        GameAnalytics.instance.onMonsterDie(monster.name);
         this.addPlayerCoin(monster.getCoin());
     }
 
@@ -406,6 +409,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onWaveCompleted(currentWave: number): void
     {
+        GameAnalytics.instance.onWaveCleared();
         this.sceneUI.onWaveCompleted(currentWave);
     }
 
@@ -623,7 +627,7 @@ export class SceneTowerDefense extends Welly_Scene
 
             this.waveManager.clear();
 
-            this.sceneUI.onGameOver();
+            this.sceneUI.onGameOver(GameAnalytics.instance.getGameStatistics());
         }
     }
 }

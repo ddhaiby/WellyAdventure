@@ -4,6 +4,7 @@ import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { gameStatistics } from "../Analytics/GameAnalytics";
 import { BottomMenu } from "../HUD/BottomMenu";
 import { EndRunWidget } from "../HUD/EndRunWidget";
 import { PauseMenu } from "../HUD/PauseMenu";
@@ -109,7 +110,6 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.endRunWidget = new EndRunWidget(this, 0, 0);
         this.endRunWidget.setVisible(false);
         this.endRunWidget.on("requestRestart", () => { this.requestRestart(); }, this);
-
     }
 
     private createShortcuts(): void
@@ -186,9 +186,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.events.emit("requestRestart");
     }
 
-    public onGameOver(): void
+    public onGameOver(gameStatistics: gameStatistics): void
     {
-        this.endRunWidget.show();
+        this.endRunWidget.show(gameStatistics);
     }
 
     public onPlayerCoinChanged(coin: number): void

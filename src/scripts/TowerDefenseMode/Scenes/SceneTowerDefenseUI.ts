@@ -104,13 +104,12 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.pauseMenu = new PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
         this.pauseMenu.on("requestResume", () => { this.togglePauseMenu(); }, this);
-        this.pauseMenu.on("requestRestart", () => {
-            this.pauseMenu.setVisible(false)
-            this.events.emit("requestRestart");
-        }, this);
+        this.pauseMenu.on("requestRestart", () => { this.requestRestart(); }, this);
 
         this.endRunWidget = new EndRunWidget(this, 0, 0);
         this.endRunWidget.setVisible(false);
+        this.endRunWidget.on("requestRestart", () => { this.requestRestart(); }, this);
+
     }
 
     private createShortcuts(): void
@@ -173,6 +172,13 @@ export class SceneTowerDefenseUI extends Welly_Scene
     {
         this.pauseMenu.setVisible(!this.pauseMenu.visible);
         this.events.emit("pauseMenuToggled", this.pauseMenu.visible);
+    }
+
+    private requestRestart(): void
+    {
+        this.pauseMenu.setVisible(false);
+        this.endRunWidget.setVisible(false);
+        this.events.emit("requestRestart");
     }
 
     public onGameOver(): void

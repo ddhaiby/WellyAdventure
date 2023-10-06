@@ -91,6 +91,7 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.image("coin_16", "coin_16.png");
         this.load.image("coin_24", "coin_24.png");
         this.load.image("coin_48", "coin_48.png");
+        this.load.image("waveIcon", "waveIcon.png");
     }
 
     private loadWellyBonus():void

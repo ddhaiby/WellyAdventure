@@ -80,7 +80,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
         const coinIcon = this.add.image(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 12, "coin_24").setOrigin(0, 0);
         this.coinText = this.add.text(coinIcon.x + coinIcon.displayWidth + 8, coinIcon.y - 3, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.ORANGE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
-        this.waveText = this.add.text(this.playerFaceImage.x + 2, this.coinText.y + this.coinText.height + 6, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        
+        const waveIcon = this.add.image(this.playerFaceImage.x + 2, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75);
+        this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
 
         this.turretDataWidget = new TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
@@ -204,7 +206,7 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
     public onWaveStarted(currentWave: number): void
     {
-        this.waveText.setText(`Wave: ${currentWave.toString()}`);
+        this.waveText.setText(`${currentWave.toString()}`);
     }
 
     public onWaveCompleted(currentWave: number): void

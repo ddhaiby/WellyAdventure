@@ -170,8 +170,13 @@ export class SceneTowerDefenseUI extends Welly_Scene
 
     private togglePauseMenu(): void
     {
-        this.pauseMenu.setVisible(!this.pauseMenu.visible);
-        this.events.emit("pauseMenuToggled", this.pauseMenu.visible);
+        const newVisibility = !this.pauseMenu.visible;
+
+        if (!newVisibility || !this.endRunWidget.visible)
+        {
+            this.pauseMenu.setVisible(newVisibility);
+            this.events.emit("pauseMenuToggled", newVisibility);
+        }
     }
 
     private requestRestart(): void

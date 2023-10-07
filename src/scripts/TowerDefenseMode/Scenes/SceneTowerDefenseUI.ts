@@ -4,7 +4,7 @@ import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
-import { gameStatistics } from "../Analytics/GameAnalytics";
+import { GameStatistics } from "../Analytics/GameAnalytics";
 import { BottomMenu } from "../HUD/BottomMenu";
 import { EndRunWidget } from "../HUD/EndRunWidget";
 import { PauseMenu } from "../HUD/PauseMenu";
@@ -188,9 +188,9 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.events.emit("requestRestart");
     }
 
-    public onGameOver(gameStatistics: gameStatistics): void
+    public onGameOver(runStatistics: GameStatistics): void
     {
-        this.endRunWidget.show(gameStatistics);
+        this.endRunWidget.show(runStatistics);
     }
 
     public onPlayerCoinChanged(coin: number): void
@@ -257,7 +257,6 @@ export class SceneTowerDefenseUI extends Welly_Scene
             case SpeedMode.SLOW: this.gameSpeedButton.setText("X1"); break;
             case SpeedMode.NORMAL: this.gameSpeedButton.setText("X2"); break;
             case SpeedMode.FAST: this.gameSpeedButton.setText("X3"); break;
-            case SpeedMode.PAUSE: break;
             default: console.error("SceneTowerDefenseUI::onSpeedModeChanged - Invalid speed mode"); break;   
         }
     }

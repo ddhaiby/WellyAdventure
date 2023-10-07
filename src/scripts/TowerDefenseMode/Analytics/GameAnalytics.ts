@@ -1,7 +1,14 @@
-export declare type gameStatistics =
+export declare type MonsterStatistics =
 {
-    killedMonsters: Map<string, number>;
+    monsterName: string;
+    monsterCount: number;
+}
+
+export declare type GameStatistics =
+{
+    monsterStatistics: MonsterStatistics[];
     waveCount: number;
+    elapsedTime: number;
 };
 
 export class GameAnalytics
@@ -10,6 +17,9 @@ export class GameAnalytics
 
     protected killedMonsters: Map<string /** monsterName */, number /** killCount */>;
     protected waveCount: number = 0;
+
+    /** How much time this run has lasted */
+    private elapsedTime: number = 0;
 
     private constructor()
     {
@@ -38,6 +48,12 @@ export class GameAnalytics
 
         this._instance.killedMonsters = new Map<string, number>();
         this._instance.waveCount = 0;
+        this._instance.elapsedTime = 0;
+    }
+
+    public update(time: number, delta: number): void
+    {
+        this.elapsedTime += delta;
     }
 
     public onWaveCleared(): void
@@ -58,11 +74,19 @@ export class GameAnalytics
         }
     }
 
-    public getGameStatistics(): gameStatistics
+    public getGameStatistics(): GameStatistics
     {
+        let monsterStatistics = [] as MonsterStatistics[];
+
+        this.killedMonsters.forEach((monsterCount: number, monsterName: string) =>
+        {
+            monsterStatistics.push({monsterName: monsterName, monsterCount: monsterCount});
+        });
+
         return {
-            killedMonsters: this.killedMonsters,
+            monsterStatistics: monsterStatistics,
             waveCount: this.waveCount,
+            elapsedTime: Math.round(this.elapsedTime)
         };
     }
 }

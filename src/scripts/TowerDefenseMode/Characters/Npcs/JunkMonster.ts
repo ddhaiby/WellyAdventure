@@ -156,14 +156,26 @@ export class JunkMonster extends Npc
 
     public takeDamage(damage: number): void
     {
-        this.setHealth(this.health - damage);
+        if (this.isAlive())
+        {
+            this.setHealth(this.health - damage);
+        }
+    }
+
+    public isAlive(): boolean
+    {
+        return (this.health > 0)
     }
 
     public die(): void
     {
         this.health = 0;
         this.stopWalking();
-        this.disableBody(true, true);
+
+        if (this.body)
+        {
+            this.disableBody(true, true);
+        }
 
         this.emit("DIE");
     }

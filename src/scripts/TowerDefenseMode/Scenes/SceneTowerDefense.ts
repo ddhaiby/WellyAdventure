@@ -41,8 +41,8 @@ export class SceneTowerDefense extends Welly_Scene
     /** The health of the player. The game is over when they reach 0 */
     private playerHealth: number = 0;
 
-     /** The max health of the player. */
-     private playerMaxHealth: number = 0;
+    /** The max health of the player. */
+    private playerMaxHealth: number = 0;
 
     /** Shows when the next wave should start */
     private waveCountdownWidgets: WaveCountdownWidget[];
@@ -220,7 +220,14 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onPauseMenuToggled(isPauseMenuVisible: boolean): void
     {
-        this.setSpeedMode(isPauseMenuVisible ? SpeedMode.PAUSE: this.lastSpeedMode);
+        if (isPauseMenuVisible)
+        {
+            this.scene.pause();
+        }
+        else
+        {
+            this.scene.resume();
+        }
     }
 
     private setSpeedMode(inSpeedMode: SpeedMode): void
@@ -243,11 +250,6 @@ export class SceneTowerDefense extends Welly_Scene
                 this.time.timeScale = 4;
                 this.anims.globalTimeScale = 1;
                 break;
-            case SpeedMode.PAUSE:
-                this.time.timeScale = 0.0625;
-                this.anims.globalTimeScale = 0.3;
-                break;
-
             default:
                 console.error("SceneTowerDefense::updateSpeedMode - Invalid speed mode");
                 break;
@@ -258,12 +260,11 @@ export class SceneTowerDefense extends Welly_Scene
 
     private startGame(): void
     {
+        this.setGameOver(false);
         this.setPlayerCoin(100);
         this.setPlayerHealth(100, 100);
         this.onWaveStarted(0);
         this.waveManager.start();
-
-        this.setGameOver(false);
 
         // Wait a few milliseconds to let the camera update correctly
         this.time.delayedCall(100, () => { this.showWellyBoostSelection() }, undefined, this);
@@ -275,6 +276,8 @@ export class SceneTowerDefense extends Welly_Scene
     public update(time: number, delta: number): void
     {
         super.update(time, delta);
+
+        GameAnalytics.instance.update(time, delta);
 
         for (const spawner of this.spawners)
         {
@@ -472,7 +475,6 @@ export class SceneTowerDefense extends Welly_Scene
             case SpeedMode.SLOW: this.setSpeedMode(SpeedMode.NORMAL); break;
             case SpeedMode.NORMAL: this.setSpeedMode(SpeedMode.FAST); break;
             case SpeedMode.FAST: this.setSpeedMode(SpeedMode.SLOW); break;
-            case SpeedMode.PAUSE: break;
             default: console.error("SceneTowerDefense::onUpdateGameSpeedRequested - Invalid speed mode"); break;
         }
     }
@@ -612,22 +614,25 @@ export class SceneTowerDefense extends Welly_Scene
 
     private setGameOver(isGameOver: boolean): void
     {
-        this.isGameOver = isGameOver;
-
-        if (this.isGameOver)
+        if (this.isGameOver != isGameOver)
         {
-            (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => {
-                turret.disableBody(false, false);
-            }, this);
+            this.isGameOver = isGameOver;
 
-            for (const widget of this.waveCountdownWidgets)
+            if (this.isGameOver)
             {
-                widget.setVisible(false);
+                (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => {
+                    turret.disableBody(false, false);
+                }, this);
+
+                for (const widget of this.waveCountdownWidgets)
+                {
+                    widget.setVisible(false);
+                }
+
+                this.waveManager.clear();
+
+                this.sceneUI.onGameOver(GameAnalytics.instance.getGameStatistics());
             }
-
-            this.waveManager.clear();
-
-            this.sceneUI.onGameOver(GameAnalytics.instance.getGameStatistics());
         }
     }
 }

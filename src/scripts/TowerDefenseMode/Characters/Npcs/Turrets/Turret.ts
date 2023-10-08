@@ -170,7 +170,7 @@ export class Turret extends Npc implements ITurretData
 
     public upgradeTo(level: number): void
     {
-        if ((level >= 0) && (level < this.maxLevel))
+        if ((level >= 0) && (level <= this.maxLevel))
         {
             this.level = level;
             this.levelText.setText(`${this.level + 1}`);
@@ -208,7 +208,7 @@ export class Turret extends Npc implements ITurretData
 
     public isLevelMax(): boolean
     {
-        return (this.level >= this.maxLevel - 1);
+        return (this.level >= this.maxLevel);
     }
 
     protected attack(): void
@@ -299,9 +299,28 @@ export class Turret extends Npc implements ITurretData
         }, undefined, this);
     }
 
+    public getNextStat(statName: string): number
+    {
+        if (this.turretData)
+        {
+            const nextLevel = this.level + 1;
+            if ((nextLevel >= 0) && (nextLevel < this.turretData.gameStatsPerLevel.length))
+            {
+                return this.turretData.gameStatsPerLevel[nextLevel][statName];
+            }
+        }
+
+        return this.turretData.gameStatsPerLevel[this.level][statName];
+    }
+
     public getDamage(): number
     {
         return this.damage;
+    }
+
+    public getNextDamage(): number
+    {
+        return this.getNextStat("damage");
     }
 
     public getAttackSpeed(): number
@@ -309,9 +328,19 @@ export class Turret extends Npc implements ITurretData
         return this.attackSpeed;
     }
 
+    public getNextAttackSpeed(): number
+    {
+        return this.getNextStat("attackSpeed");
+    }
+
     public getRange(): number
     {
         return this.body.width * 0.5;
+    }
+
+    public getNextRange(): number
+    {
+        return this.getNextStat("range") * 0.5;
     }
 
     protected setRange(range: number): void
@@ -323,6 +352,11 @@ export class Turret extends Npc implements ITurretData
     public getLevel(): number
     {
         return this.level;
+    }
+
+    public getNextLevel(): number
+    {
+        return Math.min(this.level + 1, this.maxLevel);
     }
 
     public showRangeIndicator(): void

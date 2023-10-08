@@ -107,7 +107,7 @@ export class EndRunWidget extends Phaser.GameObjects.Container
 
                 if (cellContainer == null)
                 {
-                    const background = this.scene.add.image(0,0, `${monsterStatsItem.monsterName}`).setDisplaySize(64, 64);
+                    const background = this.scene.add.image(0,0, `${monsterStatsItem.monsterTexture}`).setDisplaySize(64, 64);
                     const icon = this.scene.add.text(0,0, `x${monsterStatsItem.monsterCount}`, { fontStyle: "bold", color: "white", fontSize: "20px", stroke: "black", strokeThickness: 4});
                     cellContainer = this.scene.rexUI.add.label({
                         width: gridCellWidth,

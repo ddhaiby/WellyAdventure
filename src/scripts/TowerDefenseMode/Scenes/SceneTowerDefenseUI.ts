@@ -84,10 +84,6 @@ export class SceneTowerDefenseUI extends Welly_Scene
         const waveIcon = this.add.image(this.playerFaceImage.x + 2, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75);
         this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, color: CST.STYLE.COLOR.BLUE, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
 
-        this.turretDataWidget = new TurretDataWidget(this, 0, 0);
-        this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth * 0.5 - 8, this.scale.displaySize.height - this.turretDataWidget.displayHeight * 0.5 - 8)
-        this.turretDataWidget.setVisible(false);
-
         this.gameSpeedButton = new WELLY_TextButton(this, this.scale.displaySize.width - 30, 36, "X1", {
             fontSize: "30px",
             textOffsetNormalY: -1,
@@ -99,6 +95,10 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.gameSpeedButton.onClicked(() => { this.onGameSpeedButtonClicked(); }, this);
 
         this.createBottomMenu();
+
+        this.turretDataWidget = new TurretDataWidget(this, 0, 0);
+        this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth, this.scale.displaySize.height - this.turretDataWidget.displayHeight);
+        this.turretDataWidget.setVisible(false);
 
         this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
         this.wellyBoostSelection.setVisible(false);

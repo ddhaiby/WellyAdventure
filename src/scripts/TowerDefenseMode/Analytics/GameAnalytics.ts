@@ -1,6 +1,6 @@
 export declare type MonsterStatistics =
 {
-    monsterName: string;
+    monsterTexture: string;
     monsterCount: number;
 }
 
@@ -61,16 +61,16 @@ export class GameAnalytics
         ++this.waveCount;
     }
 
-    public onMonsterDie(monsterName: string): void
+    public onMonsterDie(monsterName: string, monsterTexture: string): void
     {
         const monsterCount = this.killedMonsters.get(monsterName);
         if (monsterCount == undefined)
         {
-            this.killedMonsters.set(monsterName, 0);
+            this.killedMonsters.set(monsterTexture, 1);
         }
         else
         {
-            this.killedMonsters.set(monsterName, monsterCount + 1);
+            this.killedMonsters.set(monsterTexture, monsterCount + 1);
         }
     }
 
@@ -78,9 +78,9 @@ export class GameAnalytics
     {
         let monsterStatistics = [] as MonsterStatistics[];
 
-        this.killedMonsters.forEach((monsterCount: number, monsterName: string) =>
+        this.killedMonsters.forEach((monsterCount: number, monsterTexture: string) =>
         {
-            monsterStatistics.push({monsterName: monsterName, monsterCount: monsterCount});
+            monsterStatistics.push({monsterTexture: monsterTexture, monsterCount: monsterCount});
         });
 
         return {

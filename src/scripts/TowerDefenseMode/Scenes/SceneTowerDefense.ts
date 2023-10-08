@@ -90,6 +90,15 @@ export class SceneTowerDefense extends Welly_Scene
 
     public create(): void
     {
+        const keys = this.input.keyboard?.addKeys({
+            escape: Phaser.Input.Keyboard.KeyCodes.O
+        }, false);
+        // @ts-ignore
+        keys.escape.on('down', () => { this.setGameOver(true); }, this);
+
+
+
+
         super.create();
 
         this.turretsData = this.cache.json.get("turretsData");
@@ -303,7 +312,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        GameAnalytics.instance.onMonsterDie(monster.name);
+        GameAnalytics.instance.onMonsterDie(monster.name, monster.texture.key);
         this.addPlayerCoin(monster.getCoin());
     }
 
@@ -587,6 +596,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.turrets.add(turret);
 
         const spawnData: TurretSpawnData = {
+            name: turretData.turretName,
             level: level,
             turretData: turretData,
             characterTexture: "",
@@ -623,16 +633,16 @@ export class SceneTowerDefense extends Welly_Scene
                 (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => {
                     turret.disableBody(false, false);
                 }, this);
-
+    
                 for (const widget of this.waveCountdownWidgets)
                 {
                     widget.setVisible(false);
                 }
-
+    
                 this.waveManager.clear();
-
+    
                 this.sceneUI.onGameOver(GameAnalytics.instance.getGameStatistics());
-            }
+            }   
         }
     }
 }

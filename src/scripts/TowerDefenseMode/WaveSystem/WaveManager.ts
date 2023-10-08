@@ -6,6 +6,7 @@ import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { MonsterSpawnerData, WaveSpawner } from "./WaveSpawner";
 
 declare type MonsterData = {
+    name: string,
     texture: string,
     health: number,
     bodyWidth: number,
@@ -165,6 +166,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         const monsterData = this.monstersData[monsterKey] as MonsterData;
 
         const monsterSpawnData: MonsterSpawnerData = {
+            name: monsterData.name,
             walkSpeed: monsterData.moveSpeed,
             characterTexture: monsterData.texture,
             health: monsterData.health,

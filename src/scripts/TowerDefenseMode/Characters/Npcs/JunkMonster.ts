@@ -58,15 +58,15 @@ export class JunkMonster extends Npc
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    public init(monseterSpawnData: MonsterSpawnerData): void
+    public init(monsterSpawnData: MonsterSpawnerData): void
     {
-        super.init(monseterSpawnData);
+        super.init(monsterSpawnData);
 
-        this.setDepth(monseterSpawnData.depth ?? 0);
-        this.health = monseterSpawnData.health;
+        this.setDepth(monsterSpawnData.depth ?? 0);
+        this.health = monsterSpawnData.health;
         this.maxHealth = this.health;
-        this.coin = monseterSpawnData.coin;
-        this.damage = monseterSpawnData.damage;
+        this.coin = monsterSpawnData.coin;
+        this.damage = monsterSpawnData.damage;
         
         this.initHealthBar();
     }

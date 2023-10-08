@@ -9,6 +9,7 @@ export class TurretPopup extends WELLY_Popup
     public scene: Welly_Scene;
     protected turret: Turret;
     protected upgradeButton: WELLY_TextButton;
+    protected turretNameText: Phaser.GameObjects.Text;
 
     constructor(turret: Turret, x?: number | undefined, y?: number | undefined, config?: IPopupConfig | undefined)
     {
@@ -27,9 +28,12 @@ export class TurretPopup extends WELLY_Popup
 
         this.upgradeButton.onClicked(() => { this.emit("requestUpgrade"); }, this);
 
+        this.turretNameText = this.scene.add.text(turret.x - this.x, turret.y - turret.displayHeight * 0.5 - 4 - this.y, turret.name.toUpperCase(),{ fontSize: "14px", color: CST.STYLE.COLOR.WHITE, fontFamily: CST.STYLE.TEXT.FONT_FAMILY, stroke: CST.STYLE.COLOR.BLACK, strokeThickness: 3 }).setOrigin(0.5, 1);
+        this.add(this.turretNameText);
+
         this.turret = turret;
         this.turret.on("upgrade", this.onTurretUpgraded, this);
-        this.updateTextButton(this.turret);
+        this.updateData(this.turret);
     }
 
     public destroy(fromScene?: boolean | undefined): void
@@ -43,7 +47,7 @@ export class TurretPopup extends WELLY_Popup
         super.destroy(fromScene);    
     }
 
-    private updateTextButton(turret: Turret): void
+    private updateData(turret: Turret): void
     {
         const text = turret.canUpgrade() ? `UPGRADE  ${turret.getUpgradePrice()}\[img=coin_24]` : "LEVEL MAX";
         this.upgradeButton.setText(text);
@@ -51,6 +55,6 @@ export class TurretPopup extends WELLY_Popup
 
     private onTurretUpgraded(turret: Turret): void
     {
-        this.updateTextButton(turret);
+        this.updateData(turret);
     }
 }

@@ -9,6 +9,8 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
 {
     public scene: Welly_Scene;
 
+    protected boostData: WellyBoostData;
+
     protected title: Phaser.GameObjects.Text;
     protected description: Phaser.GameObjects.Text;
     protected background: RoundRectangle;
@@ -59,6 +61,17 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         }, this);
     }
 
+    public activate(): void
+    {
+        this.background.setInteractive();
+    }
+
+    public disable(): void
+    {
+        this.background.emit(Phaser.Input.Events.POINTER_OUT);
+        this.background.disableInteractive();
+    }
+
     public onClicked(fn: Function, context?: any) : this
     {
         this.background.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
@@ -67,8 +80,14 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
 
     public setBoostData(boostData: WellyBoostData): void
     {
+        this.boostData = boostData;
         this.title.setText(boostData.name);
         this.description.setText(boostData.description);
+    }
+
+    public getBoostData(): WellyBoostData
+    {
+        return this.boostData;
     }
 }
 
@@ -76,9 +95,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 {
     public scene: Welly_Scene;
 
-    private boostWidget1: BoostButtonWidget;
-    private boostWidget2: BoostButtonWidget;
-    private boostWidget3: BoostButtonWidget;
+    private boostWidgetArray: BoostButtonWidget[];
 
     constructor(scene: Welly_Scene, x: number, y: number)
     {
@@ -95,15 +112,6 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
         this.add(background);
 
-        this.boostWidget1 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget1.onClicked(() => { this.onBoostSelected(); }, this);
-
-        this.boostWidget2 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget2.onClicked(() => { this.onBoostSelected(); }, this);
-
-        this.boostWidget3 = new BoostButtonWidget(this.scene, 0, 0);
-        this.boostWidget3.onClicked(() => { this.onBoostSelected(); }, this);
-
         const buttonColumn = this.scene.rexUI.add.sizer({
             orientation: "horizontal",
             space: { top: 0, item: 100 },
@@ -112,22 +120,38 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         }).setOrigin(0.5);
 
         this.add(buttonColumn);
-        buttonColumn.add(this.boostWidget1);
-        buttonColumn.add(this.boostWidget2);
-        buttonColumn.add(this.boostWidget3);
+
+        const boostButtonCount = 3;
+        this.boostWidgetArray = [];
+
+        for (let i = 0; i < boostButtonCount; ++i)
+        {
+            const button = new BoostButtonWidget(this.scene, 0, 0);
+            button.onClicked(() => { this.onBoostSelected(i); }, this);
+            this.boostWidgetArray.push(button);
+            buttonColumn.add(button);
+        }
+        
         buttonColumn.layout();
     }
 
     public show(boostDatArray: WellyBoostData[]): void
     {
-        if (boostDatArray.length < 3)
+        const newBoostCount = Math.min(boostDatArray.length, this.boostWidgetArray.length)
+
+        for (let i = 0; i < newBoostCount; ++i)
         {
-            return;
+            this.boostWidgetArray[i].setBoostData(boostDatArray[i]);
+            this.boostWidgetArray[i].setVisible(true);
+            this.boostWidgetArray[i].setScale(1);
+            this.boostWidgetArray[i].activate();
         }
 
-        this.boostWidget1.setBoostData(boostDatArray[0]);
-        this.boostWidget2.setBoostData(boostDatArray[1]);
-        this.boostWidget3.setBoostData(boostDatArray[2]);
+        for (let i = newBoostCount; i < this.boostWidgetArray.length; ++i)
+        {
+            this.boostWidgetArray[i].setVisible(false);
+            this.boostWidgetArray[i].disable();
+        }
 
         this.setVisible(true);
     }
@@ -137,9 +161,46 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         this.setVisible(false);
     }
 
-    protected onBoostSelected(): void
+    protected onBoostSelected(selectedIndex : number): void
     {
-        this.emit("wellyBoostSelected");
-        this.setVisible(false);
+        for (let i = 0; i < this.boostWidgetArray.length; ++i)
+        {
+            this.boostWidgetArray[i].disable();
+
+            if (i == selectedIndex)
+            {
+                this.animateSelectedBoostWidget(this.boostWidgetArray[i]);
+            }
+            else
+            {
+                this.animateNonSelectedBoostWidget(this.boostWidgetArray[i]);
+            }
+        }
+    }
+
+    protected animateSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
+    {
+        this.scene.tweens.add({
+            targets: boostButtonWidget,
+            duration: 200,
+            yoyo: true,
+            scale: 1.4,
+            callbackScope: this,
+            onComplete: () => {
+                this.scene.time.delayedCall(1100, () => {
+                    this.emit("wellyBoostSelected", boostButtonWidget.getBoostData());
+                    this.hide();
+                }, undefined, this);
+            }
+        });
+    }
+
+    protected animateNonSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
+    {
+        this.scene.tweens.add({
+            targets: boostButtonWidget,
+            duration: 380,
+            scale: 0
+        });
     }
 }

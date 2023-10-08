@@ -180,7 +180,7 @@ export class Turret extends Npc implements ITurretData
             this.damage = gameStats.damage;
             this.attackSpeed = gameStats.attackSpeed;
             this.setRange(gameStats.range);
-            this.setTexture(gameStats.texture)
+            this.setTexture(gameStats.texture);
 
             this.emit("upgrade", this);
             this.onUpgrade();

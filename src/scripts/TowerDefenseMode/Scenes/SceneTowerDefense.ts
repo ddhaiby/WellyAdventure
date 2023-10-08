@@ -32,6 +32,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
 
+    private turretPopup: TurretPopup;
+
     /** Whether the game is over or still running */
     private isGameOver: boolean = false;
 
@@ -380,9 +382,9 @@ export class SceneTowerDefense extends Welly_Scene
         turret.on("upgrade", fnOnTurretUpgrade, this);
         turret.showRangeIndicator();
 
-        const turretPopup = new TurretPopup(turret, turret.x, turret.y);
-        turretPopup.on("requestUpgrade", () => { this.tryUpgradeTurret(turret); }, this);
-        turretPopup.once("destroyed", () => {
+        this.turretPopup = new TurretPopup(turret, turret.x, turret.y);
+        this.turretPopup.on("requestUpgrade", () => { this.tryUpgradeTurret(turret); }, this);
+        this.turretPopup.once("destroyed", () => {
             this.sceneUI.hideTurretDataWidget();
             turret.hideRangeIndicator();
             turret.off("upgrade", fnOnTurretUpgrade, this);
@@ -497,6 +499,12 @@ export class SceneTowerDefense extends Welly_Scene
 
             if ((turretCount != undefined) && (turretCount < this.turretsData[turretIndex].maxInstances))
             {
+                if (this.turretPopup)
+                {
+                    this.turretPopup.destroy();
+                    this.turretPopup = undefined;
+                }
+
                 this.initTurretPreview(turretIndex);
             }
             else

@@ -218,7 +218,7 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.events.removeAllListeners("endDragTurret");
         this.sceneUI.events.removeAllListeners("pauseMenuToggled");
 
-        this.sceneUI.events.on("requestRestart", () => { this.scene.restart(); }, this);
+        this.sceneUI.events.on("requestRestart", () => { this.onRestartRequested(); }, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
         this.sceneUI.events.on("requestUpdateGameSpeed", this.onUpdateGameSpeedRequested, this);
 
@@ -227,6 +227,12 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.events.on("endDragTurret", this.onEnDragTurret, this);
 
         this.sceneUI.events.on("pauseMenuToggled", this.onPauseMenuToggled, this);
+    }
+
+    protected onRestartRequested(): void
+    {
+        this.sceneUI.scene.restart();
+        this.scene.restart();
     }
 
     private onPauseMenuToggled(isPauseMenuVisible: boolean): void

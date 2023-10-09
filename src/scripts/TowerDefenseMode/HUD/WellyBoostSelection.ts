@@ -182,15 +182,22 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
     {
         this.scene.tweens.add({
             targets: boostButtonWidget,
-            duration: 200,
-            yoyo: true,
-            scale: 1.4,
+            duration: 120,
+            scale: 1.3,
             callbackScope: this,
             onComplete: () => {
-                this.scene.time.delayedCall(1100, () => {
-                    this.emit("wellyBoostSelected", boostButtonWidget.getBoostData());
-                    this.hide();
-                }, undefined, this);
+                this.scene.tweens.add({
+                    targets: boostButtonWidget,
+                    duration: 120,
+                    scale: 1.1,
+                    callbackScope: this,
+                    onComplete: () => {
+                        this.scene.time.delayedCall(1100, () => {
+                            this.emit("wellyBoostSelected", boostButtonWidget.getBoostData());
+                            this.hide();
+                        }, undefined, this);
+                    }
+                });
             }
         });
     }

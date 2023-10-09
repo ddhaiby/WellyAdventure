@@ -279,7 +279,7 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.setGameOver(false);
         this.setPlayerCoin(100);
-        this.setPlayerHealth(100, 100);
+        this.initPlayerHealth();
         this.onWaveStarted(0);
         this.waveManager.start();
 
@@ -345,6 +345,12 @@ export class SceneTowerDefense extends Welly_Scene
     {
         this.coin = coin;
         this.sceneUI.onPlayerCoinChanged(this.coin);
+    }
+
+    private initPlayerHealth(): void
+    {
+        this.setPlayerHealth(100, 100);
+        this.sceneUI.onPlayerHealthChanged(this.playerHealth, this.playerMaxHealth);
     }
 
     private addPlayerHealth(health: number): void
@@ -482,7 +488,7 @@ export class SceneTowerDefense extends Welly_Scene
     protected onWellyBoostSelected(): void
     {
         this.sceneUI.hideWellyBoostSelection();
-        this.sceneUI.scene.resume(CST.SCENES.TOWER_DEFENSE);
+        this.scene.resume();
     }
 
     protected onUpdateGameSpeedRequested(): void

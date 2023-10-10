@@ -22,6 +22,12 @@ export class PauseMenu extends Phaser.GameObjects.Container
 
         this.add(background);
 
+        this.createMainButtons();
+        this.createTopRightCornerButtons();
+    }
+
+    protected createMainButtons(): void
+    {
         const buttonStyle = {
             fontSize : "54px",
             textColorNormal: CST.STYLE.COLOR.ORANGE,
@@ -45,17 +51,71 @@ export class PauseMenu extends Phaser.GameObjects.Container
         buttonRestart.onClicked(() => { this.onRestartClicked(); } , this);
         this.add(buttonRestart);
 
-        const buttonColumn = this.scene.rexUI.add.sizer({
+        const buttonMainMenu =  new WELLY_TextButton(this.scene, 0, 0, "MAIN MENU", buttonStyle);
+        buttonMainMenu.setTextures("");
+        buttonMainMenu.onClicked(() => { this.onMainMenuClicked(); } , this);
+        this.add(buttonMainMenu);
+
+        const mainButtons = this.scene.rexUI.add.sizer({
             orientation: "top-to-bottom",
             space: { top: 0, item: 40 },
             x: this.width * 0.5,
             y: this.height * 0.5
         }).setOrigin(0.5);
 
-        this.add(buttonColumn);
-        buttonColumn.add(buttonResume);
-        buttonColumn.add(buttonRestart);
-        buttonColumn.layout();
+        this.add(mainButtons);
+        mainButtons.add(buttonResume);
+        mainButtons.add(buttonRestart);
+        mainButtons.add(buttonMainMenu);
+        mainButtons.layout();
+    }
+
+    protected createTopRightCornerButtons(): void
+    {
+        const buttonStyle = {
+            pixelPerfect: false,
+            textOffsetNormalY: 0,
+            textOffsetHoveredY: -1,
+            textOffsetPressedY: 3,
+            tintNormal: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.ORANGE),
+            tintHovered: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE),
+            tintPressed: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.GREY)
+        } as GPC_TextButtonStyle ;
+
+        const topRightButtons = this.scene.rexUI.add.sizer({
+            orientation: "left-to-right",
+            space: { top: 0, item: 12 },
+            x: this.width - 12,
+            y: 12
+        }).setOrigin(1, 0);
+
+        const buttonMusic =  new WELLY_TextButton(this.scene, 0, 0, "", buttonStyle);
+        buttonMusic.setTextures("musicIcon");
+
+        // Temporary until we get sounds for real
+        let isMusicOn = true;
+        buttonMusic.onClicked(() => {
+            isMusicOn = !isMusicOn;
+            buttonMusic.setTextures(isMusicOn ? "musicIcon" : "musicIconOff");
+            this.onMusicClicked();
+        } , this);
+        this.add(buttonMusic);
+
+        // Temporary until we get sounds for real
+        let isSoundOn = true;
+        const buttonSound =  new WELLY_TextButton(this.scene, 0, 0, "", buttonStyle);
+        buttonSound.setTextures("soundIcon");
+        buttonSound.onClicked(() => {
+            isSoundOn = !isSoundOn;
+            buttonSound.setTextures(isSoundOn ? "soundIcon" : "soundIconOff");
+            this.onSoundClicked();
+        } , this);
+        this.add(buttonSound);
+
+        this.add(topRightButtons);
+        topRightButtons.add(buttonMusic);
+        topRightButtons.add(buttonSound);
+        topRightButtons.layout();
     }
 
     private onResumeClicked() : void
@@ -66,5 +126,20 @@ export class PauseMenu extends Phaser.GameObjects.Container
     private onRestartClicked() : void
     {
         this.emit("requestRestart");
+    }
+
+    private onMainMenuClicked() : void
+    {
+        this.emit("requestMainMenu");
+    }
+
+    private onMusicClicked() : void
+    {
+        this.emit("toggleMusic");
+    }
+
+    private onSoundClicked() : void
+    {
+        this.emit("toggleSound");
     }
 }

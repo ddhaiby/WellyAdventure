@@ -12,6 +12,10 @@ export declare type GPC_TextButtonStyle = {
     textOffsetNormalY?: number;
     textOffsetHoveredY?: number;
     textOffsetPressedY?: number;
+    tintNormal?: number;
+    tintHovered?: number;
+    tintPressed?: number;
+    tintDisabled?: number;
     pixelPerfect?: boolean;
     fontSize?: string;
     textColorNormal?: string;
@@ -50,6 +54,11 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
     protected textureHovered: string;
     protected textureDisabled: string;
 
+    protected tintNormal: number | undefined;
+    protected tintHovered: number | undefined;
+    protected tintPressed: number | undefined;
+    protected tintDisabled: number | undefined;
+
     protected textColorNormal: string;
     protected textColorHovered: string;
     protected textColorPressed: string;
@@ -69,6 +78,11 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.texturePressed = (style && style.texturePressed) ? style.texturePressed : this.textureNormal;
         this.textureHovered = (style && style.textureHovered) ? style.textureHovered : this.textureNormal;
         this.textureDisabled = (style && style.textureDisabled) ? style.textureDisabled : this.textureNormal;
+
+        this.tintNormal = (style && style.tintNormal) ? style.tintNormal : undefined;
+        this.tintPressed = (style && style.tintPressed) ? style.tintPressed : this.tintNormal;
+        this.tintHovered = (style && style.tintHovered) ? style.tintHovered : this.tintNormal;
+        this.tintDisabled = (style && style.tintDisabled) ? style.tintDisabled : this.tintNormal;
 
         this.textColorNormal = (style && style.textColorNormal) ? style.textColorNormal : "#000000";
         this.textColorHovered = (style && style.textColorHovered) ? style.textColorHovered : this.textColorNormal;
@@ -107,7 +121,15 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     protected setupInteractions(): void
     {
-        this.interactiveObject = this.buttonImage.visible ? this.buttonImage : this.buttonText;
+        const newInteractiveObject = this.buttonImage.visible ? this.buttonImage : this.buttonText;
+
+        if (this.interactiveObject && (newInteractiveObject != this.interactiveObject))
+        {
+            this.interactiveObject.removeInteractive();
+            this.interactiveObject.emit(Phaser.Input.Events.POINTER_OUT);
+        }
+        
+        this.interactiveObject = newInteractiveObject;
 
         this.interactiveObject.setInteractive({
             pixelPerfect: this.pixelPerfect && (this.interactiveObject == this.buttonImage),
@@ -185,7 +207,9 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.textureHovered = textureHovered ?? textureNormal;
         this.texturePressed = texturePressed ?? textureNormal;
         this.textureDisabled = textureDisabled ?? textureNormal;
+        
         this.updateVisual();
+        this.setupInteractions();
     }
 
     public setText(value: string): this
@@ -196,25 +220,39 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     private updateVisual(): void
     {
+        let buttonImageTexture = this.textureNormal;
+        let buttonTextColor = this.textColorNormal;
+        let buttonImageTint = this.tintNormal;
+
         if (!this._isEnabled)
         {
-            this.buttonImage.setTexture(this.textureDisabled);
-            this.buttonText.setColor(this.textColorDisabled);
+            buttonImageTexture = this.textureDisabled;
+            buttonTextColor = this.textColorDisabled;
+            buttonImageTint = this.tintNormal;
         }
         else if (this.isPressed)
         {
-            this.buttonImage.setTexture(this.texturePressed);
-            this.buttonText.setColor(this.textColorPressed);
+            buttonImageTexture = this.texturePressed;
+            buttonTextColor = this.textColorPressed;
+            buttonImageTint = this.tintPressed;
         }
         else if (this.isHovered)
         {
-            this.buttonImage.setTexture(this.textureHovered);
-            this.buttonText.setColor(this.textColorHovered);
+            buttonImageTexture = this.textureHovered;
+            buttonTextColor = this.textColorHovered;
+            buttonImageTint = this.tintHovered;
+        }
+
+        this.buttonImage.setTexture(buttonImageTexture);
+        this.buttonText.setColor(buttonTextColor);
+        
+        if (buttonImageTint)
+        {
+            this.buttonImage.setTintFill(buttonImageTint);
         }
         else
         {
-            this.buttonImage.setTexture(this.textureNormal);
-            this.buttonText.setColor(this.textColorNormal);
+            this.buttonImage.clearTint();
         }
 
         this.buttonImage.setVisible((this.buttonImage.texture.key.length > 0) && (this.buttonImage.texture.key != "__MISSING"))

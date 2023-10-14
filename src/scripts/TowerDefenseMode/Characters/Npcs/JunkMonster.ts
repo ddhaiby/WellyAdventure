@@ -3,7 +3,7 @@ import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
-import { MonsterSpawnerData } from "../../WaveSystem/WaveManager";
+import { MonsterSpawnerData } from "../../WaveSystem/WaveInstance";
 
 export class JunkMonster extends Npc
 {

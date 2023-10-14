@@ -49,8 +49,6 @@ export class SceneTowerDefense extends Welly_Scene
 
     private speedMode: SpeedMode = SpeedMode.SLOW;
     
-    private lastSpeedMode: SpeedMode = SpeedMode.SLOW;
-
     private turretsData: TurretData[];
 
     /** Index from turretsData for the preview */
@@ -248,7 +246,6 @@ export class SceneTowerDefense extends Welly_Scene
 
     private setSpeedMode(inSpeedMode: SpeedMode): void
     {
-        this.lastSpeedMode = this.speedMode;
         this.speedMode = inSpeedMode;
         this.sceneUI.onSpeedModeChanged(inSpeedMode);
 

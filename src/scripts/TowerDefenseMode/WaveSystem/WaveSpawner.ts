@@ -1,5 +1,4 @@
 import { PathFindingConfig } from "../../Common/Characters/CharacterMovementComponent";
-import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 
 export class WaveSpawner extends Phaser.GameObjects.Image

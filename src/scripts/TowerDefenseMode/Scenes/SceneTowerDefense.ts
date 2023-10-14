@@ -3,7 +3,6 @@ import { Welly_Scene, SceneData, SpeedMode } from "../../Common/Scenes/WELLY_Sce
 import { SceneTowerDefenseUI } from "./SceneTowerDefenseUI";
 import { WaveSpawner } from "../WaveSystem/WaveSpawner";
 import { MoveToPoint } from "../../Common/PathFinding/MoveToEntity";
-import { Npc } from "../../Common/Characters/Npcs/Npc";
 import { Turret, TurretSpawnData } from "../Characters/Npcs/Turrets/Turret";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveManager } from "../WaveSystem/WaveManager";
@@ -27,7 +26,6 @@ export class SceneTowerDefense extends Welly_Scene
     protected layer1: Phaser.Tilemaps.TilemapLayer;
 
     // Waves
-    private spawners: WaveSpawner[];
     private waveManager: WaveManager;
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
@@ -77,7 +75,6 @@ export class SceneTowerDefense extends Welly_Scene
     public init(data?: SceneData): void
     {
         GameAnalytics.resetGameplay();
-        this.spawners = [];
     }
 
     // Preload
@@ -143,9 +140,9 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createWaveSpawner(): void
     {
-        this.spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
+        const spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
-        for (const monsterSpawner of this.spawners)
+        for (const monsterSpawner of spawners)
         {
             let moveToPointId = monsterSpawner.getMoveToPointId();
             let positions = [] as Phaser.Types.Math.Vector2Like[];
@@ -173,8 +170,6 @@ export class SceneTowerDefense extends Welly_Scene
             positions.reverse();
 
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
-            monsterSpawner.onMonsterDie(this.onMonsterDie, this);
-            monsterSpawner.on("MONSTER_MOVE_TO_END", this.onMonsterReachEndPoint, this);
         }
 
         const waveCountdownSpawners = this.currentMap.createFromObjects("Wave", {name: "WaveCountdown", classType: Phaser.GameObjects.Image}) as Phaser.GameObjects.Image[];
@@ -188,11 +183,15 @@ export class SceneTowerDefense extends Welly_Scene
             waveCountdownSpawner.destroy();
         }
 
-        this.waveManager = new WaveManager(this, this.spawners);
+        this.waveManager = new WaveManager(this, spawners);
         this.waveManager.onWaveStarted(this.onWaveStarted, this)
         this.waveManager.onWaveCompleted(this.onWaveCompleted, this);
         this.waveManager.onWaveTimerStarted(this.onWaveTimerStarted, this);
         this.waveManager.onWaveTimerTick(this.onWaveTimerTick, this);
+        this.waveManager.on("MONSTER_MOVE_TO_END", this.onMonsterReachEndPoint, this);
+        this.waveManager.on("MONSTER_DIED", this.onMonsterDie, this);
+
+        this.physics.add.overlap(this.turrets, this.waveManager.getMonsters(), this.onMonsterInRange, this.isMonsterTargetable, this);
     }
 
     private createCamera(): void
@@ -296,11 +295,11 @@ export class SceneTowerDefense extends Welly_Scene
 
         GameAnalytics.instance.update(time, delta);
 
-        for (const spawner of this.spawners)
-        {
-            (spawner.getMonsters().getChildren() as Npc[]).forEach((npc: Npc) => { npc.update(); }, this);
-        }
-        (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => { turret.update(); }, this);
+        const monsters = this.waveManager.getMonsters().getChildren() as JunkMonster[];
+        monsters.forEach((monster: JunkMonster) => { monster.update(); }, this);
+
+        const turrets = (this.turrets.getChildren() as Turret[]);
+        turrets.forEach((turret: Turret) => { turret.update(); }, this);
     }
 
     private isMonsterTargetable(turret: Turret, monster: JunkMonster): boolean
@@ -320,15 +319,18 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onMonsterDie(monster: JunkMonster): void
     {
-        GameAnalytics.instance.onMonsterDie(monster.name, monster.texture.key);
-        this.addPlayerCoin(monster.getCoin());
+        if (!this.isGameOver)
+        {
+            GameAnalytics.instance.onMonsterDie(monster.name, monster.texture.key);
+            this.addPlayerCoin(monster.getCoin());
+        }
     }
 
     private onMonsterReachEndPoint(monster: JunkMonster): void
     {
-        this.removePlayerHealth(monster.getDamage());
-        this.waveManager.removeMonster(monster);
         this.cameras.main.shake(80, 0.003);
+        this.removePlayerHealth(monster.getDamage());
+        monster.die();
     }
 
     private addPlayerCoin(coin: number): void
@@ -627,12 +629,6 @@ export class SceneTowerDefense extends Welly_Scene
         let turretCount = this.spawnedTurrets.get(turretData.id) ?? 0;
         ++turretCount;
         this.spawnedTurrets.set(turretData.id, turretCount);
-
-        for (const spawner of this.spawners)
-        {
-            // @ts-ignore
-            this.physics.add.overlap(this.turrets, spawner.getMonsters(), this.onMonsterInRange, this.isMonsterTargetable, this);
-        }
 
         turret.setInteractive();
         turret.on(Phaser.Input.Events.POINTER_UP, () => { this.onTurretClicked(turret); }, this);

@@ -31,8 +31,7 @@ const defaultFormatTimeOption: FormatTimeOption = {
     millisecondSymbol: "MS",
 };
 
-/** Any object you may want to center with CenterItem, CenterVItem or CenterHItem. They must have a height and a width. */
-declare type CenterableObject = Phaser.GameObjects.Text | Phaser.GameObjects.Image;
+declare type CenterableObject = Phaser.GameObjects.Components.Transform & Phaser.GameObjects.Components.ComputedSize;
 
 export class Welly_Scene extends Phaser.Scene
 {
@@ -54,7 +53,7 @@ export class Welly_Scene extends Phaser.Scene
     ////////////////////////////////////////////////////////////////////////
 
 
-    public centerItem(item: CenterableObject, offsetX: number = 0, offsetY: number = 0) : CenterableObject
+    public centerItem(item: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.Components.ComputedSize, offsetX: number = 0, offsetY: number = 0) : CenterableObject
     {
         const sceneWidth: number = this.scale.displaySize.width;
         const sceneHeight: number = this.scale.displaySize.height;

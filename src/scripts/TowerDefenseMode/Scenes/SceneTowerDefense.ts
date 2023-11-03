@@ -87,15 +87,6 @@ export class SceneTowerDefense extends Welly_Scene
 
     public create(): void
     {
-        const keys = this.input.keyboard?.addKeys({
-            escape: Phaser.Input.Keyboard.KeyCodes.O
-        }, false);
-        // @ts-ignore
-        keys.escape.on('down', () => { this.setGameOver(true); }, this);
-
-
-
-
         super.create();
 
         this.turretsData = this.cache.json.get("turretsData");
@@ -436,6 +427,11 @@ export class SceneTowerDefense extends Welly_Scene
     {
         GameAnalytics.instance.onWaveCleared();
         this.sceneUI.onWaveCompleted(currentWave);
+
+        if (this.waveManager.shouldGetBonusFromWave(currentWave))
+        {
+            this.showWellyBoostSelection();
+        }
     }
 
     private onWaveTimerStarted(): void

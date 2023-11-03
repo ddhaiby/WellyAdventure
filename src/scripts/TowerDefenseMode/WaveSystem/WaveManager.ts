@@ -12,6 +12,7 @@ declare type WaveDataSettings = {
     monsterCountBase: number;
     monsterCountIncreasePerWaveMin: number;
     monsterCountIncreasePerWaveMax: number;
+    bonusEveryXWave: number;
 }
 
 export class WaveManager extends Phaser.GameObjects.GameObject
@@ -181,6 +182,11 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         this.monsterCountLastWave = this.waveData.monsterCountBase;
 
         this.waveInstances = [];
+    }
+
+    public shouldGetBonusFromWave(wave: number): boolean
+    {
+        return ((wave % this.waveData.bonusEveryXWave) == 0);
     }
 
     public getMonsters(): Phaser.Physics.Arcade.Group

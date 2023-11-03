@@ -137,23 +137,23 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
     public show(boostDatArray: WellyBoostData[]): void
     {
-        const newBoostCount = Math.min(boostDatArray.length, this.boostWidgetArray.length)
-
-        for (let i = 0; i < newBoostCount; ++i)
-        {
-            this.boostWidgetArray[i].setBoostData(boostDatArray[i]);
-            this.boostWidgetArray[i].setVisible(true);
-            this.boostWidgetArray[i].setScale(1);
-            this.boostWidgetArray[i].activate();
-        }
-
-        for (let i = newBoostCount; i < this.boostWidgetArray.length; ++i)
-        {
-            this.boostWidgetArray[i].setVisible(false);
-            this.boostWidgetArray[i].disable();
-        }
-
         this.setVisible(true);
+
+        for (const boostWidget of this.boostWidgetArray)
+        {
+            boostWidget.setVisible(false);
+            boostWidget.disable();
+        }
+
+        this.scene.time.delayedCall(200, () => {
+            const newBoostCount = Math.min(boostDatArray.length, this.boostWidgetArray.length)
+
+            for (let i = 0; i < newBoostCount; ++i)
+            {
+                this.boostWidgetArray[i].setBoostData(boostDatArray[i]);
+                this.animateShowBoostWidget(this.boostWidgetArray[i]);
+            }
+        }, undefined, this);
     }
 
     public hide(): void
@@ -169,16 +169,40 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
             if (i == selectedIndex)
             {
-                this.animateSelectedBoostWidget(this.boostWidgetArray[i]);
+                this.animateHideSelectedBoostWidget(this.boostWidgetArray[i]);
             }
             else
             {
-                this.animateNonSelectedBoostWidget(this.boostWidgetArray[i]);
+                this.animateHideNonSelectedBoostWidget(this.boostWidgetArray[i]);
             }
         }
     }
 
-    protected animateSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
+    protected animateShowBoostWidget(boostButtonWidget: BoostButtonWidget): void
+    {
+        boostButtonWidget.setScale(0);
+        boostButtonWidget.setVisible(true);
+
+        this.scene.tweens.add({
+            targets: boostButtonWidget,
+            duration: 250,
+            scale: 1.05,
+            callbackScope: this,
+            onComplete: () => {
+                this.scene.tweens.add({
+                    targets: boostButtonWidget,
+                    duration: 250,
+                    scale: 1,
+                    callbackScope: this,
+                    onComplete: () => {
+                        boostButtonWidget.activate();
+                    }
+                });
+            }
+        });
+    }
+
+    protected animateHideSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
     {
         this.scene.tweens.add({
             targets: boostButtonWidget,
@@ -202,7 +226,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         });
     }
 
-    protected animateNonSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
+    protected animateHideNonSelectedBoostWidget(boostButtonWidget: BoostButtonWidget): void
     {
         this.scene.tweens.add({
             targets: boostButtonWidget,

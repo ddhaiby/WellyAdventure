@@ -2,7 +2,7 @@
     "boss1": {
         "name": "Hungry Amalia",
         "texture": "boss1",
-        "health": 800,
+        "health": 400,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "coin": 500,
@@ -13,7 +13,7 @@
     "amalia": {
         "name": "Amalia",
         "texture": "Amalia",
-        "health": 100,
+        "health": 80,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "coin": 40,
@@ -23,7 +23,7 @@
     "wellyYellow": {
         "name": "Yellow boy",
         "texture": "player",
-        "health": 200,
+        "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "coin": 150,
@@ -33,7 +33,7 @@
     "wellyRed": {
         "name": "Welly Red",
         "texture": "wellyRed",
-        "health": 160,
+        "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "coin": 80,
@@ -43,7 +43,7 @@
     "wellyWhite": {
         "name": "Welly welly friend",
         "texture": "wellyWhite",
-        "health": 100,
+        "health": 120,
         "bodyWidth": 48,
         "bodyHeight": 64,
         "coin": 20,

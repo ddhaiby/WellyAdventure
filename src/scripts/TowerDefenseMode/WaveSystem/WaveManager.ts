@@ -3,6 +3,17 @@ import { JunkMonster } from "../Characters/Npcs/JunkMonster";
 import { WaveInstance } from "./WaveInstance";
 import {  WaveSpawner } from "./WaveSpawner";
 
+declare type WaveDataSettings = {
+    spawnCooldownBase: number;
+    spawnCooldownVariation: number;
+    spawnCooldownMinimum: number;
+    spawnCooldownDecreasePerWave: number;
+    healthPercentageIncreasePerWave: number;
+    monsterCountBase: number;
+    monsterCountIncreasePerWaveMin: number;
+    monsterCountIncreasePerWaveMax: number;
+}
+
 export class WaveManager extends Phaser.GameObjects.GameObject
 {
     public scene: Welly_Scene;
@@ -19,10 +30,16 @@ export class WaveManager extends Phaser.GameObjects.GameObject
     /** Total number of waves - Set value to 0 or lower for infinite waves */
     protected waveCount: number = -1;
 
+    /** How many monsters were spawned on last wave */
+    protected monsterCountLastWave: number = 0;
+
     protected tickNextWaveTimerEvent: Phaser.Time.TimerEvent;
 
     /** All the data related to the monsters */
     protected monstersData: any;
+
+    /** All the data related to the waves */
+    protected waveData: WaveDataSettings;
 
     /** The spawned monsters (alive) in the game */
     private monsters: Phaser.Physics.Arcade.Group;
@@ -35,7 +52,10 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         this.tickNextWaveTimerEvent = this.scene.time.addEvent({});
 
         this.monstersData = this.scene.cache.json.get("monstersData");
+        this.waveData = this.scene.cache.json.get("waveData");
         this.monsters = scene.physics.add.group();
+
+        this.monsterCountLastWave = this.waveData.monsterCountBase;
     }
 
     public addSpawners(newSpawners: WaveSpawner[])
@@ -70,7 +90,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         const allWavesCompleted = (this.waveCount > 0) && (this.currentWave >= this.waveCount);
         if (!allWavesCompleted)
         {
-            const waitWaveDuration = 10000;
+            const waitWaveDuration = 20000;
             this.tickNextWaveTimer(waitWaveDuration, waitWaveDuration);
             this.emit("WAVE_TIMER_STARTED", waitWaveDuration);
         }
@@ -96,24 +116,38 @@ export class WaveManager extends Phaser.GameObjects.GameObject
 
     public startNextWave(): void
     {
-        ++this.currentWave;
+        const monsterCount = this.generateMonsterCount();
+        this.monsterCountLastWave = monsterCount;
+
+        const spawnCooldown = this.waveData.spawnCooldownBase - this.waveData.spawnCooldownDecreasePerWave * this.currentWave;
+        const healthPercentageBonus = this.waveData.healthPercentageIncreasePerWave * this.currentWave;
 
         const waveInstance = new WaveInstance(this.scene, {
-            monsterCount: 4,
-            spawnCooldown: 4000,
+            monsterCount: monsterCount,
+            spawnCooldown: spawnCooldown,
+            spawnCooldownVariation: this.waveData.spawnCooldownVariation,
+            spawnCooldownMinimum: this.waveData.spawnCooldownMinimum,
             monstersData: this.monstersData,
             spawners: this.spawners,
-            waveNumber: this.currentWave,
-            monsterGroup: this.monsters
+            waveNumber: this.currentWave + 1,
+            monsterGroup: this.monsters,
+            healthPercentageBonus: healthPercentageBonus
         });
         waveInstance.on("MONSTER_DIED", this.onMonsterDie, this);
         waveInstance.on("MONSTER_MOVE_TO_END", this.onMonsterMoveToEnd, this);
         waveInstance.on("WAVE_COMPLETED", () => { this.onWaveInstanceCompleted(waveInstance); }, this);
         this.waveInstances.push(waveInstance);
 
+        ++this.currentWave;
+
         this.emit("WAVE_STARTED", this.currentWave);
 
         this.startNextWaveTimer();
+    }
+
+    protected generateMonsterCount(): number
+    {
+        return Math.max(1, this.monsterCountLastWave + Phaser.Math.Between(-this.waveData.monsterCountIncreasePerWaveMin, this.waveData.monsterCountIncreasePerWaveMax));
     }
 
     protected onMonsterDie(monster: JunkMonster): void
@@ -144,6 +178,7 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         this.clearWaveTimer();
 
         this.monsters.clear(true, true);
+        this.monsterCountLastWave = this.waveData.monsterCountBase;
 
         this.waveInstances = [];
     }

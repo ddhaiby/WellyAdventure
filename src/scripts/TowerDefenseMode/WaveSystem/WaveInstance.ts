@@ -33,6 +33,9 @@ export declare type MonsterSpawnerData = SpawnData &
 declare type WaveInstanceData = {
     monsterCount: number,
     spawnCooldown: number,
+    spawnCooldownVariation: number,
+    spawnCooldownMinimum: number,
+    healthPercentageBonus: number,
     monstersData: any
     spawners: WaveSpawner[],
     waveNumber: number,
@@ -55,6 +58,13 @@ export class WaveInstance extends Phaser.Events.EventEmitter
     /** Base cooldown to spawn a monster */
     protected spawnCooldown: number = 1000;
 
+    /** Noise cooldown to diversify the moment of spawn */
+    protected spawnCooldownVariation: number = 100;
+    
+    protected spawnCooldownMinimum: number = 100;
+
+    protected healthPercentageBonus: number = 0;
+
     protected spawners: WaveSpawner[];
 
     /** Which wave is it */
@@ -76,6 +86,10 @@ export class WaveInstance extends Phaser.Events.EventEmitter
         this.waveNumber = waveInstanceData.waveNumber;
         this.monsterGroup = waveInstanceData.monsterGroup;
 
+        this.spawnCooldown = waveInstanceData.spawnCooldown;
+        this.spawnCooldownVariation = waveInstanceData.spawnCooldownVariation;
+        this.healthPercentageBonus = waveInstanceData.healthPercentageBonus;
+
         this.start();
     }
 
@@ -95,8 +109,8 @@ export class WaveInstance extends Phaser.Events.EventEmitter
     public waitAndSpawnMonster(): void
     {
         const spawner = this.pickRandomSpawner();
-        // this.scene.time.delayedCall(this.spawnCooldown + Math.random() * 400, this.spawnMonster, [spawner], this);
-        this.scene.time.delayedCall(1000, this.spawnMonster, [spawner], this);
+        const cooldown = Math.max(this.spawnCooldownMinimum, this.spawnCooldown + (Math.random() * this.spawnCooldownVariation * 2 - this.spawnCooldownVariation));
+        this.scene.time.delayedCall(cooldown, this.spawnMonster, [spawner], this);
     }
 
     protected pickRandomSpawner(): WaveSpawner
@@ -130,7 +144,10 @@ export class WaveInstance extends Phaser.Events.EventEmitter
         const monster = new JunkMonster(this.scene, monsterX, monsterY);
         this.monsterGroup.add(monster);
         monster.init(monsterSpawnData);
-        
+
+        monster.setMaxHealth(monster.getMaxHealth() * (1 + this.healthPercentageBonus));
+        monster.setHealth(monster.getMaxHealth());
+
         ++this.aliveMonsterCount;
         ++this.spawnedMonsterCount;
 

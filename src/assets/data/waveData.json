@@ -1,8 +1,10 @@
-[
-    {
-
-    },
-    {
-        
-    }
-]
+{
+    "spawnCooldownBase": 1000,
+    "spawnCooldownVariation": 200,
+    "spawnCooldownMinimum": 400,
+    "spawnCooldownDecreasePerWave": 30,
+    "healthPercentageIncreasePerWave": 0.15,
+    "monsterCountBase": 4,
+    "monsterCountIncreasePerWaveMin": 0,
+    "monsterCountIncreasePerWaveMax": 2
+}

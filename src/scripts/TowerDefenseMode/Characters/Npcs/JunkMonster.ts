@@ -141,6 +141,16 @@ export class JunkMonster extends Npc
         }
     }
 
+    public getHealth(): number
+    {
+        return this.health;
+    }
+
+    public getMaxHealth(): number
+    {
+        return this.maxHealth;
+    }
+
     public setHealth(inHealth: number): void
     {
         const oldHealth = this.health;
@@ -151,6 +161,15 @@ export class JunkMonster extends Npc
         if ((this.health <= 0) && (oldHealth > 0))
         {
             this.die();
+        }
+    }
+
+    public setMaxHealth(inMaxHealth: number): void
+    {
+        if (inMaxHealth > 0)
+        {
+            this.maxHealth = inMaxHealth;
+            this.health = Math.min(this.health, this.maxHealth);
         }
     }
 

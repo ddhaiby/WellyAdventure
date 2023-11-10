@@ -239,10 +239,10 @@ export class SceneTowerDefenseUI extends Welly_Scene
         this.wellyBoostSelection.hide();
     }
 
-    protected onWellyBoostSelected(): void
+    protected onWellyBoostSelected(boostData: WellyBoostData): void
     {
         this.wellyBoostSelection.hide();
-        this.events.emit("wellyBoostSelected");
+        this.events.emit("wellyBoostSelected", boostData);
     }
 
     protected onGameSpeedButtonClicked(): void

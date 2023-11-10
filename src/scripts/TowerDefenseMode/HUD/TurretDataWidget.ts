@@ -14,7 +14,7 @@ export interface ITurretData
     getRange: () => number;
     getNextRange: () => number;
     
-    getDamage: () => number;
+    getCurrentDamage: () => number;
     getNextDamage: () => number;
 
     getAttackSpeed: () => number;
@@ -145,7 +145,7 @@ export class TurretDataWidget extends Phaser.GameObjects.Container
     {
         this.turretNameText.setText(`${turretData.name}    Lv.${turretData.getLevel() + 1}`);
 
-        this.turretATQText.setText(`${turretData.getDamage()}`);
+        this.turretATQText.setText(`${turretData.getCurrentDamage()}`);
         this.turretNextATQText.setText(`${turretData.getNextDamage()}`);
         this.turretNextATQText.setVisible(turretData.canUpgrade());
         this.turretATQArrow.setVisible(turretData.canUpgrade());

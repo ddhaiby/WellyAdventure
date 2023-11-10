@@ -209,7 +209,7 @@ export class JunkMonster extends Npc
         return this.coin;
     }
 
-    public getDamage(): number
+    public getCurrentDamage(): number
     {
         return this.damage;
     }

@@ -1,11 +1,15 @@
+import { SceneTowerDefense } from "../Scenes/SceneTowerDefense";
 
-
-export class WellyBoostManager
+export class WellyBoost
 {
-    private
+    protected scene: SceneTowerDefense;
 
-    constructor()
+    constructor(scene: SceneTowerDefense)
     {
+        this.scene = scene;
+    }
 
+    public activate(): void
+    {
     }
 }

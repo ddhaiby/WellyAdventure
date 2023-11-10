@@ -10,7 +10,7 @@ import { TurretPopup } from "../Characters/Npcs/Turrets/TurretPopup";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import { WaveCountdownWidget } from "../HUD/WaveCountdownWidget";
-import { WellyBoostManager } from "../WellyBoost/WellyBoostManager";
+import { WellyBoostData, WellyBoostManager } from "../WellyBoost/WellyBoostManager";
 import { TurretData } from "../Turrets/TurretData";
 import { TurretPreviewWidget } from "../HUD/TurretPreviewWidget";
 import { GameAnalytics } from "../Analytics/GameAnalytics";
@@ -60,7 +60,11 @@ export class SceneTowerDefense extends Welly_Scene
     /** Indicates where the turret will be spawned. Used with turretPreview */
     private turretSpawnAreaPreview: Phaser.GameObjects.Graphics;
 
+    /** The number of turrets spawned in game per turret type */
     private spawnedTurrets: Map<string /** turretId */, number /** turretCount */>;
+
+    /** The bonus damage for each turret */
+    private bonusDamagePerTurret: Map<string /** turretId */, number /** turretCount */>;
 
     constructor()
     {
@@ -87,6 +91,18 @@ export class SceneTowerDefense extends Welly_Scene
 
     public create(): void
     {
+        const keys = this.input.keyboard?.addKeys({
+            escape: Phaser.Input.Keyboard.KeyCodes.O
+        }, false);
+
+        if (keys)
+        {
+            // @ts-ignore
+            keys.escape.on('down', () => { this.showWellyBoostSelection(); }, this);
+        }
+        
+
+
         super.create();
 
         this.turretsData = this.cache.json.get("turretsData");
@@ -94,10 +110,14 @@ export class SceneTowerDefense extends Welly_Scene
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
         this.spawnedTurrets = new Map<string, number>();
+        this.bonusDamagePerTurret = new Map<string, number>();
+
+        this.bonusDamagePerTurret.set("ALL", 0);
 
         for (const turretData of this.turretsData)
         {
             this.spawnedTurrets.set(turretData.id, 0);
+            this.bonusDamagePerTurret.set(turretData.id, 0);
         }
 
         this.createMap();
@@ -317,7 +337,7 @@ export class SceneTowerDefense extends Welly_Scene
     private onMonsterReachEndPoint(monster: JunkMonster): void
     {
         this.cameras.main.shake(80, 0.003);
-        this.removePlayerHealth(monster.getDamage());
+        this.removePlayerHealth(monster.getCurrentDamage());
         monster.die();
     }
 
@@ -380,8 +400,6 @@ export class SceneTowerDefense extends Welly_Scene
         outlinePlugin.remove(turret, "hoverTurret");
         outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
 
-        const fnOnTurretUpgrade = () => { this.sceneUI.updateTurretDataWidget(turret); };
-        turret.on("upgrade", fnOnTurretUpgrade, this);
         turret.showRangeIndicator();
 
         this.turretPopup = new TurretPopup(turret, turret.x, turret.y);
@@ -389,7 +407,6 @@ export class SceneTowerDefense extends Welly_Scene
         this.turretPopup.once("destroyed", () => {
             this.sceneUI.hideTurretDataWidget();
             turret.hideRangeIndicator();
-            turret.off("upgrade", fnOnTurretUpgrade, this);
             outlinePlugin.remove(turret);
         }, this); 
 
@@ -408,13 +425,19 @@ export class SceneTowerDefense extends Welly_Scene
         outlinePlugin.remove(turret, "hoverTurret");
     }
 
-    private tryUpgradeTurret(turret: Turret): void
+    public tryUpgradeTurret(turret: Turret, hasPrice: boolean = true): void
     {
-        const upgradePrice = turret.getUpgradePrice();
+        const upgradePrice = hasPrice ? turret.getUpgradePrice() : 0;
         if (turret.canUpgrade() && (this.coin >= upgradePrice))
         {
             turret.upgrade();
-            this.removePlayerCoin(upgradePrice);
+
+            if (upgradePrice > 0)
+            {
+                this.removePlayerCoin(upgradePrice);
+            }
+
+            this.sceneUI.updateTurretDataWidget(turret);
         }
     }
 
@@ -480,8 +503,9 @@ export class SceneTowerDefense extends Welly_Scene
         this.sceneUI.showWellyBoostSelection(boostDatArray);
     }
 
-    protected onWellyBoostSelected(): void
+    protected onWellyBoostSelected(boostData: WellyBoostData): void
     {
+        this.boostManager.grantBoost(boostData);
         this.sceneUI.hideWellyBoostSelection();
         this.scene.resume();
     }
@@ -585,7 +609,20 @@ export class SceneTowerDefense extends Welly_Scene
 
             this.turretPrewiewIndex = CST.INDEX_INVALID;
         }
-        
+    }
+
+    public getTurrets(): Turret[]
+    {
+        return this.turrets.getChildren() as Turret[];
+    }
+    
+    public addBonusDamageTo(turretId: string, bonusDamage: number): void
+    {
+        if ((bonusDamage > 0) && this.bonusDamagePerTurret.has(turretId))
+        {
+            this.bonusDamagePerTurret.set(turretId, this.bonusDamagePerTurret.get(turretId) + bonusDamage);
+            this.updateAllTurretBonusDamage();
+        }
     }
 
     private trySpawnTurret(x: number, y: number, turretData: TurretData, level: number = 0, price: number = 0)
@@ -606,6 +643,7 @@ export class SceneTowerDefense extends Welly_Scene
     private spawnTurret(x: number, y: number, turretData: TurretData, level: number = 0): void
     {
         const turret = new Turret(this, 0, 0);
+        turret.setBonusDamage(this.bonusDamagePerTurret.get(turretData.id) + this.bonusDamagePerTurret.get("ALL"));
         turret.setPosition(x, y - turret.height * 0.5);
 
         this.turrets.add(turret);
@@ -629,6 +667,18 @@ export class SceneTowerDefense extends Welly_Scene
         turret.on(Phaser.Input.Events.POINTER_OUT, () => { this.onTurretHoverEnded(turret); }, this);
 
         this.sceneUI.onTurretSpawned(turretData.id, turretData.maxInstances - turretCount);
+    }
+
+    public updateAllTurretBonusDamage(): void
+    {
+        for (const turret of this.turrets.getChildren() as Turret[])
+        {
+            const turretId = turret.getTurretId();
+            if (this.bonusDamagePerTurret.has(turretId))
+            {
+                turret.setBonusDamage(this.bonusDamagePerTurret.get(turretId) + this.bonusDamagePerTurret.get("ALL"));
+            }
+        }
     }
 
     private setGameOver(isGameOver: boolean): void

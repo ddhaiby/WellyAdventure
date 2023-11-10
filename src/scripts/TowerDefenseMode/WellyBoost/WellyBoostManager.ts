@@ -1,4 +1,7 @@
-import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
+import { SceneTowerDefense } from "../Scenes/SceneTowerDefense";
+import { WellyBoost } from "./WellyBoost";
+import { WellyBoost_BoostDamageTurrets } from "./WellyBoost_BoostDamageTurrets";
+import { WellyBoost_LevelUpTurrets } from "./WellyBoost_LevelUpTurrets";
 
 export declare type WellyBoostData = {
     id: string;
@@ -8,20 +11,37 @@ export declare type WellyBoostData = {
     rarity: string;
 }
 
+/** All the boost that we can use and read from the json wellyBoostData */
+const WellyBoostList =
+{
+    "fullTraining": WellyBoost_LevelUpTurrets,
+    "damageBonus": WellyBoost_BoostDamageTurrets,
+}
+
 export class WellyBoostManager
 {
-    public scene: Welly_Scene;
+    public scene: SceneTowerDefense;
 
     protected boostDatArray: WellyBoostData[];
 
     /** All the data related to the monsters */
     protected wellyBoostData: WellyBoostData[];
 
-    constructor(scene: Welly_Scene)
+    constructor(scene: SceneTowerDefense)
     {
         this.scene = scene;
 
         this.wellyBoostData = this.scene.cache.json.get("wellyBoostData");
+    }
+
+    public grantBoost(boostData: WellyBoostData): void
+    {
+        const boostClass = WellyBoostList[boostData.id];
+        if (boostClass)
+        {
+            const newBoost = new boostClass(this.scene) as WellyBoost;
+            newBoost.activate();
+        }
     }
 
     public generateRandomBoosts(boostCount: number): WellyBoostData[]

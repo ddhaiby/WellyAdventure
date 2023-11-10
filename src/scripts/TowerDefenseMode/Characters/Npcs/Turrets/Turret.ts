@@ -37,6 +37,9 @@ export class Turret extends Npc implements ITurretData
     /** Base damage to inflict to a target */
     protected damage: number = 50;
 
+    /** Damage bonus granted by the game or from bonus */
+    protected bonusDamage: number = 0;
+
     /** Text that shows the current level of the turret */
     protected levelText: Phaser.GameObjects.Text;
 
@@ -201,6 +204,11 @@ export class Turret extends Npc implements ITurretData
         }
     }
 
+    public getTurretId(): string
+    {
+        return this.turretData.id;
+    }
+
     public getUpgradePrice(): number
     {
         return this.isLevelMax() ? Infinity : this.turretData.gameStatsPerLevel[this.level].price;
@@ -227,7 +235,7 @@ export class Turret extends Npc implements ITurretData
                 onComplete: () => {
                     if (target)
                     {
-                        target.takeDamage(this.damage);
+                        target.takeDamage(this.getCurrentDamage());
                     }
                     bullet.destroy();
                 }
@@ -285,6 +293,11 @@ export class Turret extends Npc implements ITurretData
         }
     }
 
+    public setBonusDamage(bonusDamage: number): void
+    {
+        this.bonusDamage = bonusDamage;
+    }
+
     protected reload(): void
     {
         this.isReloading = true;
@@ -313,14 +326,14 @@ export class Turret extends Npc implements ITurretData
         return this.turretData.gameStatsPerLevel[this.level][statName];
     }
 
-    public getDamage(): number
+    public getCurrentDamage(): number
     {
-        return this.damage;
+        return this.damage + this.bonusDamage;
     }
 
     public getNextDamage(): number
     {
-        return this.getNextStat("damage");
+        return this.getNextStat("damage") + this.bonusDamage;
     }
 
     public getAttackSpeed(): number

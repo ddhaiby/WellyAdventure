@@ -3,7 +3,7 @@ import { CST } from "../../Common/CST";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
-import { WellyBoostData } from "../WellyBoost/WellyBoostManager";
+import { WellyBoostData } from "./WellyBoostManager";
 
 export class BoostButtonWidget extends Phaser.GameObjects.Container
 {

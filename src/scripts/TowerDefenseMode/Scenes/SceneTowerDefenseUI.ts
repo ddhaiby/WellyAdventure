@@ -9,7 +9,7 @@ import { BottomMenu } from "../HUD/BottomMenu";
 import { EndRunWidget } from "../HUD/EndRunWidget";
 import { PauseMenu } from "../HUD/PauseMenu";
 import { ITurretData, TurretDataWidget } from "../HUD/TurretDataWidget";
-import { WellyBoostSelection } from "../HUD/WellyBoostSelection";
+import { WellyBoostSelection } from "../WellyBoost/WellyBoostSelection";
 import { WellyBoostData } from "../WellyBoost/WellyBoostManager";
 
 declare type UIKeys = 

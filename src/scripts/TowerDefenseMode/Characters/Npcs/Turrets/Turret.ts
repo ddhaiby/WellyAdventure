@@ -43,6 +43,9 @@ export class Turret extends Npc implements ITurretData
     /** Damage bonus granted by the game or from bonus */
     protected bonusDamage: number = 0;
 
+    /** Range bonus granted by the game or from bonus */
+    protected bonusRange: number = 0;
+
     /** Text that shows the current level of the turret */
     protected levelText: Phaser.GameObjects.Text;
 
@@ -296,16 +299,6 @@ export class Turret extends Npc implements ITurretData
         }
     }
 
-    public setBonusDamage(bonusDamage: number): void
-    {
-        this.bonusDamage = bonusDamage;
-    }
-
-    public setBonusAttackSpeed(bonusAttackSpeed: number): void
-    {
-        this.bonusAttackSpeed = bonusAttackSpeed;
-    }
-
     protected reload(): void
     {
         this.isReloading = true;
@@ -344,6 +337,11 @@ export class Turret extends Npc implements ITurretData
         return this.getNextStat("damage") + this.bonusDamage;
     }
 
+    public setBonusDamage(bonusDamage: number): void
+    {
+        this.bonusDamage = bonusDamage;
+    }
+
     public getCurrentAttackSpeed(): number
     {
         return this.attackSpeed + this.bonusAttackSpeed;
@@ -354,20 +352,32 @@ export class Turret extends Npc implements ITurretData
         return this.getNextStat("attackSpeed") + this.bonusAttackSpeed;
     }
 
-    public getRange(): number
+    public setBonusAttackSpeed(bonusAttackSpeed: number): void
+    {
+        this.bonusAttackSpeed = bonusAttackSpeed;
+    }
+
+    public getCurrentRange(): number
     {
         return this.body.width * 0.5;
     }
 
     public getNextRange(): number
     {
-        return this.getNextStat("range") * 0.5;
+        return this.getNextStat("range") * 0.5 + this.bonusRange;
     }
 
     protected setRange(range: number): void
     {
         const bodySize = range;
         this.body.setSize(bodySize, bodySize);
+    }
+
+    public setBonusRange(bonusRange: number): void
+    {
+        // Reset the range with the new bonusRange.
+        this.setRange(this.body.width - this.bonusRange + bonusRange);
+        this.bonusRange = bonusRange;
     }
 
     public getLevel(): number
@@ -386,7 +396,7 @@ export class Turret extends Npc implements ITurretData
         {
             this.hideRangeIndicator();
 
-            const range = this.getRange();
+            const range = this.getCurrentRange();
             this.rangeIndicator.fillStyle(0x0000AA, 0.25);
             this.rangeIndicator.fillCircle(this.x, this.y, range);
             this.rangeIndicator.lineStyle(3, 0x0000FF, 0.8);

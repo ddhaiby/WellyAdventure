@@ -69,6 +69,9 @@ export class SceneTowerDefense extends Welly_Scene
     /** The bonus attack speed for each turret */
     private bonusAttackSpeedPerTurret: Map<string /** turretId */, number /** turretCount */>;
 
+    /** The bonus range for each turret */
+    private bonusRangePerTurret: Map<string /** turretId */, number /** turretCount */>;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -115,15 +118,18 @@ export class SceneTowerDefense extends Welly_Scene
         this.spawnedTurrets = new Map<string, number>();
         this.bonusDamagePerTurret = new Map<string, number>();
         this.bonusAttackSpeedPerTurret = new Map<string, number>();
+        this.bonusRangePerTurret = new Map<string, number>();
 
         this.bonusDamagePerTurret.set("ALL", 0);
         this.bonusAttackSpeedPerTurret.set("ALL", 0);
+        this.bonusRangePerTurret.set("ALL", 0);
 
         for (const turretData of this.turretsData)
         {
             this.spawnedTurrets.set(turretData.id, 0);
             this.bonusDamagePerTurret.set(turretData.id, 0);
             this.bonusAttackSpeedPerTurret.set(turretData.id, 0);
+            this.bonusRangePerTurret.set(turretData.id, 0);
         }
 
         this.createMap();
@@ -322,7 +328,7 @@ export class SceneTowerDefense extends Welly_Scene
         const posBodyTurret = { x: turret.body.x + turret.body.width * 0.5, y: turret.body.y + turret.body.height * 0.5 };
         const posBodyMonster = { x: monster.body.x + monster.body.width * 0.5, y: monster.body.y + monster.body.height * 0.5 };
         const squareDistance = Phaser.Math.Distance.BetweenPointsSquared(posBodyTurret, posBodyMonster);
-        const squareRange = turret.getRange() * turret.getRange();
+        const squareRange = turret.getCurrentRange() * turret.getCurrentRange();
         return (squareDistance <= squareRange);
     }
 
@@ -657,6 +663,15 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
+    public addBonusRangeTo(turretId: string, bonusRange: number): void
+    {
+        if ((bonusRange > 0) && this.bonusRangePerTurret.has(turretId))
+        {
+            this.bonusRangePerTurret.set(turretId, this.bonusRangePerTurret.get(turretId) + bonusRange);
+            this.updateAllTurretBonusRange();
+        }
+    }
+
     private trySpawnTurret(x: number, y: number, turretData: TurretData, level: number = 0, price: number = 0)
     {
         if (this.canSpawnTurret(turretData, price))
@@ -677,6 +692,7 @@ export class SceneTowerDefense extends Welly_Scene
         const turret = new Turret(this, 0, 0);
         turret.setBonusDamage(this.bonusDamagePerTurret.get(turretData.id) + this.bonusDamagePerTurret.get("ALL"));
         turret.setBonusAttackSpeed(this.bonusAttackSpeedPerTurret.get(turretData.id) + this.bonusAttackSpeedPerTurret.get("ALL"));
+        turret.setBonusRange(this.bonusRangePerTurret.get(turretData.id) + this.bonusRangePerTurret.get("ALL"));
         turret.setPosition(x, y - turret.height * 0.5);
 
         this.turrets.add(turret);
@@ -726,6 +742,18 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
+    public updateAllTurretBonusRange(): void
+    {
+        for (const turret of this.turrets.getChildren() as Turret[])
+        {
+            const turretId = turret.getTurretId();
+            if (this.bonusRangePerTurret.has(turretId))
+            {
+                turret.setBonusRange(this.bonusRangePerTurret.get(turretId) + this.bonusRangePerTurret.get("ALL"));
+            }
+        }
+    }
+
     private setGameOver(isGameOver: boolean): void
     {
         if (this.isGameOver != isGameOver)
@@ -737,16 +765,16 @@ export class SceneTowerDefense extends Welly_Scene
                 (this.turrets.getChildren() as Turret[]).forEach((turret: Turret) => {
                     turret.disableBody(false, false);
                 }, this);
-    
+
                 for (const widget of this.waveCountdownWidgets)
                 {
                     widget.setVisible(false);
                 }
-    
+
                 this.waveManager.clear();
-    
+
                 this.sceneUI.onGameOver(GameAnalytics.instance.getGameStatistics());
-            }   
+            }
         }
     }
 }

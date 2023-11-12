@@ -65,6 +65,9 @@ export class SceneTowerDefense extends Welly_Scene
 
     /** The bonus damage for each turret */
     private bonusDamagePerTurret: Map<string /** turretId */, number /** turretCount */>;
+    
+    /** The bonus attack speed for each turret */
+    private bonusAttackSpeedPerTurret: Map<string /** turretId */, number /** turretCount */>;
 
     constructor()
     {
@@ -111,13 +114,16 @@ export class SceneTowerDefense extends Welly_Scene
         this.turretPreviewWidget = new TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
         this.spawnedTurrets = new Map<string, number>();
         this.bonusDamagePerTurret = new Map<string, number>();
+        this.bonusAttackSpeedPerTurret = new Map<string, number>();
 
         this.bonusDamagePerTurret.set("ALL", 0);
+        this.bonusAttackSpeedPerTurret.set("ALL", 0);
 
         for (const turretData of this.turretsData)
         {
             this.spawnedTurrets.set(turretData.id, 0);
             this.bonusDamagePerTurret.set(turretData.id, 0);
+            this.bonusAttackSpeedPerTurret.set(turretData.id, 0);
         }
 
         this.createMap();
@@ -642,6 +648,15 @@ export class SceneTowerDefense extends Welly_Scene
         }
     }
 
+    public addBonusAttackSpeedTo(turretId: string, bonusAttackSpeed: number): void
+    {
+        if ((bonusAttackSpeed > 0) && this.bonusAttackSpeedPerTurret.has(turretId))
+        {
+            this.bonusAttackSpeedPerTurret.set(turretId, this.bonusAttackSpeedPerTurret.get(turretId) + bonusAttackSpeed);
+            this.updateAllTurretBonusAttackSpeed();
+        }
+    }
+
     private trySpawnTurret(x: number, y: number, turretData: TurretData, level: number = 0, price: number = 0)
     {
         if (this.canSpawnTurret(turretData, price))
@@ -661,6 +676,7 @@ export class SceneTowerDefense extends Welly_Scene
     {
         const turret = new Turret(this, 0, 0);
         turret.setBonusDamage(this.bonusDamagePerTurret.get(turretData.id) + this.bonusDamagePerTurret.get("ALL"));
+        turret.setBonusAttackSpeed(this.bonusAttackSpeedPerTurret.get(turretData.id) + this.bonusAttackSpeedPerTurret.get("ALL"));
         turret.setPosition(x, y - turret.height * 0.5);
 
         this.turrets.add(turret);
@@ -694,6 +710,18 @@ export class SceneTowerDefense extends Welly_Scene
             if (this.bonusDamagePerTurret.has(turretId))
             {
                 turret.setBonusDamage(this.bonusDamagePerTurret.get(turretId) + this.bonusDamagePerTurret.get("ALL"));
+            }
+        }
+    }
+
+    public updateAllTurretBonusAttackSpeed(): void
+    {
+        for (const turret of this.turrets.getChildren() as Turret[])
+        {
+            const turretId = turret.getTurretId();
+            if (this.bonusAttackSpeedPerTurret.has(turretId))
+            {
+                turret.setBonusAttackSpeed(this.bonusAttackSpeedPerTurret.get(turretId) + this.bonusAttackSpeedPerTurret.get("ALL"));
             }
         }
     }

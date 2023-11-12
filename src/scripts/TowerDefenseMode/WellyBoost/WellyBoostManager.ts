@@ -1,5 +1,6 @@
 import { SceneTowerDefense } from "../Scenes/SceneTowerDefense";
 import { WellyBoost } from "./WellyBoost";
+import { WellyBoost_AttackSpeedTurrets } from "./WellyBoost_AttackSpeedTurrets";
 import { WellyBoost_BoostDamageTurrets } from "./WellyBoost_BoostDamageTurrets";
 import { WellyBoost_LevelUpTurrets } from "./WellyBoost_LevelUpTurrets";
 
@@ -16,6 +17,7 @@ const WellyBoostList =
 {
     "fullTraining": WellyBoost_LevelUpTurrets,
     "damageBonus": WellyBoost_BoostDamageTurrets,
+    "attackSpeedBonus": WellyBoost_AttackSpeedTurrets,
 }
 
 export class WellyBoostManager

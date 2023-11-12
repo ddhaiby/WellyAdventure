@@ -34,6 +34,9 @@ export class Turret extends Npc implements ITurretData
     /** How many time the turret can attack per second */
     protected attackSpeed: number = 1;
 
+    /** Attack speed bonus granted by the game or from bonus */
+    protected bonusAttackSpeed: number = 0;
+
     /** Base damage to inflict to a target */
     protected damage: number = 50;
 
@@ -298,11 +301,16 @@ export class Turret extends Npc implements ITurretData
         this.bonusDamage = bonusDamage;
     }
 
+    public setBonusAttackSpeed(bonusAttackSpeed: number): void
+    {
+        this.bonusAttackSpeed = bonusAttackSpeed;
+    }
+
     protected reload(): void
     {
         this.isReloading = true;
 
-        this.scene.time.delayedCall(1000 / this.attackSpeed, () => {
+        this.scene.time.delayedCall(1000 / this.getCurrentAttackSpeed(), () => {
             this.isReloading = false;
 
             if (this.currentFocus)
@@ -336,14 +344,14 @@ export class Turret extends Npc implements ITurretData
         return this.getNextStat("damage") + this.bonusDamage;
     }
 
-    public getAttackSpeed(): number
+    public getCurrentAttackSpeed(): number
     {
-        return this.attackSpeed;
+        return this.attackSpeed + this.bonusAttackSpeed;
     }
 
     public getNextAttackSpeed(): number
     {
-        return this.getNextStat("attackSpeed");
+        return this.getNextStat("attackSpeed") + this.bonusAttackSpeed;
     }
 
     public getRange(): number

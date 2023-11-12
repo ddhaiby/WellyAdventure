@@ -57,4 +57,9 @@ export class TurretPopup extends WELLY_Popup
     {
         this.updateData(turret);
     }
+
+    public getTurret(): Turret
+    {
+        return this.turret;
+    }
 }

@@ -30,7 +30,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private turrets: Phaser.Physics.Arcade.StaticGroup;
 
-    private turretPopup: TurretPopup;
+    private turretPopup: TurretPopup | undefined;
 
     /** Whether the game is over or still running */
     private isGameOver: boolean = false;
@@ -395,22 +395,37 @@ export class SceneTowerDefense extends Welly_Scene
     private onTurretClicked(turret: Turret): void
     {
         this.sceneUI.onTurretClicked(turret);
+        this.showTurretPopup(turret);
+    }
 
+    private showTurretPopup(turret: Turret): void
+    {
         const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
         outlinePlugin.remove(turret, "hoverTurret");
-        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
+        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE), name: "turretShowPopup" });
 
         turret.showRangeIndicator();
 
         this.turretPopup = new TurretPopup(turret, turret.x, turret.y);
         this.turretPopup.on("requestUpgrade", () => { this.tryUpgradeTurret(turret); }, this);
-        this.turretPopup.once("destroyed", () => {
-            this.sceneUI.hideTurretDataWidget();
-            turret.hideRangeIndicator();
-            outlinePlugin.remove(turret);
-        }, this); 
+        this.turretPopup.once("destroyed", () => { this.hideTurretPopup(); }, this); 
 
         this.tweens.add({ targets: turret, scale: 1.08, yoyo: true, repeat: 0, duration: 100 });
+    }
+
+    private hideTurretPopup(): void
+    {
+        if (this.turretPopup)
+        {
+            const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
+            const turret = this.turretPopup.getTurret();
+
+            this.sceneUI.hideTurretDataWidget();
+            turret.hideRangeIndicator();
+            outlinePlugin.remove(turret, "turretShowPopup");
+
+            this.turretPopup.destroy();
+        }   
     }
 
     private onTurretHoverStarted(turret: Turret): void
@@ -497,6 +512,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     protected showWellyBoostSelection(): void
     {
+        this.hideTurretPopup();
+
         const boostDatArray = this.boostManager.generateRandomBoosts(3);
 
         this.scene.pause();

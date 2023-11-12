@@ -241,7 +241,7 @@ export class Turret extends Npc implements ITurretData
                 onComplete: () => {
                     if (target)
                     {
-                        target.takeDamage(this.getCurrentDamage());
+                        target.takeDamage(this.getCurrentDamage(), this);
                     }
                     bullet.destroy();
                 }

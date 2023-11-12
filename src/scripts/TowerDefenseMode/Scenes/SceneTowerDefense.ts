@@ -72,6 +72,9 @@ export class SceneTowerDefense extends Welly_Scene
     /** The bonus range for each turret */
     private bonusRangePerTurret: Map<string /** turretId */, number /** turretCount */>;
 
+    /** The bonus range for each turret */
+    private bonusGoldFromDeathPerTurret: Map<string /** turretId */, number /** turretCount */>;
+
     constructor()
     {
         super({key: CST.SCENES.TOWER_DEFENSE});
@@ -119,10 +122,12 @@ export class SceneTowerDefense extends Welly_Scene
         this.bonusDamagePerTurret = new Map<string, number>();
         this.bonusAttackSpeedPerTurret = new Map<string, number>();
         this.bonusRangePerTurret = new Map<string, number>();
+        this.bonusGoldFromDeathPerTurret = new Map<string, number>();
 
         this.bonusDamagePerTurret.set("ALL", 0);
         this.bonusAttackSpeedPerTurret.set("ALL", 0);
         this.bonusRangePerTurret.set("ALL", 0);
+        this.bonusGoldFromDeathPerTurret.set("ALL", 0);
 
         for (const turretData of this.turretsData)
         {
@@ -130,6 +135,7 @@ export class SceneTowerDefense extends Welly_Scene
             this.bonusDamagePerTurret.set(turretData.id, 0);
             this.bonusAttackSpeedPerTurret.set(turretData.id, 0);
             this.bonusRangePerTurret.set(turretData.id, 0);
+            this.bonusGoldFromDeathPerTurret.set(turretData.id, 0);
         }
 
         this.createMap();
@@ -337,12 +343,25 @@ export class SceneTowerDefense extends Welly_Scene
         turret.onMonsterInRange(monster);
     }
 
-    private onMonsterDie(monster: JunkMonster): void
+    private onMonsterDie(monster: JunkMonster, sourceTurret?: Turret): void
     {
         if (!this.isGameOver)
         {
             GameAnalytics.instance.onMonsterDie(monster.name, monster.texture.key);
-            this.addPlayerCoin(monster.getCoin());
+
+            const monsterCoin = monster.getCoin();
+
+            if (sourceTurret)
+            {
+                const turretId = sourceTurret.getTurretId();
+                const bonusCoinForTurret = this.bonusGoldFromDeathPerTurret.has(turretId) ? this.bonusGoldFromDeathPerTurret.get(turretId) : 0;
+                const bonusCoinAllTurret = this.bonusGoldFromDeathPerTurret.has("ALL") ? this.bonusGoldFromDeathPerTurret.get("ALL") : 0;
+                this.addPlayerCoin(monsterCoin + bonusCoinForTurret + bonusCoinAllTurret);
+            }
+            else
+            {
+                this.addPlayerCoin(monsterCoin);
+            }
         }
     }
 
@@ -669,6 +688,14 @@ export class SceneTowerDefense extends Welly_Scene
         {
             this.bonusRangePerTurret.set(turretId, this.bonusRangePerTurret.get(turretId) + bonusRange);
             this.updateAllTurretBonusRange();
+        }
+    }
+
+    public addBonusMoneyFromDeathTo(turretId: string, bonusMoney: number): void
+    {
+        if ((bonusMoney > 0) && this.bonusGoldFromDeathPerTurret.has(turretId))
+        {
+            this.bonusGoldFromDeathPerTurret.set(turretId, this.bonusGoldFromDeathPerTurret.get(turretId) + bonusMoney);
         }
     }
 

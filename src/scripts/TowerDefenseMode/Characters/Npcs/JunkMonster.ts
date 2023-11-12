@@ -4,6 +4,7 @@ import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { Welly_Scene } from "../../../Common/Scenes/WELLY_Scene";
 import { MonsterSpawnerData } from "../../WaveSystem/WaveInstance";
+import { Turret } from "./Turrets/Turret";
 
 export class JunkMonster extends Npc
 {
@@ -151,7 +152,7 @@ export class JunkMonster extends Npc
         return this.maxHealth;
     }
 
-    public setHealth(inHealth: number): void
+    public setHealth(inHealth: number, source?: Turret): void
     {
         const oldHealth = this.health;
 
@@ -160,7 +161,7 @@ export class JunkMonster extends Npc
 
         if ((this.health <= 0) && (oldHealth > 0))
         {
-            this.die();
+            this.die(source);
         }
     }
 
@@ -173,11 +174,11 @@ export class JunkMonster extends Npc
         }
     }
 
-    public takeDamage(damage: number): void
+    public takeDamage(damage: number, damager?: Turret): void
     {
         if (this.isAlive())
         {
-            this.setHealth(this.health - damage);
+            this.setHealth(this.health - damage, damager);
         }
     }
 
@@ -186,7 +187,7 @@ export class JunkMonster extends Npc
         return (this.health > 0)
     }
 
-    public die(): void
+    public die(sourceTurret?: Turret): void
     {
         this.health = 0;
         this.stopWalking();
@@ -196,12 +197,7 @@ export class JunkMonster extends Npc
             this.disableBody(true, true);
         }
 
-        this.emit("DIE");
-    }
-
-    public onDie(fn: () => void , context?: any): void
-    {
-        this.on("DIE", fn, context);
+        this.emit("DIE", sourceTurret);
     }
 
     public getCoin(): number

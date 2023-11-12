@@ -7,44 +7,30 @@
         "rarity": "Common"
     },
     {
+        "id": "fullTraining",
+        "name": "Full Training",
+        "description": "All chefs in game level up",
+        "image": "",
+        "rarity": "Rare"
+    },
+    {
         "id": "attackSpeedBonus",
-        "name": "Attack Speed Bonus",
-        "description": "Add extra attack speed",
+        "name": "Chief's on fire",
+        "description": "Chiefs cook faster",
         "image": "",
         "rarity": "Common"
     },
     {
         "id": "rangeBonus",
         "name": "Range Bonus",
-        "description": "Add extra range to all towers",
+        "description": "Chiefs can feed farer customers",
         "image": "",
         "rarity": "Common"
     },
     {
-        "id": "moneyBonus",
-        "name": "Money money!",
-        "description": "Get more money from all monsters",
-        "image": "",
-        "rarity": "Rare"
-    },
-    {
-        "id": "wellyBoom",
-        "name": "Welly Boom",
-        "description": "Monsters explode when they die",
-        "image": "",
-        "rarity": "Rare"
-    },
-    {
-        "id": "brainfreeze",
-        "name": "BrainFreeze",
-        "description": "Slow down whoever drink this",
-        "image": "",
-        "rarity": "Rare"
-    },
-    {
-        "id": "fullTraining",
-        "name": "Full Training",
-        "description": "All chefs in game level up",
+        "id": "moneyBonusFromDeath",
+        "name": "Inflation",
+        "description": "Get more money from customers once they are fed",
         "image": "",
         "rarity": "Rare"
     }

@@ -1,6 +1,7 @@
 import { SpawnData } from "../../Common/Characters/CharacterSpawner";
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
+import { Turret } from "../Characters/Npcs/Turrets/Turret";
 import { WaveSpawner } from "./WaveSpawner";
 
 declare type MonsterData = {
@@ -151,7 +152,7 @@ export class WaveInstance extends Phaser.Events.EventEmitter
         ++this.aliveMonsterCount;
         ++this.spawnedMonsterCount;
 
-        monster.on("DIE", () => { this.onMonsterDie(monster); }, this);
+        monster.on("DIE", (sourceTurret?: Turret) => { this.onMonsterDie(monster, sourceTurret); }, this);
         monster.on("MOVE_TO_END", () => { this.emit("MONSTER_MOVE_TO_END", monster); }, this);
 
         const pathConfig = spawner.getPathFindingConfig();
@@ -182,9 +183,9 @@ export class WaveInstance extends Phaser.Events.EventEmitter
         return !this.canSpawnMonster() && (this.aliveMonsterCount <= 0);
     }
 
-    protected onMonsterDie(monster: JunkMonster): void
+    protected onMonsterDie(monster: JunkMonster, sourceTurret?: Turret): void
     {
-        this.emit("MONSTER_DIED", monster);
+        this.emit("MONSTER_DIED", monster, sourceTurret);
         --this.aliveMonsterCount;
 
         if (this.isWaveCompleted())

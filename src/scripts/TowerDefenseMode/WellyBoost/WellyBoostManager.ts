@@ -3,6 +3,7 @@ import { WellyBoost } from "./WellyBoost";
 import { WellyBoost_AttackSpeedTurrets } from "./WellyBoost_AttackSpeedTurrets";
 import { WellyBoost_BoostDamageTurrets } from "./WellyBoost_BoostDamageTurrets";
 import { WellyBoost_LevelUpTurrets } from "./WellyBoost_LevelUpTurrets";
+import { WellyBoost_MoneyFromDeath } from "./WellyBoost_MoneyFromDeath";
 import { WellyBoost_RangeTurrets } from "./WellyBoost_RangeTurrets";
 
 export declare type WellyBoostData = {
@@ -20,6 +21,7 @@ const WellyBoostList =
     "damageBonus": WellyBoost_BoostDamageTurrets,
     "attackSpeedBonus": WellyBoost_AttackSpeedTurrets,
     "rangeBonus": WellyBoost_RangeTurrets,
+    "moneyBonusFromDeath": WellyBoost_MoneyFromDeath,
 }
 
 export class WellyBoostManager

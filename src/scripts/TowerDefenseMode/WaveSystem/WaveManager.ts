@@ -1,5 +1,6 @@
 import { Welly_Scene } from "../../Common/Scenes/WELLY_Scene";
 import { JunkMonster } from "../Characters/Npcs/JunkMonster";
+import { Turret } from "../Characters/Npcs/Turrets/Turret";
 import { WaveInstance } from "./WaveInstance";
 import {  WaveSpawner } from "./WaveSpawner";
 
@@ -151,9 +152,9 @@ export class WaveManager extends Phaser.GameObjects.GameObject
         return Math.max(1, this.monsterCountLastWave + Phaser.Math.Between(-this.waveData.monsterCountIncreasePerWaveMin, this.waveData.monsterCountIncreasePerWaveMax));
     }
 
-    protected onMonsterDie(monster: JunkMonster): void
+    protected onMonsterDie(monster: JunkMonster, sourceTurret?: Turret): void
     {
-        this.emit("MONSTER_DIED", monster);
+        this.emit("MONSTER_DIED", monster, sourceTurret);
         this.monsters.remove(monster, true, true);
     }
 

@@ -207,6 +207,7 @@ export class SceneTowerDefense extends Welly_Scene
             const waveWidget = new WaveCountdownWidget(this, waveCountdownSpawner.x, waveCountdownSpawner.y);
             this.waveCountdownWidgets.push(waveWidget);
             waveWidget.on(Phaser.Input.Events.POINTER_UP, () => { this.onWaveCountdownWidgetClicked(waveWidget); }, this);
+            waveWidget.on(Phaser.Input.Events.POINTER_DOWN, () => { this.sound.play("buttonPressed", { volume: 0.15 }); }, this);
             waveCountdownSpawner.destroy();
         }
 

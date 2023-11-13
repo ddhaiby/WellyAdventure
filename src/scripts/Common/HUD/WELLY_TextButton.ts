@@ -142,6 +142,8 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
                 this.isHovered = true;
                 this.isPressed = false;
                 this.updateVisual();
+
+                this.scene.sound.play("buttonHovered", { volume: 0.005 });
             }
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
@@ -162,6 +164,8 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
                 this.isPressed = true;
                 this.isHovered = false;
                 this.updateVisual();
+
+                this.scene.sound.play("buttonPressed", { volume: 0.1 });
             }
             this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);

@@ -45,6 +45,7 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         this.background.setInteractive();
         this.background.on(Phaser.Input.Events.POINTER_OVER, () => {
             outlinePlugin.add(this.background, { thickness: 4, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
+            this.scene.sound.play("buttonHovered", { volume: 0.01 });
         }, this);
         
         this.background.on(Phaser.Input.Events.POINTER_OUT, () => {
@@ -54,6 +55,7 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
 
         this.background.on(Phaser.Input.Events.POINTER_DOWN, () => {
             this.setScale(scalePressed);
+            this.scene.sound.play("buttonPressed", { volume: 0.2 });
         }, this);
 
         this.background.on(Phaser.Input.Events.POINTER_UP, () => {

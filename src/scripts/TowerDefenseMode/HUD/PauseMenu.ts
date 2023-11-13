@@ -108,6 +108,7 @@ export class PauseMenu extends Phaser.GameObjects.Container
         buttonSound.onClicked(() => {
             isSoundOn = !isSoundOn;
             buttonSound.setTextures(isSoundOn ? "soundIcon" : "soundIconOff");
+            this.scene.sound.setMute(!isSoundOn);
             this.onSoundClicked();
         } , this);
         this.add(buttonSound);

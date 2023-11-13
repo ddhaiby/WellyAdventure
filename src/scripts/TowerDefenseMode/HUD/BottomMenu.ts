@@ -54,6 +54,7 @@ export class BottomMenu extends Phaser.GameObjects.Container
             });
             turretButton.setInteractive(new Phaser.Geom.Rectangle(-turretContainer.width * 0.5, -turretContainer.height * 0.5, turretContainer.width, turretContainer.height), Phaser.Geom.Rectangle.Contains);
             this.scene.input.setDraggable(turretButton);
+            turretButton.on(Phaser.Input.Events.POINTER_DOWN, () => { this.scene.sound.play("buttonPressed", { volume: 0.02 }); }, this);
             this.turretButtons.push(turretButton);
             turretContainer.add(turretButton);
 

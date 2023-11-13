@@ -41,6 +41,7 @@ export class ScenePreloadAssets extends Welly_Scene
 
     private loadAssets(): void
     {
+        this.loadAudio();
         this.loadCharacters();
         this.loadCity();
         this.loadTowerDefenseAssets();
@@ -54,6 +55,13 @@ export class ScenePreloadAssets extends Welly_Scene
         this.load.json("wellyBoostData", "wellyBoostData.json");
 
         this.load.start();
+    }
+
+    private loadAudio(): void
+    {
+        this.load.setPath("./assets/audio/");
+        this.load.audio("buttonHovered", "buttonHovered.wav");
+        this.load.audio("buttonPressed", "buttonPressed.wav");
     }
 
     private loadCharacters(): void

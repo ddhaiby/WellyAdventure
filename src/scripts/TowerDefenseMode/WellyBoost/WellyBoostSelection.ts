@@ -38,18 +38,17 @@ export class BoostButtonWidget extends Phaser.GameObjects.Container
         this.description.setWordWrapWidth(this.background.width)
         this.add(this.description);
 
-        const outlinePlugin = this.scene.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
         const scaleNormal = 1;
         const scalePressed = 0.95;
 
         this.background.setInteractive();
         this.background.on(Phaser.Input.Events.POINTER_OVER, () => {
-            outlinePlugin.add(this.background, { thickness: 4, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
+            this.scene.rexOutlinePipelinePlugin.add(this.background, { thickness: 4, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) });
             this.scene.sound.play("buttonHovered", { volume: 0.01 });
         }, this);
         
         this.background.on(Phaser.Input.Events.POINTER_OUT, () => {
-            outlinePlugin.remove(this.background);
+            this.scene.rexOutlinePipelinePlugin.remove(this.background);
             this.setScale(scaleNormal);
         }, this);
 

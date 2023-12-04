@@ -167,15 +167,17 @@ export class SceneTowerDefense extends Welly_Scene
 
     private createWaveSpawner(): void
     {
+        // @ts-ignore
         const spawners = this.currentMap.createFromObjects("Wave", {name: "WaveSpawner", classType: WaveSpawner}) as WaveSpawner[];
 
         for (const monsterSpawner of spawners)
         {
             let moveToPointId = monsterSpawner.getMoveToPointId();
-            let positions = [] as Phaser.Types.Math.Vector2Like[];
+            let positions = [] as Phaser.Math.Vector2[];
 
             while (moveToPointId >= 0)
             {
+                // @ts-ignore
                 const moveToEntities = this.currentMap.createFromObjects("Wave", {id: moveToPointId, classType: MoveToPoint}) as MoveToPoint[];
 
                 if (moveToEntities.length > 0)
@@ -193,12 +195,10 @@ export class SceneTowerDefense extends Welly_Scene
                     moveToPointId = CST.INDEX_INVALID;
                 }
             }
-
-            positions.reverse();
-
             monsterSpawner.setPathFindingConfig({positions: positions, repeat: 0});
         }
 
+        // @ts-ignore
         const waveCountdownSpawners = this.currentMap.createFromObjects("Wave", {name: "WaveCountdown", classType: Phaser.GameObjects.Image}) as Phaser.GameObjects.Image[];
         this.waveCountdownWidgets = [];
         
@@ -235,7 +235,7 @@ export class SceneTowerDefense extends Welly_Scene
 
     private initUI(): void
     {
-        this.sceneUI = this.scene.get<SceneTowerDefenseUI>(CST.SCENES.TOWER_DEFENSE_UI);
+        this.sceneUI = this.scene.get(CST.SCENES.TOWER_DEFENSE_UI) as SceneTowerDefenseUI;
 
         this.sceneUI.events.removeAllListeners("requestRestart");
         this.sceneUI.events.removeAllListeners("wellyBoostSelected");
@@ -432,9 +432,8 @@ export class SceneTowerDefense extends Welly_Scene
 
     private showTurretPopup(turret: Turret): void
     {
-        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
-        outlinePlugin.remove(turret, "hoverTurret");
-        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE), name: "turretShowPopup" });
+        this.rexOutlinePipelinePlugin.remove(turret, "hoverTurret");
+        this.rexOutlinePipelinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE), name: "turretShowPopup" });
 
         turret.showRangeIndicator();
 
@@ -449,12 +448,11 @@ export class SceneTowerDefense extends Welly_Scene
     {
         if (this.turretPopup)
         {
-            const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
             const turret = this.turretPopup.getTurret();
 
             this.sceneUI.hideTurretDataWidget();
             turret.hideRangeIndicator();
-            outlinePlugin.remove(turret, "turretShowPopup");
+            this.rexOutlinePipelinePlugin.remove(turret, "turretShowPopup");
 
             this.turretPopup.destroy();
         }   
@@ -462,14 +460,12 @@ export class SceneTowerDefense extends Welly_Scene
 
     private onTurretHoverStarted(turret: Turret): void
     {
-        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
-        outlinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE), name: "hoverTurret" });
+        this.rexOutlinePipelinePlugin.add(turret, { thickness: 2, outlineColor: WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.WHITE), name: "hoverTurret" });
     }
 
     private onTurretHoverEnded(turret: Turret): void
     {
-        const outlinePlugin = this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
-        outlinePlugin.remove(turret, "hoverTurret");
+        this.rexOutlinePipelinePlugin.remove(turret, "hoverTurret");
     }
 
     public tryUpgradeTurret(turret: Turret, hasPrice: boolean = true): void
@@ -586,6 +582,7 @@ export class SceneTowerDefense extends Welly_Scene
                 }
 
                 this.initTurretPreview(turretIndex);
+                this.onDragTurret();
             }
             else
             {
@@ -625,14 +622,18 @@ export class SceneTowerDefense extends Welly_Scene
             this.turretPreviewWidget.setPosition(worldX, worldY);
 
             const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-            const isTurretPositionValid = tile.properties.towerField;
+            const isTurretPositionValid = tile && tile.properties.towerField;
             const color = isTurretPositionValid ? WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.LIGHT_BLUE) : WELLY_Utils.hexColorToNumber(CST.STYLE.COLOR.RED);
 
             this.turretPreviewWidget.setValid(isTurretPositionValid);
 
             this.turretSpawnAreaPreview.clear();
-            this.turretSpawnAreaPreview.fillStyle(color);
-            this.turretSpawnAreaPreview.fillRect(tile.pixelX, tile.pixelY, tile.width, tile.height);
+
+            if (tile)
+            {
+                this.turretSpawnAreaPreview.fillStyle(color);
+                this.turretSpawnAreaPreview.fillRect(tile.pixelX, tile.pixelY, tile.width, tile.height);
+            }
         }
     }
 
@@ -645,7 +646,7 @@ export class SceneTowerDefense extends Welly_Scene
             const worldY = this.input.activePointer.worldY;
 
             const tile = this.layer1.getTileAtWorldXY(worldX, worldY);
-            if (tile.properties.towerField)
+            if (tile && tile.properties.towerField)
             {
                 const turretLevel = 0; 
                 const turretPreviewData = this.turretsData[this.turretPrewiewIndex];

@@ -91,7 +91,7 @@ export class SceneExplorationGame extends Welly_Scene
             this.npcs.add(npc);
             npc.init(npcSpawner.getSpawnData());
             
-            let positions = [] as Phaser.Types.Math.Vector2Like[];
+            let positions = [] as Phaser.Math.Vector2[];
             let moveToPointId = spawnData.moveToPointId ?? CST.INDEX_INVALID;
 
             while (moveToPointId >= 0)

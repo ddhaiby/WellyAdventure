@@ -3,6 +3,7 @@ import { ScenePreloadAssets } from './Common/Scenes/ScenePreloadAssets';
 import { CST } from './Common/CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
+import PathFollowerPlugin from 'phaser3-rex-plugins/plugins/pathfollower-plugin.js';
 
 document.body.style.margin = "0";
 document.body.style.padding = "0";
@@ -28,10 +29,11 @@ new Phaser.Game({
     },
     plugins: {
         global: [
-            { key: 'rexOutlinePipeline', plugin: OutlinePipelinePlugin, start: true },
+            { key: "rexOutlinePipeline", plugin: OutlinePipelinePlugin, start: true },
+            { key: "rexPathFollower", plugin: PathFollowerPlugin, start: true }
         ],
         scene: [
-            {key: 'rexUI',  plugin: UIPlugin, mapping: 'rexUI'}
+            {key: "rexUI",  plugin: UIPlugin, mapping: "rexUI"}
         ]
     }
 });

@@ -4,8 +4,8 @@
     "spawnCooldownMinimum": 400,
     "spawnCooldownDecreasePerWave": 30,
     "healthPercentageIncreasePerWave": 0.15,
-    "monsterCountBase": 4,
+    "monsterCountBase": 1,
     "monsterCountIncreasePerWaveMin": 0,
-    "monsterCountIncreasePerWaveMax": 2,
+    "monsterCountIncreasePerWaveMax": 0,
     "bonusEveryXWave": 10
 }

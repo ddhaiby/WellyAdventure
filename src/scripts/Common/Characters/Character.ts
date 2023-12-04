@@ -1,11 +1,13 @@
 import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { SpawnData } from "./CharacterSpawner";
 import { CharacterMovementComponent, DIRECTION, DIRECTIONS, PathFindingConfig } from "./CharacterMovementComponent";
-import { MoveToPoint } from "../PathFinding/MoveToEntity";
 import { CST } from "../CST";
 
 export class Character extends Phaser.Physics.Arcade.Sprite
 {
+    declare public scene: Welly_Scene;
+    declare public body: Phaser.Physics.Arcade.Body;
+    
     /** Whether this character is walking */
     protected isWalking: boolean = false;
 

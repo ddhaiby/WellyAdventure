@@ -1,4 +1,6 @@
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+import PathFollowerPlugin from 'phaser3-rex-plugins/plugins/pathfollower-plugin.js';
+import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
 
 export const enum SpeedMode {
     SLOW,
@@ -124,5 +126,15 @@ export class Welly_Scene extends Phaser.Scene
                 return `${dayString}${hoursString}${minutesString}${secondsString}${millisecondsString}`;
             }
         }
+    }
+
+    public get rexPathFollowerPlugin(): PathFollowerPlugin
+    {
+        return this.plugins.get("rexPathFollower") as PathFollowerPlugin;
+    }
+
+    public get rexOutlinePipelinePlugin(): OutlinePipelinePlugin
+    {
+        return this.plugins.get('rexOutlinePipeline') as OutlinePipelinePlugin;
     }
 }

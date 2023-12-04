@@ -1,4 +1,4 @@
-import { DIRECTIONS } from "../../../Common/Characters/CharacterMovementComponent";
+import { DIRECTION, DIRECTIONS } from "../../../Common/Characters/CharacterMovementComponent";
 import { SpawnData } from "../../../Common/Characters/CharacterSpawner";
 import { Npc } from "../../../Common/Characters/Npcs/Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
@@ -30,11 +30,18 @@ export class JunkMonster extends Npc
     protected healthBarOffsetX: number = 0;
     protected healthBarOffsetY: number = -6;
 
+    private prevX: number = 0;
+    private prevY: number = 0;
+
     constructor(scene: Welly_Scene, x: number, y: number)
     {
         super(scene, x, y);
+
         scene.physics.add.existing(this);
         this.setCollideWorldBounds(false);
+
+        this.prevX = this.x;
+        this.prevY = this.x;
     }
 
     public destroy(fromScene?: boolean | undefined): void
@@ -132,7 +139,43 @@ export class JunkMonster extends Npc
     {
         super.updateAnimations();
 
-        if ((this.body as Phaser.Physics.Arcade.Body).velocity.length() > 0)
+        const threshold = 0.001;
+        const velocityX = this.x - this.prevX;
+        const velocityY = this.y - this.prevY;
+
+        let directionV = "";
+        let directionH = "";
+        let hasMoved = false;
+
+        if (velocityX > threshold)
+        {
+            directionH = DIRECTIONS.Right;
+            hasMoved = true;
+        }
+        else if (velocityX < -threshold)
+        {
+            directionH = DIRECTIONS.Left;
+            hasMoved = true;
+        }
+
+        if (velocityY > threshold)
+        {
+            directionV = DIRECTIONS.Down;
+            hasMoved = true;
+        }
+        else if (velocityY < -threshold)
+        {
+            directionV = DIRECTIONS.Up;
+            hasMoved = true;
+        }
+
+        const direction = directionV + directionH as DIRECTION;
+        this.setDirection(direction);
+
+        this.prevX = this.x;
+        this.prevY = this.y;
+
+        if (hasMoved)
         {
             this.anims.play(`Walk${this.currentDirection}`, true);
         }

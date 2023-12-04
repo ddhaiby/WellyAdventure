@@ -156,13 +156,10 @@ export class WaveInstance extends Phaser.Events.EventEmitter
         monster.on("MOVE_TO_END", () => { this.emit("MONSTER_MOVE_TO_END", monster); }, this);
 
         const pathConfig = spawner.getPathFindingConfig();
-        const adaptedPositions = [] as Phaser.Types.Math.Vector2Like[];
+        const adaptedPositions = [] as Phaser.Math.Vector2[];
         for (const position of pathConfig.positions)
         {
-            adaptedPositions.push({
-                x: (position.x != undefined) ? (position.x + offsetX) : undefined,
-                y: (position.y != undefined) ? (position.y + offsetY) : undefined,
-            });
+            adaptedPositions.push(new Phaser.Math.Vector2(position.x + offsetX, position.y + offsetY));
         }
 
         monster.moveTo({ positions: adaptedPositions, repeat: pathConfig.repeat });

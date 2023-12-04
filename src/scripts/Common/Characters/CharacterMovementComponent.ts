@@ -1,9 +1,11 @@
+import { Welly_Scene } from "../Scenes/WELLY_Scene";
 import { Character } from "./Character";
 import { SpawnData } from "./CharacterSpawner";
+import PathFollower from "phaser3-rex-plugins/plugins/pathfollower";
 
 export declare type PathFindingConfig = {
     /** All the positions to follows */
-    positions: Phaser.Types.Math.Vector2Like[],
+    positions: Phaser.Math.Vector2[],
 
     /** Threshold to consider that a position has been reached */
     threshold?: number,
@@ -39,6 +41,8 @@ export class CharacterMovementComponent
     /** Character who owns this movement component */
     protected owner: Character;
 
+    protected scene: Welly_Scene;
+
     /** The physic body of the owner */
     protected ownerBody: Phaser.Physics.Arcade.Body;
 
@@ -48,31 +52,28 @@ export class CharacterMovementComponent
     /** Walk speed */
     protected runSpeed: number = 250;
 
-    /** All the positions this character should follow */
-    private positions: Phaser.Types.Math.Vector2Like[] = [];
-
-    /** How many time this character should follow the given path (see positions) */
-    private pathCount: number = 0;
-    
-    /** The threshold to consider we reached a position. The lower this value the more accurate we want the component to be */
-    private threshold: number = 10;
-
-    /** Internal timer called to check the position of the character when they follow a path */
-    private internalPositionCheckTimerEvent: Phaser.Time.TimerEvent | undefined;
+    protected tweenFollowPath: Phaser.Tweens.Tween | undefined;
+    protected pathFollower: PathFollower | undefined;
 
     constructor(owner: Character)
     {
         this.owner = owner;
+        this.scene = owner.scene;
         this.ownerBody = owner.body as Phaser.Physics.Arcade.Body;
     }
 
     public destroy(): void
     {
-        if (this.internalPositionCheckTimerEvent)
+        if (this.tweenFollowPath)
         {
-            this.internalPositionCheckTimerEvent.remove(false);
-            this.internalPositionCheckTimerEvent.destroy();
-            this.internalPositionCheckTimerEvent = undefined;
+            this.tweenFollowPath.remove();
+            this.tweenFollowPath = undefined;
+        }
+
+        if (this.pathFollower)
+        {
+            this.pathFollower.destroy();
+            this.pathFollower = undefined;
         }
     }
 
@@ -84,9 +85,6 @@ export class CharacterMovementComponent
         this.walkSpeed = spawnData.walkSpeed ?? 0;
         this.runSpeed = spawnData.runSpeed ?? this.walkSpeed;
     }
-
-    // Update
-    ////////////////////////////////////////////////////////////////////////
 
     // Update
     ////////////////////////////////////////////////////////////////////////
@@ -181,99 +179,36 @@ export class CharacterMovementComponent
 
     public moveTo(config: PathFindingConfig): void
     {
-        if (config.positions.length > 0)
+        const path = this.scene.add.path(this.owner.x, this.owner.y);
+
+        for (const point of config.positions)
         {
-            this.pathCount = config.repeat ?? 0;
-            this.threshold = config.threshold ?? 10;
-            
-            this.positions = [];
-            config.positions.forEach((vector: Phaser.Types.Math.Vector2Like) => { this.positions.push(Object.assign({}, vector)); });
-
-            const lastPosition = this.positions[this.positions.length - 1];
-            if ((lastPosition.x == undefined) || (Math.abs(lastPosition.x - this.owner.x) > this.threshold) || (lastPosition.y == undefined) || (Math.abs(lastPosition.y - this.owner.y) > this.threshold))
-            {
-                this.positions.push({ x: this.owner.x, y: this.owner.y } as Phaser.Types.Math.Vector2Like);
-            }
-
-            this.positions.reverse();
-
-            this.moveTo_Internal(config.positions);
-        }
-    }
-
-    private moveTo_Internal(positions: Phaser.Types.Math.Vector2Like[]): void
-    {
-        const currentPosition = positions[positions.length - 1];
-        if (currentPosition.x == undefined)
-        {
-            currentPosition.x = this.owner.x;
+            path.lineTo(point.x, point.y);
         }
 
-        if (currentPosition.y == undefined)
-        {
-            currentPosition.y = this.owner.y;
-        }
+        this.pathFollower = this.scene.rexPathFollowerPlugin.add(this.owner, {
+            path: path,
+            t: 0,
+            rotateToPath: false
+        });
 
-        this.owner.scene.physics.moveTo(this.owner, currentPosition.x, currentPosition.y, this.walkSpeed);
-        
-        const velocityThreshold = 10;
-        
-        let directionV = "";
-        let directionH = "";
+        this.tweenFollowPath = this.scene.tweens.add({
+            targets: this.pathFollower,
+            t: 1,
+            ease: "Linear",
+            duration: 1000 * path.getLength() / this.walkSpeed,
+            repeat: 0,
+            yoyo: false,
+            onComplete: () => { this.owner.emit("MOVE_TO_END"); },
+            callbackScope: this
+        });
 
-        if (this.ownerBody.velocity.x > velocityThreshold)
-        {
-            directionH = DIRECTIONS.Right;
-        }
-        else if (this.ownerBody.velocity.x < -velocityThreshold)
-        {
-            directionH = DIRECTIONS.Left;
-        }
-
-        if (this.ownerBody.velocity.y > velocityThreshold)
-        {
-            directionV = DIRECTIONS.Down;
-        }
-        else if (this.ownerBody.velocity.y < -velocityThreshold)
-        {
-            directionV = DIRECTIONS.Up;
-        }
-
-        const direction = directionV + directionH as DIRECTION;
-        this.owner.setDirection(direction);
-
-        const positionCheck = () => {
-            const dist = Math.abs(this.owner.x - (currentPosition.x as number)) + Math.abs(this.owner.y - (currentPosition.y as number));
-
-            if (dist > this.threshold)
-            {
-                this.internalPositionCheckTimerEvent = this.owner.scene.time.delayedCall(30, positionCheck, undefined, this);
-            }
-            else
-            {
-                this.ownerBody.reset(this.owner.x, this.owner.y);
-                positions.pop();
-
-                if (positions.length > 0)
-                {
-                    this.moveTo_Internal(positions);
-                }
-                else if (this.pathCount > 0)
-                {
-                    this.pathCount = (this.pathCount as number) - 1;
-                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
-                }
-                else if (this.pathCount < 0)
-                {
-                    this.moveTo({ repeat: this.pathCount, positions: this.positions, threshold: this.threshold });
-                }
-                else
-                {
-                    this.owner.emit("MOVE_TO_END");
-                }
-            }
-        };
-
-        positionCheck();
+        // let graphics = this.scene.add.graphics({
+        //     lineStyle: {
+        //         width: 3,
+        //         color: 0xFFFF00,
+        //         alpha: 1
+        // }})
+        // path.draw(graphics);
     }
 }

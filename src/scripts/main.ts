@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import { ScenePreloadAssets } from './Common/Scenes/ScenePreloadAssets';
-import { CST } from './Common/CST';
+import { ScenePreloadAssets } from './Common/Scenes/WELLY_ScenePreloadAssets';
+import { WELLY_CST } from './WELLY_CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
 import PathFollowerPlugin from 'phaser3-rex-plugins/plugins/pathfollower-plugin.js';
@@ -14,8 +14,8 @@ new Phaser.Game({
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    width: CST.GAME.WIDTH,
-    height: CST.GAME.HEIGHT,
+    width: WELLY_CST.GAME.WIDTH,
+    height: WELLY_CST.GAME.HEIGHT,
     dom: { createContainer: true },
     scene: [ScenePreloadAssets],
     render: { pixelArt: false, transparent: true },
@@ -24,7 +24,7 @@ new Phaser.Game({
         default: "arcade",
         arcade: {
             gravity: {y: 0},
-            debug: CST.PHYSIC.DEBUG
+            debug: WELLY_CST.PHYSIC.DEBUG
         }
     },
     plugins: {

@@ -1,4 +1,4 @@
-import { CST } from "../CST";
+import { WELLY_CST } from "../../WELLY_CST";
 import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext.js';
 
 export declare type GPC_TextButtonStyle = {
@@ -110,7 +110,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.height = this.buttonImage.displayHeight;
         this.add(this.buttonImage);
 
-        this.buttonText =  new BBCodeText(this.scene, 0, 0, text, { fontFamily: CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
+        this.buttonText =  new BBCodeText(this.scene, 0, 0, text, { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
         this.scene.add.existing(this.buttonText);
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);
@@ -145,7 +145,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
                 this.scene.sound.play("buttonHovered", { volume: 0.005 });
             }
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
         this.interactiveObject.on(Phaser.Input.Events.POINTER_OUT, () => {
@@ -155,7 +155,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
                 this.isHovered = false;
                 this.updateVisual();
             }
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
         this.interactiveObject.on(Phaser.Input.Events.POINTER_DOWN, () => {
@@ -167,7 +167,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
                 this.scene.sound.play("buttonPressed", { volume: 0.1 });
             }
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
         this.interactiveObject.on(Phaser.Input.Events.POINTER_UP, () => {
@@ -177,15 +177,15 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
                 this.isHovered = true;
                 this.updateVisual();
             }
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
 
         this.interactiveObject.on(Phaser.Input.Events.POINTER_MOVE, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.SHOW, this.toolTipText);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.SHOW, this.toolTipText);
         }, this);
 
         this.interactiveObject.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
-            this.scene.events.emit(CST.EVENTS.UI.TOOLTIP.HIDE);
+            this.scene.events.emit(WELLY_CST.EVENTS.UI.TOOLTIP.HIDE);
         }, this);
     }
 

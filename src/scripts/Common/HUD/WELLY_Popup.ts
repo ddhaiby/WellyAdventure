@@ -1,4 +1,4 @@
-import { Welly_Scene } from "../Scenes/WELLY_Scene";
+import { WELLY_BaseScene } from "../Scenes/WELLY_BaseScene";
 
 export declare interface IPopupConfig
 {
@@ -8,7 +8,7 @@ export class WELLY_Popup extends Phaser.GameObjects.Container
 {
     protected screenBackground: Phaser.GameObjects.Graphics | undefined;
 
-    constructor(scene: Welly_Scene, x?: number | undefined, y?: number | undefined, config?: IPopupConfig)
+    constructor(scene: WELLY_BaseScene, x?: number | undefined, y?: number | undefined, config?: IPopupConfig)
     {
         super(scene, x, y);
         this.scene.add.existing(this);

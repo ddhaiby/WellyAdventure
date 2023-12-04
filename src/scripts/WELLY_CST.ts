@@ -28,6 +28,14 @@ export const WELLY_CST = {
             FONT_FAMILY: "Kickers-Regular"
         },
         COLOR: {
+            RARITY: {
+                COMMON: "#777777",
+                UNCOMMON: "#1eff00",
+                RARE: "#0070dd",
+                EPIC: "#a335ee",
+                LEGENDARY: "#ff8000",
+                MYTHIC: "#FF55FF",
+            },
             ORANGE: "#f1966b",
             BLUE: "#2c4b7e",
             LIGHT_BLUE: "#6782e6",

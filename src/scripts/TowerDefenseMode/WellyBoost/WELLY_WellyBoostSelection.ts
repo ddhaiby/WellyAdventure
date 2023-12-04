@@ -12,6 +12,7 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
     protected boostData: WELLY_WellyBoostData;
 
     protected title: Phaser.GameObjects.Text;
+    protected rarityText: Phaser.GameObjects.Text;
     protected description: Phaser.GameObjects.Text;
     protected background: RoundRectangle;
 
@@ -29,6 +30,10 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
         this.title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 12, "BONUS 1", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "26px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: WELLY_CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "center" });
         this.title.setOrigin(0.5, 0);
         this.add(this.title);
+
+        this.rarityText = scene.add.text(0, this.title.y + this.title.displayHeight + 12, "COMMON", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "15px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, align: "center" });
+        this.rarityText.setOrigin(0.5, 0);
+        this.add(this.rarityText);
 
         const image = scene.add.image(0, 0, "wellyBonusTemplate");
         this.add(image);
@@ -84,6 +89,8 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
         this.boostData = boostData;
         this.title.setText(boostData.name);
         this.description.setText(boostData.description);
+        this.rarityText.setText(boostData.rarity);
+        this.rarityText.setColor(WELLY_CST.STYLE.COLOR.RARITY[boostData.rarity]);
     }
 
     public getBoostData(): WELLY_WellyBoostData

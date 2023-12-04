@@ -4,34 +4,34 @@
         "name": "Bonus Damage",
         "description": "Add extra damage to all towers",
         "image": "",
-        "rarity": "Common"
+        "rarity": "UNCOMMON"
     },
     {
         "id": "fullTraining",
         "name": "Full Training",
         "description": "All chefs in game level up",
         "image": "",
-        "rarity": "Rare"
+        "rarity": "RARE"
     },
     {
         "id": "attackSpeedBonus",
         "name": "Chief's on fire",
         "description": "Chiefs cook faster",
         "image": "",
-        "rarity": "Common"
+        "rarity": "COMMON"
     },
     {
         "id": "rangeBonus",
         "name": "Range Bonus",
         "description": "Chiefs can feed farer customers",
         "image": "",
-        "rarity": "Common"
+        "rarity": "LEGENDARY"
     },
     {
         "id": "moneyBonusFromDeath",
         "name": "Inflation",
         "description": "Get more money from customers once they are fed",
         "image": "",
-        "rarity": "Rare"
+        "rarity": "MYTHIC"
     }
 ]

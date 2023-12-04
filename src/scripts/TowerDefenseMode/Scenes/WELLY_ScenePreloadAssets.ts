@@ -1,9 +1,9 @@
 import { WELLY_CST } from "../../WELLY_CST";
-import { WELLY_BaseScene } from "./WELLY_BaseScene";
-import { WELLY_SceneTowerDefense } from "../../TowerDefenseMode/Scenes/WELLY_SceneTowerDefense";
-import { WELLY_SceneTowerDefenseUI } from "../../TowerDefenseMode/Scenes/WELLY_SceneTowerDefenseUI";
-import { WELLY_LoadingScreen } from "../HUD/WELLY_LoadingScreen";
-import { WELLY_GameAnalytics } from "../../TowerDefenseMode/Analytics/WELLY_GameAnalytics";
+import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
+import { WELLY_SceneTowerDefense } from "./WELLY_SceneTowerDefense";
+import { WELLY_SceneTowerDefenseUI } from "./WELLY_SceneTowerDefenseUI";
+import { WELLY_LoadingScreen } from "../../Common/HUD/WELLY_LoadingScreen";
+import { WELLY_GameAnalytics } from "../Analytics/WELLY_GameAnalytics";
 
 export class ScenePreloadAssets extends WELLY_BaseScene
 {
@@ -41,7 +41,6 @@ export class ScenePreloadAssets extends WELLY_BaseScene
     {
         this.loadAudio();
         this.loadCharacters();
-        this.loadCity();
         this.loadTowerDefenseAssets();
         this.loadWellyBonus();
 
@@ -72,13 +71,6 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.load.spritesheet("wellyWhite", "wellyWhite.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("wellyItaly", "wellyItaly.png", { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet("boss1", "boss1.png", { frameWidth: 128, frameHeight: 128 });
-    }
-
-    private loadCity(): void
-    {
-        this.load.setPath("./assets/maps/");
-        this.load.image("assetCity", "assetCity.png");
-        this.load.tilemapTiledJSON("cityMap", "cityMap.json");
     }
 
     private loadTowerDefenseAssets(): void
@@ -127,10 +119,6 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.time.delayedCall(200, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            // const sceneUI = this.scene.add(CST.SCENES.EXPLORATION_GAME_UI, SceneExplorationGameUI, true, undefined) as SceneExplorationGameUI;
-            // this.scene.add(CST.SCENES.EXPLORATION_GAME, SceneExplorationGame, true, undefined);
-            // sceneUI.scene.bringToTop();
-
             const sceneUI = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_UI, WELLY_SceneTowerDefenseUI, true, undefined) as WELLY_SceneTowerDefenseUI;
 
             this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE, WELLY_SceneTowerDefense, true, undefined);

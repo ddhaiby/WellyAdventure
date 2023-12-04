@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ScenePreloadAssets } from './Common/Scenes/WELLY_ScenePreloadAssets';
+import { ScenePreloadAssets } from './TowerDefenseMode/Scenes/WELLY_ScenePreloadAssets';
 import { WELLY_CST } from './WELLY_CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';

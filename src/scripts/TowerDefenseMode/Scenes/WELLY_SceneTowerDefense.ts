@@ -350,19 +350,35 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         {
             WELLY_GameAnalytics.instance.onMonsterDie(monster.name, monster.texture.key);
 
-            const monsterCoin = monster.getCoin();
+            let monsterCoin = monster.getCoin();
 
             if (sourceTurret)
             {
                 const turretId = sourceTurret.getTurretId();
                 const bonusCoinForTurret = this.bonusGoldFromDeathPerTurret.has(turretId) ? this.bonusGoldFromDeathPerTurret.get(turretId) : 0;
                 const bonusCoinAllTurret = this.bonusGoldFromDeathPerTurret.has("ALL") ? this.bonusGoldFromDeathPerTurret.get("ALL") : 0;
-                this.addPlayerCoin(monsterCoin + bonusCoinForTurret + bonusCoinAllTurret);
+                monsterCoin = monsterCoin + bonusCoinForTurret + bonusCoinAllTurret;
             }
-            else
-            {
-                this.addPlayerCoin(monsterCoin);
-            }
+            
+            this.addPlayerCoin(monsterCoin);
+
+            // TODO Make a function so it could be reuse anywhere. There is a similar code for the countdown widget
+            const coinText = this.add.text(monster.x, monster.y - monster.displayHeight * 0.5 - 10, `+${monsterCoin}`, { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+
+            this.tweens.add({
+                targets: coinText,
+                duration: 150,
+                y: coinText.y - 10,
+                onComplete: () => {
+                    this.tweens.add({
+                        targets: coinText,
+                        duration: 800,
+                        y: coinText.y + 30,
+                        alpha: 0,
+                        onComplete: () => { coinText.destroy(); }
+                    });
+                }
+            });
         }
     }
 

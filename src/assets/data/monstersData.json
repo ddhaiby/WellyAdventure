@@ -16,7 +16,7 @@
         "health": 80,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "coin": 40,
+        "coin": 20,
         "moveSpeed": 160,
         "damage": 20
     },
@@ -26,7 +26,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "coin": 150,
+        "coin": 10,
         "moveSpeed": 130,
         "damage": 30
     },
@@ -36,7 +36,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "coin": 80,
+        "coin": 10,
         "moveSpeed": 130,
         "damage": 15
     },
@@ -46,7 +46,7 @@
         "health": 120,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "coin": 20,
+        "coin": 5,
         "moveSpeed": 140,
         "damage": 10
     },
@@ -56,7 +56,7 @@
         "health": 100,
         "bodyWidth": 48,
         "bodyHeight": 64,
-        "coin": 20,
+        "coin": 10,
         "moveSpeed": 150,
         "damage": 10
     }

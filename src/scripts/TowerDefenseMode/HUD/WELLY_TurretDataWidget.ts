@@ -1,7 +1,7 @@
 import { Sizer } from "phaser3-rex-plugins/templates/ui/ui-components";
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export interface WELLY_ITurretData
 {

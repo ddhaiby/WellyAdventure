@@ -1,5 +1,5 @@
 import { WELLY_CST } from "../../WELLY_CST";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export class WELLY_WaveCountdownWidget extends Phaser.GameObjects.Graphics
 {

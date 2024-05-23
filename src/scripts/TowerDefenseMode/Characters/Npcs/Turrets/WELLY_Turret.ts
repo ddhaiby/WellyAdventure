@@ -4,8 +4,9 @@ import { WELLY_BaseScene } from "../../../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_JunkMonster } from "../WELLY_JunkMonster";
 import { WELLY_CST } from "../../../../WELLY_CST";
 import { WELLY_ITurretData as WELLY_ITurretData } from "../../../HUD/WELLY_TurretDataWidget";
-import { WELLY_DIRECTIONS } from "../../../../Common/Characters/WELLY_CharacterMovementComponent";
+import { WELLY_DIRECTION, WELLY_DIRECTIONS } from "../../../../Common/Characters/WELLY_CharacterMovementComponent";
 import { WELLY_TurretData as WELLY_TurretData } from "../../../Turrets/WELLY_TurretData";
+import { WELLY_Utils } from "../../../../Utils/WELLY_Utils";
 
 export declare type WELLY_TurretSpawnData = WELLY_SpawnData & 
 {
@@ -28,6 +29,9 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     /** The monster this turret should attack */
     protected currentFocus: WELLY_JunkMonster | undefined;
 
+    /** All the monsters this turret could attack */
+    protected targetsInRange: WELLY_JunkMonster[] = [];
+
     /** Whether the turret is reloading. If true, the turret can't attack */
     protected isReloading: boolean = false;
 
@@ -46,12 +50,23 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     /** Range bonus granted by the game or from bonus */
     protected bonusRange: number = 0;
 
+    /** For how long frozen enemies should stay in this state */
+    protected freezeDuration: number = 0;
+
+    /** How many targets should be frozen from an area attack. Set to 0 to freeze all targets in range */
+    protected freezeTargetCount: number = 0;
+
+    // TODO: Make an enum or use CST
+    protected attackType: string = "projectile";
+
     /** Text that shows the current level of the turret */
     protected levelText: Phaser.GameObjects.Text;
 
     protected rangeIndicator: Phaser.GameObjects.Graphics;
 
     protected turretData: WELLY_TurretData;
+
+    protected attackFunction: Function;
 
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
@@ -61,6 +76,8 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
 
         this.rangeIndicator = this.scene.add.graphics();
         this.hideRangeIndicator();
+
+        this.targetsInRange = [];
     }
 
     public setPosition(x?: number | undefined, y?: number | undefined, z?: number | undefined, w?: number | undefined): this
@@ -80,6 +97,8 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
 
         if (key != undefined && key != "__MISSING" && key != "")
         {
+            const framePerAnim = this.turretData.gameStatsPerLevel[this.level].framePerAnim;
+
             const directions = Object.keys(WELLY_DIRECTIONS);
             for (let i = 0; i < directions.length; ++i)
             {
@@ -89,7 +108,7 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
                 this.anims.remove(animKey);
                 this.anims.create({
                     key: animKey,
-                    frames: this.anims.generateFrameNumbers(key, { start: i * 4, end: i * 4 }),
+                    frames: this.anims.generateFrameNumbers(key, { start: i * framePerAnim, end: i * framePerAnim }),
                     frameRate: 1,
                     repeat: 0
                 });
@@ -114,6 +133,11 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
         this.turretData = spawnData.turretData;
         this.maxLevel = this.turretData.gameStatsPerLevel.length - 1;
 
+        // TODO: Make an attack component so the turret could stack a few types of attack and have them handled independently
+        // Example: A turret could usually throw projectile and then get a welly bonus that frozes/hurts an area
+        // Could also be another projectile fired in addition BUT independently
+        this.attackFunction = (spawnData.turretData.attackType == "projectile") ? this.attackProjectile : this.attackArea;
+
         this.upgradeTo(spawnData.level);
     }
 
@@ -132,13 +156,85 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     public update(): void
     {
         super.update();
-        
-        if (this.currentFocus && !this.scene.physics.overlap(this.currentFocus, this))
+        this.updateCurrentFocus();
+        this.updateAnimations();
+    }
+
+    protected updateCurrentFocus(): void
+    {
+        for (const target of this.targetsInRange)
+        {
+            if (!this.scene.physics.overlap(target, this))
+            {
+                Phaser.Utils.Array.Remove(this.targetsInRange, target);
+            }
+        }
+
+        if (this.currentFocus && !this.targetsInRange.includes(this.currentFocus))
         {
             this.setCurrentFocus(undefined);
         }
     }
 
+    protected updateAnimations(): void
+    {
+        super.updateAnimations();
+
+        if (!this.currentFocus)
+        {
+            return;
+        }
+
+        const rotation = Math.atan2(this.y - this.currentFocus.y, this.x - this.currentFocus.x) * 180 / Math.PI;
+        const threshold = 22.5;
+        
+        if (rotation > 0)
+        {
+            if (rotation < threshold)
+            {
+                this.setDirection(WELLY_DIRECTIONS.Left);
+            }
+            else if (rotation < 90 - threshold)
+            {
+                this.setDirection(WELLY_DIRECTIONS.UpLeft);
+            }
+            else if (rotation < 90 + threshold)
+            {
+                this.setDirection(WELLY_DIRECTIONS.Up);
+            }
+            else if (rotation < 180 - threshold)
+            {
+                this.setDirection(WELLY_DIRECTIONS.UpRight);
+            }
+            else
+            {
+                this.setDirection(WELLY_DIRECTIONS.Right);
+            }
+        }
+        else if (rotation > -threshold)
+        {
+            this.setDirection(WELLY_DIRECTIONS.Left);
+        }
+        else if (rotation > -90 + threshold)
+        {
+            this.setDirection(WELLY_DIRECTIONS.DownLeft);
+        }
+        else if (rotation > -90 - threshold)
+        {
+            this.setDirection(WELLY_DIRECTIONS.Down);
+        }
+        else if (rotation > -180 + threshold)
+        {
+            this.setDirection(WELLY_DIRECTIONS.DownRight);
+        }
+        else
+        {
+            this.setDirection(WELLY_DIRECTIONS.Right);
+        }
+
+        this.anims.play(`Idle${this.currentDirection}`, true);
+    }
+    
     protected setCurrentFocus(inFocus: WELLY_JunkMonster | undefined): void
     {
         if (this.currentFocus != inFocus)
@@ -147,13 +243,15 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
 
             if (this.currentFocus)
             {
-                this.attack();
+                this.attackFunction();
             }
         }
     }
 
     public onMonsterInRange(monster: WELLY_JunkMonster): void
     {
+        Phaser.Utils.Array.Add(this.targetsInRange, monster);
+
         if (!this.currentFocus)
         {
             this.setCurrentFocus(monster);
@@ -185,9 +283,11 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
             this.levelText.setText(`${this.level + 1}`);
 
             const gameStats = this.turretData.gameStatsPerLevel[level];
-            
-            this.damage = gameStats.damage;
+
+            this.damage = gameStats.damage ?? 0;
             this.attackSpeed = gameStats.attackSpeed;
+            this.freezeDuration = gameStats.freezeDuration ?? 0;
+            this.freezeTargetCount = gameStats.freezeTargetCount ?? 0;
             this.setRange(gameStats.range);
             this.setTexture(gameStats.texture);
 
@@ -225,7 +325,7 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
         return (this.level >= this.maxLevel);
     }
 
-    protected attack(): void
+    protected attackProjectile(): void
     {
         if (!this.isReloading && this.currentFocus)
         {
@@ -242,60 +342,46 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
                     if (target)
                     {
                         target.takeDamage(this.getCurrentDamage(), this);
+                        target.freeze(this.freezeDuration);
                     }
                     bullet.destroy();
                 }
             });
 
             this.reload();
+        }
+    }
 
-            const rotation = Math.atan2(this.y - this.currentFocus.y, this.x - this.currentFocus.x) * 180 / Math.PI;
-            const threshold = 22.5;
-            if (rotation > 0)
+    protected attackArea(): void
+    {
+        if (!this.isReloading && this.currentFocus)
+        {
+            if ((this.freezeTargetCount > 0) && (this.freezeTargetCount < this.targetsInRange.length))
             {
-                if (rotation < threshold)
+                let targetsIndexes = WELLY_Utils.iota(this.targetsInRange.length, 0);
+                const count = Math.min(targetsIndexes.length, this.freezeTargetCount);
+
+                for (let i = 0; i < count; ++i)
                 {
-                    this.setDirection(WELLY_DIRECTIONS.Left);
+                    const targetIndex = Phaser.Math.Between(0, targetsIndexes.length - 1);
+                    const target = this.targetsInRange[targetsIndexes[targetIndex]];
+
+                    target.takeDamage(this.getCurrentDamage(), this);
+                    target.freeze(this.freezeDuration);
+
+                    Phaser.Utils.Array.Remove(targetsIndexes, targetIndex);
                 }
-                else if (rotation < 90 - threshold)
-                {
-                    this.setDirection(WELLY_DIRECTIONS.UpLeft);
-                }
-                else if (rotation < 90 + threshold)
-                {
-                    this.setDirection(WELLY_DIRECTIONS.Up);
-                }
-                else if (rotation < 180 - threshold)
-                {
-                    this.setDirection(WELLY_DIRECTIONS.UpRight);
-                }
-                else
-                {
-                    this.setDirection(WELLY_DIRECTIONS.Right);
-                }
-            }
-            else if (rotation > -threshold)
-            {
-                this.setDirection(WELLY_DIRECTIONS.Left);
-            }
-            else if (rotation > -90 + threshold)
-            {
-                this.setDirection(WELLY_DIRECTIONS.DownLeft);
-            }
-            else if (rotation > -90 - threshold)
-            {
-                this.setDirection(WELLY_DIRECTIONS.Down);
-            }
-            else if (rotation > -180 + threshold)
-            {
-                this.setDirection(WELLY_DIRECTIONS.DownRight);
             }
             else
             {
-                this.setDirection(WELLY_DIRECTIONS.Right);
+                for (const target of this.targetsInRange)
+                {
+                    target.takeDamage(this.getCurrentDamage(), this);
+                    target.freeze(this.freezeDuration);
+                }
             }
 
-            this.anims.play(`Idle${this.currentDirection}`, true);
+            this.reload();
         }
     }
 
@@ -305,11 +391,7 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
 
         this.scene.time.delayedCall(1000 / this.getCurrentAttackSpeed(), () => {
             this.isReloading = false;
-
-            if (this.currentFocus)
-            {
-                this.attack();
-            }
+            this.attackFunction();
         }, undefined, this);
     }
 

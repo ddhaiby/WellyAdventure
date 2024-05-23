@@ -1,6 +1,6 @@
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export class WELLY_LoadingScreen extends Phaser.GameObjects.Container
 {

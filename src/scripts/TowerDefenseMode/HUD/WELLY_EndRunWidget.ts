@@ -1,7 +1,7 @@
 import Sizer from "phaser3-rex-plugins/templates/ui/sizer/Sizer";
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { GPC_TextButtonStyle, WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { WELLY_GameStatistics as RunStatistics, WELLY_MonsterStatistics } from "../Analytics/WELLY_GameAnalytics";
 import { GridTable } from "phaser3-rex-plugins/templates/ui/ui-components.js";

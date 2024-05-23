@@ -1,7 +1,7 @@
 import { WELLY_CST } from "../../WELLY_CST";
 import { GPC_TextButtonStyle, WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export class WELLY_PauseMenu extends Phaser.GameObjects.Container
 {

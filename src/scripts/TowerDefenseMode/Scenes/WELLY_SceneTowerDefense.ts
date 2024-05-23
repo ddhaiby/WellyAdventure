@@ -8,7 +8,7 @@ import { WELLY_JunkMonster } from "../Characters/Npcs/WELLY_JunkMonster";
 import { WELLY_WaveManager } from "../WaveSystem/WELLY_WaveManager";
 import { WELLY_TurretPopup } from "../Characters/Npcs/Turrets/WELLY_TurretPopup";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_WaveCountdownWidget } from "../HUD/WELLY_WaveCountdownWidget";
 import { WELLY_WellyBoostData, WELLY_WellyBoostManager } from "../WellyBoost/WELLY_WellyBoostManager";
 import { WELLY_TurretData } from "../Turrets/WELLY_TurretData";
@@ -115,7 +115,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         super.create();
 
         this.turretsData = this.cache.json.get("turretsData");
-
+        
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new WELLY_TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
         this.spawnedTurrets = new Map<string, number>();
@@ -666,7 +666,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
             {
                 const turretLevel = 0; 
                 const turretPreviewData = this.turretsData[this.turretPrewiewIndex];
-                const price = turretPreviewData.gameStatsPerLevel[turretLevel].price
+                const price = turretPreviewData.gameStatsPerLevel[turretLevel].price;
                 this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, price);
             }
 
@@ -747,7 +747,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
             level: level,
             turretData: turretData,
             characterTexture: "",
-            walkSpeed: 0
+            walkSpeed: 0,
         };
         turret.init(spawnData);
 

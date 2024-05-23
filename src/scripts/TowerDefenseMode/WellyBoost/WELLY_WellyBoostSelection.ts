@@ -1,7 +1,7 @@
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
 import { WELLY_WellyBoostData } from "./WELLY_WellyBoostManager";
 

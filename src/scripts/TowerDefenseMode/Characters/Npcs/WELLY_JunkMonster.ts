@@ -1,5 +1,4 @@
 import { WELLY_DIRECTION, WELLY_DIRECTIONS } from "../../../Common/Characters/WELLY_CharacterMovementComponent";
-import { WELLY_SpawnData } from "../../../Common/Characters/WELLY_CharacterSpawner";
 import { WELLY_Npc } from "../../../Common/Characters/Npcs/WELLY_Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { WELLY_BaseScene } from "../../../Common/Scenes/WELLY_BaseScene";
@@ -32,6 +31,9 @@ export class WELLY_JunkMonster extends WELLY_Npc
 
     private prevX: number = 0;
     private prevY: number = 0;
+
+    /** Whether this monster has a the frozen status */
+    protected isFrozen: boolean = false;
 
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
@@ -169,8 +171,11 @@ export class WELLY_JunkMonster extends WELLY_Npc
             hasMoved = true;
         }
 
-        const direction = directionV + directionH as WELLY_DIRECTION;
-        this.setDirection(direction);
+        const direction = directionV + directionH as WELLY_DIRECTION | "";
+        if (direction != "")
+        {
+            this.setDirection(direction);
+        }
 
         this.prevX = this.x;
         this.prevY = this.y;
@@ -241,6 +246,20 @@ export class WELLY_JunkMonster extends WELLY_Npc
         }
 
         this.emit("DIE", sourceTurret);
+    }
+
+    public freeze(freezeDuration: number): void {
+        if (!this.isFrozen && (freezeDuration > 0.0) && this.characterMovementComponent.isFollowingPath())
+        {
+            this.isFrozen = true;
+            this.characterMovementComponent.pauseMoveTo();
+            this.setTint(0x1F51FF);
+            this.scene.time.delayedCall(freezeDuration * 1000, () => {
+                this.characterMovementComponent.resumeMoveTo();
+                this.clearTint();
+                this.isFrozen = false;
+            }, undefined, this);
+        }
     }
 
     public getCoin(): number

@@ -32,4 +32,17 @@ export class WELLY_Utils
         }
         return 0;        
     }
+
+    /** Assign successive values of value to every element in a specified range */
+    public static iota(count: number, startValue: number = 1): number[]
+    {
+        let iotaArray = Array(count);
+
+        for (let i = 0; i < iotaArray.length; ++i)
+        {
+            iotaArray[i] = startValue + i;
+        }
+
+        return iotaArray;
+    }
 }

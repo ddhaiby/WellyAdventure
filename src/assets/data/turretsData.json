@@ -3,42 +3,60 @@
         "id": "Amalia",
         "turretName": "Amalia Turret",
         "maxInstances": 5,
+        "attackType": "projectile",
         "gameStatsPerLevel":
         [
-            { "texture": "Amalia", "price": 40, "damage": 50, "attackSpeed": 1, "range": 240 },
-            { "texture": "Amalia", "price": 160, "damage": 60, "attackSpeed": 1.1, "range": 240 },
-            { "texture": "Amalia", "price": 280, "damage": 80, "attackSpeed": 1.5, "range": 250 },
-            { "texture": "Amalia", "price": 300, "damage": 100, "attackSpeed": 2, "range": 250 },
-            { "texture": "Amalia", "price": 420, "damage": 110, "attackSpeed": 2, "range": 260 },
-            { "texture": "Amalia", "price": 550, "damage": 130, "attackSpeed": 2, "range": 300 }
+            { "texture": "Amalia", "framePerAnim": 4, "price": 50, "damage": 50, "attackSpeed": 1, "range": 240 },
+            { "texture": "Amalia", "framePerAnim": 4, "price": 160, "damage": 60, "attackSpeed": 1.1, "range": 240 },
+            { "texture": "Amalia", "framePerAnim": 4, "price": 280, "damage": 80, "attackSpeed": 1.5, "range": 250 },
+            { "texture": "Amalia", "framePerAnim": 4, "price": 300, "damage": 100, "attackSpeed": 2, "range": 250 },
+            { "texture": "Amalia", "framePerAnim": 4, "price": 420, "damage": 110, "attackSpeed": 2, "range": 260 },
+            { "texture": "Amalia", "framePerAnim": 4, "price": 550, "damage": 130, "attackSpeed": 2, "range": 300 }
         ]
     },
     {
         "id": "YellowTurret",
         "turretName": "Yellow guy",
         "maxInstances": 5,
+        "attackType": "projectile",
         "gameStatsPerLevel":
         [
-            { "texture": "player", "price": 40, "damage": 50, "attackSpeed": 1, "range": 180 },
-            { "texture": "player", "price": 160, "damage": 60, "attackSpeed": 1.1, "range": 180 },
-            { "texture": "player", "price": 280, "damage": 80, "attackSpeed": 1.5, "range": 220 },
-            { "texture": "player", "price": 300, "damage": 100, "attackSpeed": 2, "range": 220 },
-            { "texture": "player", "price": 420, "damage": 110, "attackSpeed": 2, "range": 220 },
-            { "texture": "player", "price": 550, "damage": 130, "attackSpeed": 2, "range": 250 }
+            { "texture": "player", "framePerAnim": 4, "price": 40, "damage": 50, "attackSpeed": 1, "range": 180 },
+            { "texture": "player", "framePerAnim": 4, "price": 160, "damage": 60, "attackSpeed": 1.1, "range": 180 },
+            { "texture": "player", "framePerAnim": 4, "price": 280, "damage": 80, "attackSpeed": 1.5, "range": 220 },
+            { "texture": "player", "framePerAnim": 4, "price": 300, "damage": 100, "attackSpeed": 2, "range": 220 },
+            { "texture": "player", "framePerAnim": 4, "price": 420, "damage": 110, "attackSpeed": 2, "range": 220 },
+            { "texture": "player", "framePerAnim": 4, "price": 550, "damage": 130, "attackSpeed": 2, "range": 250 }
         ]
     },
     {
         "id": "ItalianTurret",
         "turretName": "Italian Turret",
         "maxInstances": 5,
+        "attackType": "projectile",
         "gameStatsPerLevel":
         [
-            { "texture": "wellyItaly", "price": 40, "damage": 50, "attackSpeed": 1, "range": 300 },
-            { "texture": "wellyItaly", "price": 160, "damage": 60, "attackSpeed": 1.1, "range": 340 },
-            { "texture": "wellyItaly", "price": 180, "damage": 80, "attackSpeed": 1.5, "range": 350 },
-            { "texture": "wellyItaly", "price": 200, "damage": 100, "attackSpeed": 2, "range": 360 },
-            { "texture": "wellyItaly", "price": 320, "damage": 110, "attackSpeed": 2, "range": 360 },
-            { "texture": "wellyItaly", "price": 450, "damage": 130, "attackSpeed": 2, "range": 400 }
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 40, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 50, "attackSpeed": 1, "range": 300 },
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 160, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 60, "attackSpeed": 1.1, "range": 340 },
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 180, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 80, "attackSpeed": 1.5, "range": 350 },
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 200, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 100, "attackSpeed": 2, "range": 360 },
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 320, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 110, "attackSpeed": 2, "range": 360 },
+            { "texture": "wellyItaly", "framePerAnim": 4, "price": 450, "freezeDuration": 0.2, "freezeTargetCount": -1, "damage": 130, "attackSpeed": 2, "range": 400 }
+        ]
+    },
+    {
+        "id": "IceCreamMachine",
+        "turretName": "Ice Cream Machine",
+        "maxInstances": 2,
+        "attackType": "staticArea",
+        "gameStatsPerLevel":
+        [
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 40, "freezeDuration": 0.5, "freezeTargetCount": 3, "attackSpeed": 0.8, "range": 220 },
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 60, "freezeDuration": 0.6, "freezeTargetCount": 3, "attackSpeed": 0.45, "range": 220 },
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 80, "freezeDuration": 0.7, "freezeTargetCount": 3, "attackSpeed": 0.45, "range": 220 },
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 100, "freezeDuration": 0.8, "freezeTargetCount": 3, "attackSpeed": 0.45, "range": 220 },
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 120, "freezeDuration": 1, "freezeTargetCount": 3, "attackSpeed": 0.55, "range": 220 },
+            { "texture": "iceCreamMachine", "framePerAnim": 1, "price": 250, "freezeDuration": 1.25, "freezeTargetCount": 3, "attackSpeed": 0.6, "range": 220 }
         ]
     }
 ]

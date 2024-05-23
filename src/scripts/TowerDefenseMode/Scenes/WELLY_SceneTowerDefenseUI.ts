@@ -3,7 +3,7 @@ import { WELLY_DialogueBox } from "../../Common/HUD/WELLY_DialogueBox";
 import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { WELLY_BaseScene, WELLY_SceneData, WELLY_SpeedMode } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_GameStatistics } from "../Analytics/WELLY_GameAnalytics";
 import { WELLY_BottomMenu } from "../HUD/WELLY_BottomMenu";
 import { WELLY_EndRunWidget } from "../HUD/WELLY_EndRunWidget";

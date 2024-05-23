@@ -199,7 +199,10 @@ export class WELLY_CharacterMovementComponent
             duration: 1000 * path.getLength() / this.walkSpeed,
             repeat: 0,
             yoyo: false,
-            onComplete: () => { this.owner.emit("MOVE_TO_END"); },
+            onComplete: () => {
+                this.pathFollower.destroy();
+                this.owner.emit("MOVE_TO_END");
+            },
             callbackScope: this
         });
 
@@ -210,5 +213,26 @@ export class WELLY_CharacterMovementComponent
         //         alpha: 1
         // }})
         // path.draw(graphics);
+    }
+
+    public isFollowingPath(): boolean
+    {
+        return (this.tweenFollowPath != undefined);
+    }
+
+    public pauseMoveTo(): void
+    {
+        if (this.tweenFollowPath && !this.tweenFollowPath.isPaused())
+        {
+            this.tweenFollowPath.pause();
+        }
+    }
+
+    public resumeMoveTo(): void
+    {
+        if (this.tweenFollowPath && this.tweenFollowPath.isPaused())
+        {
+            this.tweenFollowPath.resume();
+        }
     }
 }

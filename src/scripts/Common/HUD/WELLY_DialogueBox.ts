@@ -1,7 +1,7 @@
 import TextBox from "phaser3-rex-plugins/templates/ui/textbox/TextBox";
 import { WELLY_BaseScene } from "../Scenes/WELLY_BaseScene";
 import { WELLY_CST } from "../../WELLY_CST";
-import { WELLY_Utils } from "../Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export class WELLY_DialogueBox extends TextBox
 {

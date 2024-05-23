@@ -1,7 +1,7 @@
 import Label from "phaser3-rex-plugins/templates/ui/label/Label";
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_Utils } from "../../Common/Utils/WELLY_Utils";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_TurretData } from "../Turrets/WELLY_TurretData";
 import { WELLY_Turret } from "../Characters/Npcs/Turrets/WELLY_Turret";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";

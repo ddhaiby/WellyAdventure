@@ -2,121 +2,75 @@ import { WELLY_CST } from "../../WELLY_CST";
 import { GPC_TextButtonStyle, WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_Utils } from "../../Utils/WELLY_Utils";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 export class WELLY_PauseMenu extends Phaser.GameObjects.Container
 {
     public scene: WELLY_BaseScene;
+
+    protected menuBackground: RoundRectangle;
 
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
         super(scene, x, y);
         this.scene.add.existing(this);
 
-        this.width = this.scene.scale.displaySize.width;
-        this.height = this.scene.scale.displaySize.height;
+        this.width = WELLY_CST.GAME.WIDTH;
+        this.height = WELLY_CST.GAME.HEIGHT;
 
         const background = scene.add.graphics();
-        background.fillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BLACK), 0.85);
+        background.fillStyle(0x526CC1, 0.8);
         background.fillRect(0, 0, this.width, this.height);
         background.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.width, this.height), Phaser.Geom.Rectangle.Contains);
-
         this.add(background);
 
-        this.createMainButtons();
-        this.createTopRightCornerButtons();
+        this.menuBackground = scene.rexUI.add.roundRectangle(this.width * 0.5, this.height * 0.5, 300, 420, 12);
+        this.menuBackground.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1);
+        this.menuBackground.setStrokeStyle(5, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+        this.add(this.menuBackground);
+
+        const title = scene.add.text(this.width * 0.5, this.menuBackground.y - this.menuBackground.height * 0.5 + 28, "PAUSED", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "46px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, align: "center" });
+        title.setOrigin(0.5, 0);
+        this.add(title);
+
+        this.createButtons();
     }
 
-    protected createMainButtons(): void
+    protected createButtons(): void
     {
-        const buttonStyle = {
-            fontSize : "54px",
-            textColorNormal: WELLY_CST.STYLE.COLOR.ORANGE,
-            textColorHovered: WELLY_CST.STYLE.COLOR.WHITE,
-            textColorPressed: WELLY_CST.STYLE.COLOR.GREY,
-            textStrokeThickness : 6,
-            textStroke: WELLY_CST.STYLE.COLOR.BLACK,
-            pixelPerfect: false,
-            textOffsetNormalY: 0,
-            textOffsetHoveredY: -1,
-            textOffsetPressedY: 3
-        } as GPC_TextButtonStyle ;
-        
-        const buttonResume =  new WELLY_TextButton(this.scene, 0, 0, "RESUME", buttonStyle);
-        buttonResume.setTextures("");
-        buttonResume.onClicked(() => { this.onResumeClicked(); } , this);
-        this.add(buttonResume);
+        const buttonHome =  new WELLY_TextButton(this.scene, 0, 0, "", {
+            textureNormal: "homeButtonNormal",
+            texturePressed: "homeButtonPressed"
+        });
+        buttonHome.onClicked(() => { this.onHomeClicked(); } , this);
+        this.add(buttonHome);
 
-        const buttonRestart =  new WELLY_TextButton(this.scene, 0, 0, "RESTART", buttonStyle);
-        buttonRestart.setTextures("");
+        const buttonRestart =  new WELLY_TextButton(this.scene, 0, 0, "", {
+            textureNormal: "restartButtonNormal",
+            texturePressed: "restartButtonPressed"
+        });
         buttonRestart.onClicked(() => { this.onRestartClicked(); } , this);
         this.add(buttonRestart);
 
-        const buttonMainMenu =  new WELLY_TextButton(this.scene, 0, 0, "MAIN MENU", buttonStyle);
-        buttonMainMenu.setTextures("");
-        buttonMainMenu.onClicked(() => { this.onMainMenuClicked(); } , this);
-        this.add(buttonMainMenu);
+        const buttonResume =  new WELLY_TextButton(this.scene, 0, 0, "", {
+            textureNormal: "playButtonNormal",
+            texturePressed: "playButtonPressed"
+        });
+        buttonResume.onClicked(() => { this.onResumeClicked(); } , this);
+        this.add(buttonResume);
 
         const mainButtons = this.scene.rexUI.add.sizer({
-            orientation: "top-to-bottom",
-            space: { top: 0, item: 40 },
+            orientation: "left-to-right",
+            space: { top: 0, item: 20 },
             x: this.width * 0.5,
-            y: this.height * 0.5
-        }).setOrigin(0.5);
+            y: this.menuBackground.y + this.menuBackground.height * 0.5 - 18
+        }).setOrigin(0.5, 1);
 
         this.add(mainButtons);
-        mainButtons.add(buttonResume);
+        mainButtons.add(buttonHome);
         mainButtons.add(buttonRestart);
-        mainButtons.add(buttonMainMenu);
+        mainButtons.add(buttonResume);
         mainButtons.layout();
-    }
-
-    protected createTopRightCornerButtons(): void
-    {
-        const buttonStyle = {
-            pixelPerfect: false,
-            textOffsetNormalY: 0,
-            textOffsetHoveredY: -1,
-            textOffsetPressedY: 3,
-            tintNormal: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.ORANGE),
-            tintHovered: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE),
-            tintPressed: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.GREY)
-        } as GPC_TextButtonStyle ;
-
-        const topRightButtons = this.scene.rexUI.add.sizer({
-            orientation: "left-to-right",
-            space: { top: 0, item: 12 },
-            x: this.width - 12,
-            y: 12
-        }).setOrigin(1, 0);
-
-        const buttonMusic =  new WELLY_TextButton(this.scene, 0, 0, "", buttonStyle);
-        buttonMusic.setTextures("musicIcon");
-
-        // Temporary until we get sounds for real
-        let isMusicOn = true;
-        buttonMusic.onClicked(() => {
-            isMusicOn = !isMusicOn;
-            buttonMusic.setTextures(isMusicOn ? "musicIcon" : "musicIconOff");
-            this.onMusicClicked();
-        } , this);
-        this.add(buttonMusic);
-
-        // Temporary until we get sounds for real
-        let isSoundOn = true;
-        const buttonSound =  new WELLY_TextButton(this.scene, 0, 0, "", buttonStyle);
-        buttonSound.setTextures("soundIcon");
-        buttonSound.onClicked(() => {
-            isSoundOn = !isSoundOn;
-            buttonSound.setTextures(isSoundOn ? "soundIcon" : "soundIconOff");
-            this.scene.sound.setMute(!isSoundOn);
-            this.onSoundClicked();
-        } , this);
-        this.add(buttonSound);
-
-        this.add(topRightButtons);
-        topRightButtons.add(buttonMusic);
-        topRightButtons.add(buttonSound);
-        topRightButtons.layout();
     }
 
     private onResumeClicked() : void
@@ -129,18 +83,8 @@ export class WELLY_PauseMenu extends Phaser.GameObjects.Container
         this.emit("requestRestart");
     }
 
-    private onMainMenuClicked() : void
+    private onHomeClicked() : void
     {
         this.emit("requestMainMenu");
-    }
-
-    private onMusicClicked() : void
-    {
-        this.emit("toggleMusic");
-    }
-
-    private onSoundClicked() : void
-    {
-        this.emit("toggleSound");
     }
 }

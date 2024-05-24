@@ -72,7 +72,7 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     {
         super(scene, x, y);
 
-        this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "28px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
+        this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "28px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
 
         this.rangeIndicator = this.scene.add.graphics();
         this.hideRangeIndicator();

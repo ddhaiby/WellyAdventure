@@ -101,13 +101,17 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
     public create(): void
     {
         const keys = this.input.keyboard?.addKeys({
-            escape: Phaser.Input.Keyboard.KeyCodes.O
+            cheat_boost: Phaser.Input.Keyboard.KeyCodes.O,
+            cheat_gameOver: Phaser.Input.Keyboard.KeyCodes.P
         }, false);
 
         if (keys)
         {
             // @ts-ignore
-            keys.escape.on('down', () => { this.showWellyBoostSelection(); }, this);
+            keys.cheat_boost.on('down', () => { this.showWellyBoostSelection(); }, this);
+
+            // @ts-ignore
+            keys.cheat_gameOver.on('down', () => { this.setGameOver(true); }, this);
         }
         
 
@@ -363,7 +367,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
             this.addPlayerCoin(monsterCoin);
 
             // TODO Make a function so it could be reuse anywhere. There is a similar code for the countdown widget
-            const coinText = this.add.text(monster.x, monster.y - monster.displayHeight * 0.5 - 10, `+${monsterCoin}`, { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+            const coinText = this.add.text(monster.x, monster.y - monster.displayHeight * 0.5 - 10, `+${monsterCoin}`, { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
 
             this.tweens.add({
                 targets: coinText,
@@ -535,7 +539,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         const bonusCoin = 100;
         this.addPlayerCoin(bonusCoin);
 
-        const coinText = this.add.text(waveWidget.x, waveWidget.y - 24, `+${bonusCoin}`, { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
+        const coinText = this.add.text(waveWidget.x, waveWidget.y - 24, `+${bonusCoin}`, { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: "#000000", strokeThickness: 3, fontSize: "21px" });
         coinText.setOrigin(0.5, 1);
 
         this.tweens.add({

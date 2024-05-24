@@ -16,9 +16,9 @@ export class WELLY_TurretPopup extends WELLY_Popup
         super(turret.scene, x, y, config);
 
         this.upgradeButton = new WELLY_TextButton(this.scene, 0, 0, "UPGRADE", {
-            textureNormal: "buttonConnectNormal", textOffsetNormalY: -1,
-            texturePressed: "buttonConnectNormal", textOffsetHoveredY: -1,
-            textureHovered: "buttonConnectNormal", textOffsetPressedY: -1,
+            textureNormal: "backgroundButtonNormal", textOffsetNormalY: -1,
+            texturePressed: "backgroundButtonPressed", textOffsetHoveredY: -1,
+            textureHovered: "backgroundButtonNormal", textOffsetPressedY: -1,
             fontSize: "18px",
             textColorNormal: WELLY_CST.STYLE.COLOR.BLUE,
             textStrokeThickness: 0
@@ -28,7 +28,7 @@ export class WELLY_TurretPopup extends WELLY_Popup
 
         this.upgradeButton.onClicked(() => { this.emit("requestUpgrade"); }, this);
 
-        this.turretNameText = this.scene.add.text(turret.x - this.x, turret.y - turret.displayHeight * 0.5 - 4 - this.y, turret.name.toUpperCase(),{ fontSize: "14px", color: WELLY_CST.STYLE.COLOR.WHITE, fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3 }).setOrigin(0.5, 1);
+        this.turretNameText = this.scene.add.text(turret.x - this.x, turret.y - turret.displayHeight * 0.5 - 4 - this.y, turret.name.toUpperCase(),{ fontSize: "14px", color: WELLY_CST.STYLE.COLOR.BEIGE, fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3 }).setOrigin(0.5, 1);
         this.add(this.turretNameText);
 
         this.turret = turret;
@@ -49,7 +49,7 @@ export class WELLY_TurretPopup extends WELLY_Popup
 
     private updateData(turret: WELLY_Turret): void
     {
-        const text = turret.canUpgrade() ? `UPGRADE  ${turret.getUpgradePrice()}\[img=coin_24]` : "LEVEL MAX";
+        const text = turret.canUpgrade() ? `UPGRADE  ${turret.getUpgradePrice()} \[img=coinSmallIcon]` : "LEVEL MAX";
         this.upgradeButton.setText(text);
     }
 

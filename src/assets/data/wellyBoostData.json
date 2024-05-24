@@ -9,7 +9,7 @@
     {
         "id": "fullTraining",
         "name": "Full Training",
-        "description": "All chefs in game level up",
+        "description": "All chefs in game\nlevel up",
         "image": "",
         "rarity": "RARE"
     },
@@ -30,7 +30,7 @@
     {
         "id": "moneyBonusFromDeath",
         "name": "Inflation",
-        "description": "Get more money from customers once they are fed",
+        "description": "Get more money from any customer",
         "image": "",
         "rarity": "MYTHIC"
     }

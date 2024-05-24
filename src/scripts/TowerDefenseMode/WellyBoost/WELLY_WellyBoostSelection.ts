@@ -2,7 +2,6 @@ import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_Utils } from "../../Utils/WELLY_Utils";
-import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
 import { WELLY_WellyBoostData } from "./WELLY_WellyBoostManager";
 
 export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
@@ -13,6 +12,7 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
 
     protected title: Phaser.GameObjects.Text;
     protected rarityText: Phaser.GameObjects.Text;
+    protected rarityBackground: RoundRectangle;
     protected description: Phaser.GameObjects.Text;
     protected background: RoundRectangle;
 
@@ -21,26 +21,34 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
         super(scene, x, y);
         this.scene.add.existing(this);
 
-        this.width = 180;
-        this.height = 400;
+        this.width = 220;
+        this.height = 420;
 
-        this.background = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 8, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE));
+        const orange = "#FF9161";
+        const blue = "0x526CC1";
+
+        this.background = scene.rexUI.add.roundRectangle(0, 0, this.width, this.height, 12);
+        this.background.setStrokeStyle(5, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
         this.add(this.background);
 
-        this.title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 12, "BONUS 1", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "26px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: WELLY_CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "center" });
+        this.title = scene.add.text(0, this.background.y - this.background.displayHeight * 0.5 + 16, "BONUS 1", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "35px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, align: "center" });
+        this.title.setWordWrapWidth(this.background.width - 20);
         this.title.setOrigin(0.5, 0);
         this.add(this.title);
 
-        this.rarityText = scene.add.text(0, this.title.y + this.title.displayHeight + 12, "COMMON", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "15px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, align: "center" });
-        this.rarityText.setOrigin(0.5, 0);
+        this.rarityBackground = scene.rexUI.add.roundRectangle(0, this.background.y + this.background.displayHeight * 0.5 - 100, 144, 32, 16,  WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.LIGHT_BLUE));
+        this.add(this.rarityBackground);
+
+        this.rarityText = scene.add.text(this.rarityBackground.x, this.rarityBackground.y, "COMMON", { fontFamily: WELLY_CST.STYLE.TEXT.NANUM_PEN_FONT_FAMILY, fontSize: "30px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, align: "center" });
+        this.rarityText.setOrigin(0.5, 0.5);
         this.add(this.rarityText);
 
-        const image = scene.add.image(0, 0, "wellyBonusTemplate");
+        const image = scene.add.image(0, -20, "wellyBonusTemplate");
         this.add(image);
 
-        this.description = scene.add.text(0, this.background.y + this.background.displayHeight * 0.5 - 24, "f", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "14px", color: WELLY_CST.STYLE.COLOR.BLUE, strokeThickness: 0, align: "center" });
+        this.description = scene.add.text(0, this.background.y + this.background.displayHeight * 0.5 - 20, "", { fontFamily: WELLY_CST.STYLE.TEXT.MERRIWEATHER_SANS_FONT_FAMILY, fontSize: "18px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, align: "center" });
         this.description.setOrigin(0.5, 1);
-        this.description.setWordWrapWidth(this.background.width)
+        this.description.setWordWrapWidth(this.background.width - 12);
         this.add(this.description);
 
         const scaleNormal = 1;
@@ -48,12 +56,28 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
 
         this.background.setInteractive();
         this.background.on(Phaser.Input.Events.POINTER_OVER, () => {
-            this.scene.rexOutlinePipelinePlugin.add(this.background, { thickness: 4, outlineColor: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.LIGHT_BLUE) });
+            this.background.setFillStyle(WELLY_Utils.hexColorToNumber(blue), 1);
+            this.background.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+            this.title.setColor(WELLY_CST.STYLE.COLOR.BEIGE)
+            this.rarityBackground.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1);
+            // this.rarityText.setColor(orange);
+            this.description.setColor(WELLY_CST.STYLE.COLOR.BEIGE);
+
+            this.setScale(1.2);
+
             this.scene.sound.play("buttonHovered", { volume: 0.01 });
         }, this);
         
         this.background.on(Phaser.Input.Events.POINTER_OUT, () => {
-            this.scene.rexOutlinePipelinePlugin.remove(this.background);
+            this.background.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1);
+            this.background.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+            this.title.setColor(WELLY_CST.STYLE.COLOR.LIGHT_BLUE)
+            this.rarityBackground.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.LIGHT_BLUE), 1);
+            // this.rarityText.setColor(WELLY_CST.STYLE.COLOR.BEIGE);
+            this.description.setColor(WELLY_CST.STYLE.COLOR.LIGHT_BLUE);
+
+            this.setScale(1);            
+
             this.setScale(scaleNormal);
         }, this);
 
@@ -65,6 +89,18 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
         this.background.on(Phaser.Input.Events.POINTER_UP, () => {
             this.setScale(scaleNormal);
         }, this);
+    }
+
+    public select(): void
+    {
+        const blue = "0x526CC1";
+
+        this.background.setFillStyle(WELLY_Utils.hexColorToNumber(blue), 1);
+        this.background.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+        this.title.setColor(WELLY_CST.STYLE.COLOR.BEIGE)
+        this.rarityBackground.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1);
+        // this.rarityText.setColor(orange);
+        this.description.setColor(WELLY_CST.STYLE.COLOR.BEIGE);
     }
 
     public activate(): void
@@ -114,7 +150,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
         this.height = this.scene.scale.displaySize.height;
 
         const background = this.scene.add.graphics();
-        background.fillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BLACK), 0.85);
+        background.fillStyle(0x526CC1, 0.8);
         background.fillRect(-this.width * 0.5, -this.height * 0.5, this.width, this.height);
         background.setInteractive(new Phaser.Geom.Rectangle(-this.width * 0.5, -this.height * 0.5, this.width, this.height), Phaser.Geom.Rectangle.Contains);
 
@@ -122,7 +158,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
         const buttonColumn = this.scene.rexUI.add.sizer({
             orientation: "horizontal",
-            space: { top: 0, item: 100 },
+            space: { top: 0, item: 80 },
             x: 0,
             y: 0
         }).setOrigin(0.5);
@@ -212,6 +248,8 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
     protected animateHideSelectedBoostWidget(boostButtonWidget: WELLY_WellyBoostButtonWidget): void
     {
+        boostButtonWidget.select();
+        
         this.scene.tweens.add({
             targets: boostButtonWidget,
             duration: 120,

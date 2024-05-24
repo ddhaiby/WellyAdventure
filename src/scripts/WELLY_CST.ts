@@ -25,24 +25,28 @@ export const WELLY_CST = {
     },
     STYLE: {
         TEXT: {
-            FONT_FAMILY: "Kickers-Regular"
+            KICKERS_FONT_FAMILY: "Kickers-Regular",
+            NANUM_PEN_FONT_FAMILY: "Nanum Pen Script",
+            MERRIWEATHER_SANS_FONT_FAMILY: "Merriweather Sans"
         },
         COLOR: {
             RARITY: {
-                COMMON: "#777777",
+                COMMON: "#222222",
                 UNCOMMON: "#1eff00",
                 RARE: "#0070dd",
                 EPIC: "#a335ee",
                 LEGENDARY: "#ff8000",
-                MYTHIC: "#FF55FF",
+                MYTHIC: "#FF0000",
             },
-            ORANGE: "#f1966b",
+            ORANGE: "#FF9161",
             BLUE: "#2c4b7e",
-            LIGHT_BLUE: "#6782e6",
-            WHITE: "#f7e6e6",
+            LIGHT_BLUE: "#6380ED",
+            BEIGE: "#FAE5E5",
+            WHITE: "#ffffff",
+            YELLOW: "#FFC715",
             BLACK: "#000000",
             GREY: "#C6B8B8",
-            RED: "#FF0000"
+            RED: "#EA3F3F"
         }
     },
     EVENTS: {

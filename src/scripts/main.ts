@@ -4,6 +4,7 @@ import { WELLY_CST } from './WELLY_CST';
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
 import PathFollowerPlugin from 'phaser3-rex-plugins/plugins/pathfollower-plugin.js';
+import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugin';
 
 document.body.style.margin = "0";
 document.body.style.padding = "0";
@@ -29,6 +30,7 @@ new Phaser.Game({
     },
     plugins: {
         global: [
+            { key: 'rexWebFontLoader', plugin: WebFontLoaderPlugin, start: true },
             { key: "rexOutlinePipeline", plugin: OutlinePipelinePlugin, start: true },
             { key: "rexPathFollower", plugin: PathFollowerPlugin, start: true }
         ],

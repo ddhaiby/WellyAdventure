@@ -7,6 +7,7 @@ export declare type WELLY_MonsterStatistics =
 export declare type WELLY_GameStatistics =
 {
     monsterStatistics: WELLY_MonsterStatistics[];
+    monsterTotalCount: number;
     waveCount: number;
     elapsedTime: number;
 };
@@ -77,14 +78,17 @@ export class WELLY_GameAnalytics
     public getGameStatistics(): WELLY_GameStatistics
     {
         let monsterStatistics = [] as WELLY_MonsterStatistics[];
+        let monsterTotalCount = 0;
 
         this.killedMonsters.forEach((monsterCount: number, monsterTexture: string) =>
         {
             monsterStatistics.push({monsterTexture: monsterTexture, monsterCount: monsterCount});
+            monsterTotalCount += monsterCount;
         });
 
         return {
             monsterStatistics: monsterStatistics,
+            monsterTotalCount: monsterTotalCount,
             waveCount: this.waveCount,
             elapsedTime: Math.round(this.elapsedTime)
         };

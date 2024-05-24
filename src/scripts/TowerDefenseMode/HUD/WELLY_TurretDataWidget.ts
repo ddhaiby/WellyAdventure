@@ -50,7 +50,7 @@ export class WELLY_TurretDataWidget extends Phaser.GameObjects.Container
 
         const textWidth = 42;
         const rowWidth = 150;
-        const textStyle = { fontSize: "14px", color: WELLY_CST.STYLE.COLOR.BLUE, fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY };
+        const textStyle = { fontSize: "14px", color: WELLY_CST.STYLE.COLOR.BLUE, fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY };
         const spaceItem = 6;
 
         const mainSizer = this.scene.rexUI.add.sizer({

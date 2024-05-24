@@ -11,6 +11,7 @@ import { WELLY_PauseMenu } from "../HUD/WELLY_PauseMenu";
 import { WELLY_ITurretData, WELLY_TurretDataWidget } from "../HUD/WELLY_TurretDataWidget";
 import { WellyBoostSelection } from "../WellyBoost/WELLY_WellyBoostSelection";
 import { WELLY_WellyBoostData } from "../WellyBoost/WELLY_WellyBoostManager";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 declare type WELLY_UIKeys = 
 {
@@ -28,6 +29,8 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     /** Display the current coins */
     private coinText: Phaser.GameObjects.Text;
 
+    private coinBackground: RoundRectangle;
+
     /** Display the current wave */
     private waveText: Phaser.GameObjects.Text;
 
@@ -35,15 +38,10 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     private turretDataWidget: WELLY_TurretDataWidget;
     
     /** Display the health of the player with a bar */
-    private playerHealthBar: WELLY_Bar;
+    private playerHealthWidget: Phaser.GameObjects.Image;
 
     /** Display the current health and max health of the player */
     private healthText: Phaser.GameObjects.Text;
-
-    /** Player face near the health bar */
-    private playerFaceImage: Phaser.GameObjects.Image;
-
-    private gameSpeedButton: WELLY_TextButton;
 
     private wellyBoostSelection: WellyBoostSelection;
 
@@ -76,23 +74,17 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         super.create();
 
         this.createShortcuts(); 
-        this.createHealthBar();
-
-        const coinIcon = this.add.image(this.playerFaceImage.x + 2, this.playerHealthBar.y + this.playerHealthBar.height + 12, "coin_24").setOrigin(0, 0);
-        this.coinText = this.add.text(coinIcon.x + coinIcon.displayWidth + 8, coinIcon.y - 3, "", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.ORANGE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        this.createHealthWidget();
+        this.createCoinWidget();
         
-        const waveIcon = this.add.image(this.playerFaceImage.x + 2, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75);
-        this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        const waveIcon = this.add.image(this.playerHealthWidget.x + 2, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75).setVisible(false);
+        this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
 
-        this.gameSpeedButton = new WELLY_TextButton(this, this.scale.displaySize.width - 30, 36, "X1", {
-            fontSize: "30px",
-            textOffsetNormalY: -1,
-            textOffsetHoveredY: -2,
-            textOffsetPressedY: 0,
-            textColorNormal: WELLY_CST.STYLE.COLOR.BLUE,
-            textStrokeThickness: 0
+        const menuButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 40, 44, "", {
+            textureNormal: "menuButtonNormal",
+            texturePressed: "menuButtonPressed",
         });
-        this.gameSpeedButton.onClicked(() => { this.onGameSpeedButtonClicked(); }, this);
+        menuButton.onClicked(() => { this.togglePauseMenu(); } , this);
 
         this.createBottomMenu();
 
@@ -126,22 +118,34 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         }
     }
 
-    private createHealthBar(): void
+    private createHealthWidget(): void
     {
-        this.playerHealthBar = new WELLY_Bar(this, { x: 30, y: 32, width: 200, height: 22, radius: 2,  value: 1, color: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.ORANGE), strokeThickness: 1, strokeColor: WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BLUE) });
+        this.playerHealthWidget = this.add.image(12, 12, "healthWidget").setOrigin(0);
         
-        this.healthText = this.add.text(this.playerHealthBar.x +  this.playerHealthBar.width * 0.5, this.playerHealthBar.y + this.playerHealthBar.height * 0.5, "", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.WHITE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 4, fontSize: "18px" });
-        this.healthText.setOrigin(0.5, 0.5);
+        this.healthText = this.add.text(this.playerHealthWidget.x +  this.playerHealthWidget.width - 7, this.playerHealthWidget.y + this.playerHealthWidget.height * 0.5 + 2, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.WHITE, fontSize: "33px" });
+        this.healthText.setOrigin(1, 0.5);
+    }
 
-        this.playerFaceImage = this.add.image(0, this.healthText.y - 6, "playerFace").setOrigin(0, 0.5);
-        this.playerFaceImage.setX(this.playerHealthBar.x - this.playerFaceImage.width * 0.5);
+    private createCoinWidget(): void
+    {
+        const backgroundHeight = 36;
+        this.coinBackground = this.rexUI.add.roundRectangle(this.playerHealthWidget.x + 2, this.playerHealthWidget.y + this.playerHealthWidget.height + backgroundHeight * 0.5 + 14, 140, backgroundHeight, backgroundHeight * 0.5, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.YELLOW), 1);
+        this.coinBackground.setOrigin(0, 0.5);
+
+        const coinIcon = this.add.image(this.playerHealthWidget.x + 2, this.coinBackground.y, "coinIcon").setOrigin(0, 0.5);
+        
+        this.coinText = this.add.text(coinIcon.x + coinIcon.width + 8, this.coinBackground.y, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.WHITE, fontSize: "32px" });
+        this.coinText.setOrigin(0, 0.5);
     }
 
     private createBottomMenu(): void
     {
         const menuWidth = this.scale.displaySize.width;
-        const menuHeight = 110;
+        const menuHeight = 120;
         this.bottomMenu = new WELLY_BottomMenu(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height - menuHeight * 0.5, menuWidth, menuHeight); // Display the bottomMenu below the game
+
+        this.bottomMenu.on("audioButtonClicked", () => {}, this);
+        this.bottomMenu.on("gameSpeedButtonClicked", () => { this.onGameSpeedButtonClicked(); }, this);
 
         const turretButtons = this.bottomMenu.getTurretButtons();
 
@@ -195,12 +199,12 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
 
     public onPlayerCoinChanged(coin: number): void
     {
-        this.coinText.setText(`${coin.toString()}`);
+        this.coinText.setText(`${coin}`);
+        this.coinBackground.resize(100 + 14 * coin.toString().length, this.coinBackground.height);
     }
 
     public onPlayerHealthChanged(health: number, maxHealth: number): void
     {
-        this.playerHealthBar.setValue(health / maxHealth);
         this.healthText.setText(`${health}/${maxHealth}`);
     }
 
@@ -215,13 +219,13 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
 
     public onTurretClicked(turretData: WELLY_ITurretData): void
     {
-        this.turretDataWidget.setVisible(true);
+        //this.turretDataWidget.setVisible(true);
         this.updateTurretDataWidget(turretData);
     }
 
     public updateTurretDataWidget(turretData: WELLY_ITurretData): void
     {
-        this.turretDataWidget.updateData(turretData);
+        //this.turretDataWidget.updateData(turretData);
     }
 
     public hideTurretDataWidget(): void
@@ -252,13 +256,7 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
 
     public onSpeedModeChanged(speedMode: WELLY_SpeedMode): void
     {
-        switch(speedMode)
-        {
-            case WELLY_SpeedMode.SLOW: this.gameSpeedButton.setText("X1"); break;
-            case WELLY_SpeedMode.NORMAL: this.gameSpeedButton.setText("X2"); break;
-            case WELLY_SpeedMode.FAST: this.gameSpeedButton.setText("X3"); break;
-            default: console.error("SceneTowerDefenseUI::onSpeedModeChanged - Invalid speed mode"); break;   
-        }
+        this.bottomMenu.updateGameSpeed(speedMode);
     }
 
     public onTurretSpawned(turretId: string, turretRemainInstances: number): void

@@ -16,7 +16,7 @@ export class WELLY_LoadingScreen extends Phaser.GameObjects.Container
         this.height = this.scene.scale.displaySize.height;
 
         const background = this.scene.add.graphics();
-        background.fillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1.0);
+        background.fillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1.0);
         background.fillRect(0, 0, this.width, this.height);
         background.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.width, this.height), Phaser.Geom.Rectangle.Contains);
         this.add(background);
@@ -32,7 +32,7 @@ export class WELLY_LoadingScreen extends Phaser.GameObjects.Container
         loadingSprite.play("Loading", true);
         this.add(loadingSprite);
 
-        const loadingText = this.scene.add.text(this.width * 0.5, this.height * 0.5, "LOADING", { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: "70px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: WELLY_CST.STYLE.COLOR.BLUE, strokeThickness: 5, align: "right" }).setOrigin(0.5, 0.5);
+        const loadingText = this.scene.add.text(this.width * 0.5, this.height * 0.5, "LOADING", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "70px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, align: "right" }).setOrigin(0.5, 0.5);
         this.add(loadingText);
     }
 }

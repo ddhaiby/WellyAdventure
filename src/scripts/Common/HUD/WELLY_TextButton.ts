@@ -74,7 +74,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         super(scene, x, y);
         scene.add.existing(this);
 
-        this.textureNormal = (style && style.textureNormal) ? style.textureNormal : "buttonNormal";
+        this.textureNormal = (style && style.textureNormal) ? style.textureNormal : "";
         this.texturePressed = (style && style.texturePressed) ? style.texturePressed : this.textureNormal;
         this.textureHovered = (style && style.textureHovered) ? style.textureHovered : this.textureNormal;
         this.textureDisabled = (style && style.textureDisabled) ? style.textureDisabled : this.textureNormal;
@@ -110,7 +110,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
         this.height = this.buttonImage.displayHeight;
         this.add(this.buttonImage);
 
-        this.buttonText =  new BBCodeText(this.scene, 0, 0, text, { fontFamily: WELLY_CST.STYLE.TEXT.FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
+        this.buttonText =  new BBCodeText(this.scene, 0, 0, text, { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: fontSize, color: textColor, stroke: textStroke, strokeThickness: textStrokeThickness, align: "center" });
         this.scene.add.existing(this.buttonText);
         this.buttonText.setOrigin(0.5);
         this.add(this.buttonText);

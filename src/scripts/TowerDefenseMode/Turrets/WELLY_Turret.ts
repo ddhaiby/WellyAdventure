@@ -68,6 +68,9 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
 
     protected attackFunction: Function;
 
+    // Simple solution to make an animated attack for area types
+    protected graphAttack: Phaser.GameObjects.Graphics | undefined;
+
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
         super(scene, x, y);
@@ -137,6 +140,8 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
         // Example: A turret could usually throw projectile and then get a welly bonus that frozes/hurts an area
         // Could also be another projectile fired in addition BUT independently
         this.attackFunction = (spawnData.turretData.attackType == "projectile") ? this.attackProjectile : this.attackArea;
+
+        this.graphAttack = this.scene.add.graphics({x: this.x, y: this.y});
 
         this.upgradeTo(spawnData.level);
     }
@@ -329,6 +334,7 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     {
         if (!this.isReloading && this.currentFocus)
         {
+            // TODO: Pooling
             const bullet = this.scene.add.image(this.x, this.y, "bullet");
             const target = this.currentFocus;
 
@@ -356,6 +362,8 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     {
         if (!this.isReloading && this.currentFocus)
         {
+            this.animateAttackArea();
+
             if ((this.freezeTargetCount > 0) && (this.freezeTargetCount < this.targetsInRange.length))
             {
                 let targetsIndexes = WELLY_Utils.iota(this.targetsInRange.length, 0);
@@ -382,6 +390,48 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
             }
 
             this.reload();
+        }
+    }
+
+    protected animateAttackArea(): void
+    {
+        if (this.graphAttack)
+        {
+            const iceColor = 0x3fd0d4;
+
+            this.graphAttack.setAlpha(0);
+            this.graphAttack.setVisible(true);
+
+            this.graphAttack.fillStyle(iceColor, 0.7);
+            this.graphAttack.fillCircle(0, 0, this.getCurrentRange());
+
+            this.scene.tweens.add({
+                targets: this.graphAttack,
+                alpha: 1,
+                duration: 200,
+                callbackScope: this,
+                onUpdate: () => {
+                    this.graphAttack.clear();
+                    this.graphAttack.fillStyle(iceColor, 0.7);
+                    this.graphAttack.fillCircle(0, 0, this.getCurrentRange() * (this.graphAttack.alpha * 0.5 + 0.6));
+                },
+                onComplete: () => {
+                    this.scene.tweens.add({
+                        targets: this.graphAttack,
+                        alpha: 0,
+                        duration: 450,
+                        callbackScope: this,
+                        onUpdate: () => {
+                            this.graphAttack.clear();
+                            this.graphAttack.fillStyle(iceColor, 0.7);
+                            this.graphAttack.fillCircle(0, 0, this.getCurrentRange() * this.graphAttack.alpha);
+                        },
+                        onComplete: () => {
+                            this.graphAttack.setVisible(false);
+                        }
+                    });
+                }
+            });
         }
     }
 

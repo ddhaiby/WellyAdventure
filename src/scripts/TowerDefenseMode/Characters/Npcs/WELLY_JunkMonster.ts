@@ -3,7 +3,7 @@ import { WELLY_Npc } from "../../../Common/Characters/Npcs/WELLY_Npc";
 import { WELLY_Bar } from "../../../Common/HUD/WELLY_Bar";
 import { WELLY_BaseScene } from "../../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_MonsterSpawnerData } from "../../WaveSystem/WELLY_WaveInstance";
-import { WELLY_Turret } from "./Turrets/WELLY_Turret";
+import { WELLY_Turret } from "../../Turrets/WELLY_Turret";
 
 export class WELLY_JunkMonster extends WELLY_Npc
 {

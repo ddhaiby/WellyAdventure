@@ -1,7 +1,7 @@
 import { WELLY_SpawnData } from "../../Common/Characters/WELLY_CharacterSpawner";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_JunkMonster } from "../Characters/Npcs/WELLY_JunkMonster";
-import { WELLY_Turret } from "../Characters/Npcs/Turrets/WELLY_Turret";
+import { WELLY_Turret } from "../Turrets/WELLY_Turret";
 import { WELLY_WaveSpawner } from "./WELLY_WaveSpawner";
 
 declare type WELLY_MonsterData = {

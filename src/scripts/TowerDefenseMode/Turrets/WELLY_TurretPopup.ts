@@ -1,8 +1,8 @@
-import { WELLY_CST } from "../../../../WELLY_CST";
-import { WELLY_BaseScene } from "../../../../Common/Scenes/WELLY_BaseScene";
-import { IPopupConfig, WELLY_Popup } from "../../../../Common/HUD/WELLY_Popup";
+import { WELLY_CST } from "../../WELLY_CST";
+import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
+import { IPopupConfig, WELLY_Popup } from "../../Common/HUD/WELLY_Popup";
 import { WELLY_Turret } from "./WELLY_Turret";
-import { WELLY_TextButton } from "../../../../Common/HUD/WELLY_TextButton";
+import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 
 export class WELLY_TurretPopup extends WELLY_Popup
 {

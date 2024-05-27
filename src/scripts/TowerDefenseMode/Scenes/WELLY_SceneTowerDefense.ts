@@ -3,11 +3,10 @@ import { WELLY_BaseScene, WELLY_SceneData, WELLY_SpeedMode } from "../../Common/
 import { WELLY_SceneTowerDefenseUI } from "./WELLY_SceneTowerDefenseUI";
 import { WELLY_WaveSpawner } from "../WaveSystem/WELLY_WaveSpawner";
 import { WELLY_MoveToPoint } from "../../Common/PathFinding/WELLY_MoveToEntity";
-import { WELLY_Turret, WELLY_TurretSpawnData } from "../Characters/Npcs/Turrets/WELLY_Turret";
+import { WELLY_Turret, WELLY_TurretSpawnData } from "../Turrets/WELLY_Turret";
+import { WELLY_TurretPopup } from "../Turrets/WELLY_TurretPopup";
 import { WELLY_JunkMonster } from "../Characters/Npcs/WELLY_JunkMonster";
 import { WELLY_WaveManager } from "../WaveSystem/WELLY_WaveManager";
-import { WELLY_TurretPopup } from "../Characters/Npcs/Turrets/WELLY_TurretPopup";
-import OutlinePipelinePlugin from "phaser3-rex-plugins/plugins/outlinepipeline-plugin";
 import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_WaveCountdownWidget } from "../HUD/WELLY_WaveCountdownWidget";
 import { WELLY_WellyBoostData, WELLY_WellyBoostManager } from "../WellyBoost/WELLY_WellyBoostManager";

@@ -1,12 +1,12 @@
-import { WELLY_SpawnData as WELLY_SpawnData } from "../../../../Common/Characters/WELLY_CharacterSpawner";
-import { WELLY_Npc as WELLY_Npc } from "../../../../Common/Characters/Npcs/WELLY_Npc";
-import { WELLY_BaseScene } from "../../../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_JunkMonster } from "../WELLY_JunkMonster";
-import { WELLY_CST } from "../../../../WELLY_CST";
-import { WELLY_ITurretData as WELLY_ITurretData } from "../../../HUD/WELLY_TurretDataWidget";
-import { WELLY_DIRECTION, WELLY_DIRECTIONS } from "../../../../Common/Characters/WELLY_CharacterMovementComponent";
-import { WELLY_TurretData as WELLY_TurretData } from "../../../Turrets/WELLY_TurretData";
-import { WELLY_Utils } from "../../../../Utils/WELLY_Utils";
+import { WELLY_SpawnData as WELLY_SpawnData } from "../../Common/Characters/WELLY_CharacterSpawner";
+import { WELLY_Npc as WELLY_Npc } from "../../Common/Characters/Npcs/WELLY_Npc";
+import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
+import { WELLY_JunkMonster } from "../Characters/Npcs/WELLY_JunkMonster";
+import { WELLY_CST } from "../../WELLY_CST";
+import { WELLY_ITurretData as WELLY_ITurretData } from "../HUD/WELLY_TurretDataWidget";
+import { WELLY_DIRECTION, WELLY_DIRECTIONS } from "../../Common/Characters/WELLY_CharacterMovementComponent";
+import { WELLY_TurretData as WELLY_TurretData } from "./WELLY_TurretData";
+import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 
 export declare type WELLY_TurretSpawnData = WELLY_SpawnData & 
 {

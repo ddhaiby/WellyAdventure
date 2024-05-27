@@ -168,7 +168,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
 
         new WELLY_LoadingScreen(this);
 
-        this.time.delayedCall(200, () => { this.loadAssets(); }, undefined, this);
+        this.time.delayedCall(1000, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             const sceneUI = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_UI, WELLY_SceneTowerDefenseUI, true, undefined) as WELLY_SceneTowerDefenseUI;

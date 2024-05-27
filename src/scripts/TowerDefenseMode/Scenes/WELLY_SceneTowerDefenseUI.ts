@@ -77,7 +77,7 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         this.createHealthWidget();
         this.createCoinWidget();
         
-        const waveIcon = this.add.image(this.playerHealthWidget.x + 2, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75).setVisible(false);
+        const waveIcon = this.add.image(this.playerHealthWidget.x + 4, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75);
         this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
 
         const menuButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 40, 44, "", {

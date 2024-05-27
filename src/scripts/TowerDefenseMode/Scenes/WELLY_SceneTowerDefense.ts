@@ -287,14 +287,17 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         {
             case WELLY_SpeedMode.SLOW:
                 this.time.timeScale = 1;
+                this.tweens.timeScale = 1;
                 this.anims.globalTimeScale = 1;
                 break;
             case WELLY_SpeedMode.NORMAL:
                 this.time.timeScale = 2;
+                this.tweens.timeScale = 2;
                 this.anims.globalTimeScale = 1;
                 break;
             case WELLY_SpeedMode.FAST:
                 this.time.timeScale = 4;
+                this.tweens.timeScale = 4;
                 this.anims.globalTimeScale = 1;
                 break;
             default:

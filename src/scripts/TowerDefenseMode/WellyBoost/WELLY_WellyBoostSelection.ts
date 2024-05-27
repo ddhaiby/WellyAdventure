@@ -249,7 +249,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
     protected animateHideSelectedBoostWidget(boostButtonWidget: WELLY_WellyBoostButtonWidget): void
     {
         boostButtonWidget.select();
-        
+
         this.scene.tweens.add({
             targets: boostButtonWidget,
             duration: 120,

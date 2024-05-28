@@ -11,9 +11,8 @@ export class WELLY_LoadingScreen extends Phaser.GameObjects.Container
         super(scene, 0, 0);
         scene.add.existing(this);
 
-        this.setDepth(99999);
-        this.width = this.scene.scale.displaySize.width;
-        this.height = this.scene.scale.displaySize.height;
+        this.width = WELLY_CST.GAME.WIDTH
+        this.height = WELLY_CST.GAME.HEIGHT;
 
         const background = this.scene.add.graphics();
         background.fillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1.0);

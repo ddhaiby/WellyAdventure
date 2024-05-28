@@ -275,7 +275,7 @@ export class WELLY_TextButton extends Phaser.GameObjects.Container
 
     public onClicked(fn: Function, context?: any) : this
     {
-        this.interactiveObject.on(Phaser.Input.Events.POINTER_UP, () => { fn(); }, context);
+        this.interactiveObject.on(Phaser.Input.Events.POINTER_UP, fn, context);
         return this;
     }
 

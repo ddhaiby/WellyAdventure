@@ -160,7 +160,7 @@ export class WELLY_EndRunWidget extends Phaser.GameObjects.Container
             textureNormal: "backgroundMenuButtonNormal",
             texturePressed: "backgroundMenuButtonPressed"
         });
-        buttonMainMenu.onClicked(() => { this.onRestartClicked(); } , this);
+        buttonMainMenu.onClicked(() => { this.onRequestMainMenu(); } , this);
         this.add(buttonMainMenu);
 
         this.mainButtons = this.scene.rexUI.add.sizer({
@@ -295,5 +295,10 @@ export class WELLY_EndRunWidget extends Phaser.GameObjects.Container
     private onRestartClicked() : void
     {
         this.emit("requestRestart");
+    }
+
+    private onRequestMainMenu() : void
+    {
+        this.emit("requestMainMenu");
     }
 }

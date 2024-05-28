@@ -249,8 +249,6 @@ export class WELLY_Slider extends Phaser.GameObjects.Container
         const oldValue = this.value;
         this.value = Phaser.Math.Clamp(value, this.minValue, this.maxValue);
         this.onValueChanged(oldValue);
-
-        console.log(value);
     }
 
     public setMinValue(minValue: number): void

@@ -4,6 +4,7 @@ import { WELLY_SceneTowerDefense } from "./WELLY_SceneTowerDefense";
 import { WELLY_SceneTowerDefenseUI } from "./WELLY_SceneTowerDefenseUI";
 import { WELLY_LoadingScreen } from "../../Common/HUD/WELLY_LoadingScreen";
 import { WELLY_GameAnalytics } from "../Analytics/WELLY_GameAnalytics";
+import { WELLY_SceneMainMenu } from "./WELLY_SceneMainMenu";
 
 export class ScenePreloadAssets extends WELLY_BaseScene
 {
@@ -60,6 +61,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.loadAudio();
         this.loadCharacters();
         this.loadHUD();
+        this.loadMainMenu();
         this.loadTowerDefenseAssets();
         this.loadWellyBonus();
 
@@ -78,6 +80,12 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.load.setPath("./assets/audio/");
         this.load.audio("buttonHovered", "buttonHovered.wav");
         this.load.audio("buttonPressed", "buttonPressed.wav");
+    }
+
+    private loadMainMenu(): void
+    {
+        this.load.setPath("./assets/mainMenu/");
+        this.load.image("mainMenuImage", "mainMenuImage.png");
     }
 
     private loadCharacters(): void
@@ -109,11 +117,17 @@ export class ScenePreloadAssets extends WELLY_BaseScene
     {
         this.load.setPath("./assets/HUD/");
 
+        this.load.image("welcomeTitle", "welcomeTitle.png");
+        this.load.image("welcomeText", "welcomeText.png");
+
         this.load.image("backgroundButtonNormal", "backgroundButtonNormal.png");
         this.load.image("backgroundButtonPressed", "backgroundButtonPressed.png");
         
         this.load.image("backgroundMenuButtonNormal", "backgroundMenuButtonNormal.png");
         this.load.image("backgroundMenuButtonPressed", "backgroundMenuButtonPressed.png");
+        
+        this.load.image("backgroundMainMenuButtonNormal", "backgroundMainMenuButtonNormal.png");
+        this.load.image("backgroundMainMenuButtonPressed", "backgroundMainMenuButtonPressed.png");
 
         this.load.image("menuButtonNormal", "menuButtonNormal.png");
         this.load.image("menuButtonPressed", "menuButtonPressed.png");
@@ -141,6 +155,9 @@ export class ScenePreloadAssets extends WELLY_BaseScene
 
         this.load.image("audioOffButtonNormal", "audioOffButtonNormal.png");
         this.load.image("audioOffButtonPressed", "audioOffButtonPressed.png");
+        
+        this.load.image("websiteButtonNormal", "websiteButtonNormal.png");
+        this.load.image("websiteButtonPressed", "websiteButtonPressed.png");
 
         this.load.image("coinSmallIcon", "coinSmallIcon.png");
         this.load.image("coinIcon", "coinIcon.png");
@@ -171,10 +188,12 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.time.delayedCall(1000, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            const sceneUI = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_UI, WELLY_SceneTowerDefenseUI, true, undefined) as WELLY_SceneTowerDefenseUI;
+            const sceneUI = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_UI, WELLY_SceneTowerDefenseUI, false, undefined) as WELLY_SceneTowerDefenseUI;
+            const sceneGame = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE, WELLY_SceneTowerDefense, false, undefined);
+            const sceneMainMenu = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_MAIN_MENU, WELLY_SceneMainMenu, true, undefined);
 
-            this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE, WELLY_SceneTowerDefense, true, undefined);
             sceneUI.scene.bringToTop();
+            sceneMainMenu.scene.bringToTop();
 
             this.scene.remove(WELLY_CST.SCENES.PRELOAD_ASSETS);
         }, this);

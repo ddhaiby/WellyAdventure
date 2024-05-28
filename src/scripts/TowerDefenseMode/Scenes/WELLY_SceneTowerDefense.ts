@@ -261,7 +261,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
 
     protected onRestartRequested(): void
     {
-        this.sceneUI.scene.restart();
+        this.sceneUI.scene.restart({});
         this.scene.restart();
     }
 
@@ -269,11 +269,17 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
     {
         if (isPauseMenuVisible)
         {
-            this.scene.pause();
+            if (!this.scene.isPaused())
+            {
+                this.scene.pause();
+            }
         }
         else
         {
-            this.scene.resume();
+            if (this.scene.isPaused())
+            {
+                this.scene.resume();
+            }
         }
     }
 

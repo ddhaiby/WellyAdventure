@@ -1,6 +1,4 @@
 import { WELLY_CST } from "../../WELLY_CST";
-import { WELLY_DialogueBox } from "../../Common/HUD/WELLY_DialogueBox";
-import { WELLY_Bar } from "../../Common/HUD/WELLY_Bar";
 import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
 import { WELLY_BaseScene, WELLY_SceneData, WELLY_SpeedMode } from "../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_Utils } from "../../Utils/WELLY_Utils";
@@ -18,34 +16,44 @@ declare type WELLY_UIKeys =
     escape: Phaser.Input.Keyboard.Key;
 }
 
+declare type WELLY_SceneTowerDefenseUIData = WELLY_SceneData & {
+    shouldShowWelcomePage?: boolean
+};
+
 export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
 {
     /** Pause menu */
-    private pauseMenu: WELLY_PauseMenu;
+    protected pauseMenu: WELLY_PauseMenu;
 
      /** Bottom menu */
-    private bottomMenu: WELLY_BottomMenu;
+    protected bottomMenu: WELLY_BottomMenu;
 
     /** Display the current coins */
-    private coinText: Phaser.GameObjects.Text;
+    protected coinText: Phaser.GameObjects.Text;
 
-    private coinBackground: RoundRectangle;
+    protected coinBackground: RoundRectangle;
 
     /** Display the current wave */
-    private waveText: Phaser.GameObjects.Text;
+    protected waveText: Phaser.GameObjects.Text;
 
     /** Display the data of a given turret */
-    private turretDataWidget: WELLY_TurretDataWidget;
+    protected turretDataWidget: WELLY_TurretDataWidget;
     
     /** Display the health of the player with a bar */
-    private playerHealthWidget: Phaser.GameObjects.Image;
+    protected playerHealthWidget: Phaser.GameObjects.Image;
 
     /** Display the current health and max health of the player */
-    private healthText: Phaser.GameObjects.Text;
+    protected healthText: Phaser.GameObjects.Text;
 
-    private wellyBoostSelection: WellyBoostSelection;
+    protected wellyBoostSelection: WellyBoostSelection;
 
-    private endRunWidget: WELLY_EndRunWidget;
+    protected endRunWidget: WELLY_EndRunWidget;
+
+    protected inGameHUD: Phaser.GameObjects.Container;
+
+    protected shouldShowWelcomePage: boolean = false;
+
+    protected welcomePage: Phaser.GameObjects.Container | undefined;
 
     constructor()
     {
@@ -55,8 +63,9 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     // Init
     ////////////////////////////////////////////////////////////////////////
 
-    public init(data?: WELLY_SceneData): void
+    public init(data?: WELLY_SceneTowerDefenseUIData): void
     {
+        this.shouldShowWelcomePage = data && data.shouldShowWelcomePage;
     }
 
     // Preload
@@ -73,40 +82,56 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     {
         super.create();
 
-        this.createShortcuts(); 
+        this.createShortcuts();
+
+        this.inGameHUD = this.add.container();
+
         this.createHealthWidget();
         this.createCoinWidget();
         
         const waveIcon = this.add.image(this.playerHealthWidget.x + 4, this.coinText.y + this.coinText.height + 6, "waveIcon").setOrigin(0, 0).setScale(0.75);
+        this.inGameHUD.add(waveIcon);
+
         this.waveText = this.add.text(waveIcon.x + waveIcon.displayWidth + 8, waveIcon.y + 3, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.BLUE, stroke: WELLY_CST.STYLE.COLOR.BLACK, strokeThickness: 3, fontSize: "24px" });
+        this.inGameHUD.add(this.waveText);
 
         const menuButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 40, 44, "", {
             textureNormal: "menuButtonNormal",
             texturePressed: "menuButtonPressed",
         });
         menuButton.onClicked(() => { this.togglePauseMenu(); } , this);
+        this.inGameHUD.add(menuButton);
 
         this.createBottomMenu();
 
         this.turretDataWidget = new WELLY_TurretDataWidget(this, 0, 0);
         this.turretDataWidget.setPosition(this.scale.displaySize.width - this.turretDataWidget.displayWidth, this.scale.displaySize.height - this.turretDataWidget.displayHeight);
         this.turretDataWidget.setVisible(false);
+        this.inGameHUD.add(this.turretDataWidget);
 
         this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
         this.wellyBoostSelection.setVisible(false);
         this.wellyBoostSelection.on("wellyBoostSelected", this.onWellyBoostSelected, this);
+        this.inGameHUD.add(this.wellyBoostSelection);
 
         this.pauseMenu = new WELLY_PauseMenu(this, 0, 0);
         this.pauseMenu.setVisible(false);
-        this.pauseMenu.on("requestResume", () => { this.togglePauseMenu(); }, this);
-        this.pauseMenu.on("requestRestart", () => { this.requestRestart(); }, this);
-
+        this.pauseMenu.on("requestResume", this.togglePauseMenu, this);
+        this.pauseMenu.on("requestRestart", this.requestRestart, this);
+        this.pauseMenu.on("requestMainMenu", this.requestMainMenu, this);
+        
         this.endRunWidget = new WELLY_EndRunWidget(this, 0, 0);
         this.endRunWidget.setVisible(false);
-        this.endRunWidget.on("requestRestart", () => { this.requestRestart(); }, this);
+        this.endRunWidget.on("requestRestart", this.requestRestart, this);
+        this.endRunWidget.on("requestMainMenu", this.requestMainMenu, this);
+
+        if (this.shouldShowWelcomePage)
+        {
+            this.showWelcomePage();
+        }
     }
 
-    private createShortcuts(): void
+    protected createShortcuts(): void
     {
         const keys = this.input.keyboard?.addKeys({
             escape: Phaser.Input.Keyboard.KeyCodes.ESC
@@ -118,27 +143,33 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         }
     }
 
-    private createHealthWidget(): void
+    protected createHealthWidget(): void
     {
         this.playerHealthWidget = this.add.image(12, 12, "healthWidget").setOrigin(0);
-        
+        this.inGameHUD.add(this.playerHealthWidget);
+
         this.healthText = this.add.text(this.playerHealthWidget.x +  this.playerHealthWidget.width - 7, this.playerHealthWidget.y + this.playerHealthWidget.height * 0.5 + 2, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.WHITE, fontSize: "33px" });
         this.healthText.setOrigin(1, 0.5);
+        
+        this.inGameHUD.add(this.healthText);
     }
 
-    private createCoinWidget(): void
+    protected createCoinWidget(): void
     {
         const backgroundHeight = 36;
         this.coinBackground = this.rexUI.add.roundRectangle(this.playerHealthWidget.x + 2, this.playerHealthWidget.y + this.playerHealthWidget.height + backgroundHeight * 0.5 + 14, 140, backgroundHeight, backgroundHeight * 0.5, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.YELLOW), 1);
         this.coinBackground.setOrigin(0, 0.5);
+        this.inGameHUD.add(this.coinBackground);
 
         const coinIcon = this.add.image(this.playerHealthWidget.x + 2, this.coinBackground.y, "coinIcon").setOrigin(0, 0.5);
-        
+        this.inGameHUD.add(coinIcon);
+
         this.coinText = this.add.text(coinIcon.x + coinIcon.width + 8, this.coinBackground.y, "", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.WHITE, fontSize: "32px" });
         this.coinText.setOrigin(0, 0.5);
+        this.inGameHUD.add(this.coinText);
     }
 
-    private createBottomMenu(): void
+    protected createBottomMenu(): void
     {
         const menuWidth = this.scale.displaySize.width;
         const menuHeight = 120;
@@ -165,6 +196,8 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
                 this.events.emit("endDragTurret");
             }, this);
         }
+
+        this.inGameHUD.add(this.bottomMenu);
     }
 
     // Update
@@ -174,8 +207,14 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     {
     }
 
-    private togglePauseMenu(): void
+    protected togglePauseMenu(): void
     {
+        if (this.welcomePage?.visible)
+        {
+            return;
+
+        }
+
         const newVisibility = !this.pauseMenu.visible;
 
         if (!newVisibility || !this.endRunWidget.visible)
@@ -185,11 +224,31 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         }
     }
 
-    private requestRestart(): void
+    protected requestRestart(): void
     {
         this.pauseMenu.setVisible(false);
         this.endRunWidget.setVisible(false);
         this.events.emit("requestRestart");
+    }
+
+    protected requestMainMenu(): void
+    {
+        const sceneGame = this.scene.get(WELLY_CST.SCENES.TOWER_DEFENSE);
+
+        if (!sceneGame.scene.isPaused())
+        {
+            sceneGame.scene.pause();
+        }
+        sceneGame.scene.setVisible(false);
+
+        if (!this.scene.isPaused())
+        {
+            this.scene.pause();
+        }
+        this.scene.setVisible(false);
+
+        const sceneMainMenu = this.scene.get(WELLY_CST.SCENES.TOWER_DEFENSE_MAIN_MENU);
+        sceneMainMenu.scene.restart();
     }
 
     public onGameOver(runStatistics: WELLY_GameStatistics): void
@@ -262,5 +321,55 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     public onTurretSpawned(turretId: string, turretRemainInstances: number): void
     {
         this.bottomMenu.updateButtons(turretId, turretRemainInstances);
+    }
+
+    public showWelcomePage(): void
+    {
+        this.welcomePage = this.add.container();
+
+        const gameWidth = WELLY_CST.GAME.WIDTH
+        const gameHeight = WELLY_CST.GAME.HEIGHT;
+
+        const background = this.add.graphics();
+        background.fillStyle(0x526CC1, 0.8);
+        background.fillRect(0, 0, gameWidth, gameHeight);
+        this.welcomePage.add(background);
+
+        const sizerTexts = this.rexUI.add.sizer(WELLY_CST.GAME.WIDTH * 0.5, WELLY_CST.GAME.HEIGHT * 0.5, {
+            space: { item: 20 },
+            orientation: "top-to-bottom",
+        });
+        sizerTexts.setOrigin(0.5);
+        sizerTexts.add(this.add.image(0, 0, "welcomeTitle"), { align: 'left' });
+        sizerTexts.add(this.add.image(0, 0, "welcomeText"), { align: 'left' });
+        sizerTexts.layout();
+
+        this.welcomePage.add(sizerTexts);
+
+        const continueButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 96, WELLY_CST.GAME.HEIGHT - 34, "continue", {
+            fontSize : "37px",
+            textColorNormal: WELLY_CST.STYLE.COLOR.WHITE,
+            textColorPressed: "#FFDFD4",
+            pixelPerfect: false,
+            textOffsetNormalY: -2,
+            textOffsetHoveredY: -1,
+            textOffsetPressedY: 2,
+        });
+        continueButton.onClicked(this.closeWelcomePage, this);
+        this.welcomePage.add(continueButton);
+
+        this.inGameHUD.setVisible(false);
+
+        this.time.delayedCall(3500, () => {
+            this.closeWelcomePage();
+        }, undefined, this);
+    }
+
+    public closeWelcomePage(): void
+    {
+        this.welcomePage?.destroy(true);
+        this.welcomePage = undefined;
+        
+        this.inGameHUD.setVisible(true);
     }
 }

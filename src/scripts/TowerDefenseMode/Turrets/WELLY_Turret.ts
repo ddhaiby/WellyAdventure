@@ -71,24 +71,38 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     // Simple solution to make an animated attack for area types
     protected graphAttack: Phaser.GameObjects.Graphics | undefined;
 
+    protected arrowLevelUp: Phaser.GameObjects.Image;
+
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
         super(scene, x, y);
 
         this.levelText = this.scene.add.text(this.x + 8, this.y + 8, "", {fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "28px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE, stroke: "black", strokeThickness: 3});
 
+        this.arrowLevelUp = this.scene.add.image(0, 0, "arrowLevelUp");
+        this.arrowLevelUp.setOrigin(0.5, 0);
+        this.arrowLevelUp.setVisible(false);
+
         this.rangeIndicator = this.scene.add.graphics();
         this.hideRangeIndicator();
 
         this.targetsInRange = [];
+
+        this.scene.events.on("coinChanged", this.onPlayerCoinChanged, this);
     }
 
     public setPosition(x?: number | undefined, y?: number | undefined, z?: number | undefined, w?: number | undefined): this
     {
         super.setPosition(x, y, z, w);
+
         if (this.levelText)
         {
             this.levelText.setPosition(this.x + 8, this.y + 8);
+        }
+
+        if (this.arrowLevelUp)
+        {
+            this.arrowLevelUp.setPosition(this.x - 9, this.y + 15);
         }
 
         return this;
@@ -542,5 +556,10 @@ export class WELLY_Turret extends WELLY_Npc implements WELLY_ITurretData
     {
         this.rangeIndicator.clear();
         this.rangeIndicator.setVisible(false);
+    }
+
+    protected onPlayerCoinChanged(playerCoin: number): void
+    {
+        this.arrowLevelUp.setVisible(playerCoin >= this.getUpgradePrice());
     }
 }

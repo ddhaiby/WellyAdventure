@@ -434,6 +434,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
     {
         this.coin = coin;
         this.sceneUI.onPlayerCoinChanged(this.coin);
+        this.events.emit("coinChanged", coin)
     }
 
     private initPlayerHealth(): void

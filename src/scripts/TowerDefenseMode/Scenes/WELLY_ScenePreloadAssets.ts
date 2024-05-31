@@ -110,8 +110,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.load.tilemapTiledJSON("towerDefenseMap", "towerDefenseMap.json");
 
         this.load.setPath("./assets/turrets/");
-        this.load.image("emptyTurret", "emptyTurret.png");
-        this.load.image("canon", "canon.png");
+        this.load.image("arrowLevelUp", "arrowLevelUp.png");
         this.load.image("bullet", "bullet.png");
     }
 

@@ -63,7 +63,7 @@ export class WELLY_WellyPower_DotArea extends WELLY_WellyPower
             speedY: { min: 300, max: 600 },
             gravityY: 800,
             quantity: 5,
-            frequency: 70,
+            frequency: 100,
             alpha: { start: 1, end: 0.5 },
             scale: { start: 0.6, end: 0.2 },
             rotate: { start: 0, end: 360 },

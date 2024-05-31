@@ -5,6 +5,7 @@ export class WELLY_PowerPreviewWidget extends Phaser.GameObjects.Container
 {
     public scene: WELLY_BaseScene;
 
+    private powerImage: Phaser.GameObjects.Image;
     private rangeIndicator: Phaser.GameObjects.Graphics;
     private powerData: WELLY_WellyPowerData;
 
@@ -18,6 +19,9 @@ export class WELLY_PowerPreviewWidget extends Phaser.GameObjects.Container
         this.rangeIndicator = this.scene.add.graphics();
         this.add(this.rangeIndicator);
         
+        this.powerImage = this.scene.add.image(0, 0, "");
+        this.add(this.powerImage);
+
         if (powerData)
         {
             this.setPowerData(powerData);
@@ -27,6 +31,8 @@ export class WELLY_PowerPreviewWidget extends Phaser.GameObjects.Container
     public setPowerData(powerData: WELLY_WellyPowerData): void
     {
         this.powerData = powerData;
+        this.powerImage.setTexture(powerData.image);
+        this.powerImage.setDisplaySize(36, 36);
         this.drawRangeIndicator(powerData.range);
     }
 

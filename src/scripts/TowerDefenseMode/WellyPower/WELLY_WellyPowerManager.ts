@@ -101,7 +101,7 @@ export class WELLY_WellyPowerManager extends Phaser.Events.EventEmitter
 
             // @ts-ignore
             const tile = this.scene.layer1.getTileAtWorldXY(worldX, worldY);
-            const isTurretPositionValid = tile && tile.properties.towerField;
+            const isTurretPositionValid = tile && tile.properties.powerField;
             this.powerPreviewWidget.setValid(isTurretPositionValid);
         }
     }
@@ -118,7 +118,7 @@ export class WELLY_WellyPowerManager extends Phaser.Events.EventEmitter
 
                 // @ts-ignore
                 const tile = this.scene.layer1.getTileAtWorldXY(worldX, worldY);
-                if (tile && tile.properties.towerField)
+                if (tile && tile.properties.powerField)
                 {
                     this.powerPreview.tryActivate(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5);
                 }

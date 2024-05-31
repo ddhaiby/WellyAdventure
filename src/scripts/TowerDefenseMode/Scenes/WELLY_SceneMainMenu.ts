@@ -48,7 +48,7 @@ export class WELLY_SceneMainMenu extends WELLY_BaseScene
         this.add.image(280, 500, "mainMenuImage").setScale(0.55);
 
         const spacing = 46;
-        const playButton = new WELLY_TextButton(this, 764, WELLY_CST.GAME.HEIGHT * 0.5 - spacing + 36, "Play", {
+        const playButton = new WELLY_TextButton(this, 764, WELLY_CST.GAME.HEIGHT * 0.5 + 36 /*- spacing + 36*/, "Play", {
             fontSize : "37px",
             textColorNormal: WELLY_CST.STYLE.COLOR.WHITE,
             textColorPressed: "#FFDFD4",
@@ -61,18 +61,18 @@ export class WELLY_SceneMainMenu extends WELLY_BaseScene
         });
         playButton.onClicked(this.startSurvivalGame, this);
 
-        const survivalModeButton = new WELLY_TextButton(this, playButton.x, WELLY_CST.GAME.HEIGHT * 0.5 + spacing + 36, "Survival Mode", {
-            fontSize : "37px",
-            textColorNormal: WELLY_CST.STYLE.COLOR.WHITE,
-            textColorPressed: "#FFDFD4",
-            pixelPerfect: false,
-            textOffsetNormalY: -3,
-            textOffsetHoveredY: -2,
-            textOffsetPressedY: 3,
-            textureNormal: "backgroundMenuButtonNormal",
-            texturePressed: "backgroundMenuButtonPressed"
-        });
-        survivalModeButton.onClicked(this.startSurvivalGame, this);
+        // const survivalModeButton = new WELLY_TextButton(this, playButton.x, WELLY_CST.GAME.HEIGHT * 0.5 + spacing + 36, "Survival Mode", {
+        //     fontSize : "37px",
+        //     textColorNormal: WELLY_CST.STYLE.COLOR.WHITE,
+        //     textColorPressed: "#FFDFD4",
+        //     pixelPerfect: false,
+        //     textOffsetNormalY: -3,
+        //     textOffsetHoveredY: -2,
+        //     textOffsetPressedY: 3,
+        //     textureNormal: "backgroundMenuButtonNormal",
+        //     texturePressed: "backgroundMenuButtonPressed"
+        // });
+        // survivalModeButton.onClicked(this.startSurvivalGame, this);
 
         const websiteButton =  new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 44, 42, "", {
             textureNormal: "websiteButtonNormal",

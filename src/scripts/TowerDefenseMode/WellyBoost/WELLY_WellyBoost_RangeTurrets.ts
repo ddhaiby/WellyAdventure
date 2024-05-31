@@ -1,11 +1,12 @@
 import { WELLY_SceneTowerDefense } from "../Scenes/WELLY_SceneTowerDefense";
 import { WELLY_WellyBoost } from "./WELLY_WellyBoost";
+import { WELLY_WellyBoostData } from "./WELLY_WellyBoostManager";
 
 export class WELLY_WellyBoost_RangeTurrets extends WELLY_WellyBoost
 {
-    constructor(scene: WELLY_SceneTowerDefense)
+    constructor(scene: WELLY_SceneTowerDefense, boostData: WELLY_WellyBoostData)
     {
-        super(scene);
+        super(scene, boostData);
     }
 
     public activate(): void

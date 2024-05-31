@@ -1,5 +1,6 @@
 import { WELLY_SceneTowerDefense } from "../Scenes/WELLY_SceneTowerDefense";
 import { WELLY_WellyBoost } from "./WELLY_WellyBoost";
+import { WELLY_WellyBoost_Airdrop } from "./WELLY_WellyBoost_Airdrop";
 import { WELLY_WellyBoost_AttackSpeedTurrets } from "./WELLY_WellyBoost_AttackSpeedTurrets";
 import { WELLY_WellyBoost_BoostDamageTurrets } from "./WELLY_WellyBoost_BoostDamageTurrets";
 import { WELLY_WellyBoost_LevelUpTurrets } from "./WELLY_WellyBoost_LevelUpTurrets";
@@ -22,13 +23,14 @@ const WellyBoostList =
     "attackSpeedBonus": WELLY_WellyBoost_AttackSpeedTurrets,
     "rangeBonus": WELLY_WellyBoost_RangeTurrets,
     "moneyBonusFromDeath": WELLY_WellyBoost_MoneyFromDeath,
+    "airdrop": WELLY_WellyBoost_Airdrop
 }
 
 export class WELLY_WellyBoostManager
 {
     public scene: WELLY_SceneTowerDefense;
 
-    protected boostDatArray: WELLY_WellyBoostData[];
+    protected boostDataArray: WELLY_WellyBoostData[];
 
     /** All the data related to the monsters */
     protected wellyBoostData: WELLY_WellyBoostData[];
@@ -47,14 +49,14 @@ export class WELLY_WellyBoostManager
         const boostClass = WellyBoostList[boostData.id];
         if (boostClass)
         {
-            const newBoost = new boostClass(this.scene) as WELLY_WellyBoost;
+            const newBoost = new boostClass(this.scene, boostData) as WELLY_WellyBoost;
             newBoost.activate();
         }
     }
 
     public generateRandomBoosts(boostCount: number): WELLY_WellyBoostData[]
     {
-        let boostDatArray = [] as WELLY_WellyBoostData[];
+        let boostDataArray = [] as WELLY_WellyBoostData[];
 
         let indexes = new Array(this.wellyBoostData.length);
         for (let i = 0; i < indexes.length; ++i)
@@ -66,13 +68,22 @@ export class WELLY_WellyBoostManager
         for (let i = 0; i < safeCount; ++i)
         {
             const boostIndex = indexes[Phaser.Math.Between(0, indexes.length - 1)];
-            const wellyBoost = this.wellyBoostData[boostIndex];
-            boostDatArray.push(wellyBoost);
+            const boostData = this.wellyBoostData[boostIndex];
+
+            const boostClass = WellyBoostList[boostData.id];
+            if (boostClass)
+            {
+                let newBoost = new boostClass(this.scene, boostData) as WELLY_WellyBoost;
+                boostData.description = newBoost.getDescription();
+                newBoost = undefined;
+            }
+
+            boostDataArray.push(boostData);
             Phaser.Utils.Array.Remove(indexes, boostIndex);
         }
 
-        this.boostDatArray = boostDatArray;
-        return boostDatArray;
+        this.boostDataArray = boostDataArray;
+        return this.boostDataArray;
     }
 
     public tryReroll(boostCount: number = 3): WELLY_WellyBoostData[] | undefined

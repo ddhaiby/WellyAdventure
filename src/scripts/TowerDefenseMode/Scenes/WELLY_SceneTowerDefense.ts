@@ -423,7 +423,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         return this.waveManager.getCurrentWave();
     }
 
-    private addPlayerCoin(coin: number): void
+    public addPlayerCoin(coin: number): void
     {
         this.setPlayerCoin(this.coin + coin);
     }

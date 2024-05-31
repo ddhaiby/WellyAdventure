@@ -33,6 +33,8 @@ export class WELLY_WellyBoostManager
     /** All the data related to the monsters */
     protected wellyBoostData: WELLY_WellyBoostData[];
 
+    protected rerollCount: number = 3;
+
     constructor(scene: WELLY_SceneTowerDefense)
     {
         this.scene = scene;
@@ -71,5 +73,25 @@ export class WELLY_WellyBoostManager
 
         this.boostDatArray = boostDatArray;
         return boostDatArray;
+    }
+
+    public tryReroll(boostCount: number = 3): WELLY_WellyBoostData[] | undefined
+    {
+        if (this.canReroll())
+        {
+            --this.rerollCount;
+            return this.generateRandomBoosts(boostCount);
+        }
+        return undefined;
+    }
+
+    public canReroll(): boolean
+    {
+        return this.rerollCount > 0;
+    }
+
+    public getRerollCount(): number
+    {
+        return this.rerollCount;
     }
 }

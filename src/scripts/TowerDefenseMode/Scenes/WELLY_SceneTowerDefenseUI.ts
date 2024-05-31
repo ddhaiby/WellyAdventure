@@ -7,7 +7,7 @@ import { WELLY_BottomMenu } from "../HUD/WELLY_BottomMenu";
 import { WELLY_EndRunWidget } from "../HUD/WELLY_EndRunWidget";
 import { WELLY_PauseMenu } from "../HUD/WELLY_PauseMenu";
 import { WELLY_ITurretData, WELLY_TurretDataWidget } from "../HUD/WELLY_TurretDataWidget";
-import { WellyBoostSelection } from "../WellyBoost/WELLY_WellyBoostSelection";
+import { WELLY_WellyBoostSelection } from "../WellyBoost/WELLY_WellyBoostSelection";
 import { WELLY_WellyBoostData } from "../WellyBoost/WELLY_WellyBoostManager";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
@@ -45,7 +45,7 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     /** Display the current health and max health of the player */
     protected healthText: Phaser.GameObjects.Text;
 
-    protected wellyBoostSelection: WellyBoostSelection;
+    protected wellyBoostSelection: WELLY_WellyBoostSelection;
 
     protected endRunWidget: WELLY_EndRunWidget;
 
@@ -109,9 +109,10 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         this.turretDataWidget.setVisible(false);
         this.inGameHUD.add(this.turretDataWidget);
 
-        this.wellyBoostSelection = new WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
+        this.wellyBoostSelection = new WELLY_WellyBoostSelection(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height * 0.5);
         this.wellyBoostSelection.setVisible(false);
-        this.wellyBoostSelection.on("wellyBoostSelected", this.onWellyBoostSelected, this);
+        this.wellyBoostSelection.on("boostSelected", this.onWellyBoostSelected, this);
+        this.wellyBoostSelection.on("rerollRequested", this.onWellyBoostRerollRequested, this);
         this.inGameHUD.add(this.wellyBoostSelection);
 
         this.pauseMenu = new WELLY_PauseMenu(this, 0, 0);
@@ -307,10 +308,20 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         this.wellyBoostSelection.hide();
     }
 
+    public updateRerollCount(rerollCount: number): void
+    {
+        this.wellyBoostSelection.updateRerollCount(rerollCount);
+    }
+
     protected onWellyBoostSelected(boostData: WELLY_WellyBoostData): void
     {
         this.wellyBoostSelection.hide();
         this.events.emit("wellyBoostSelected", boostData);
+    }
+
+    protected onWellyBoostRerollRequested(boostChoiceCount: number): void
+    {
+        this.events.emit("wellyBoostRerollRequested", boostChoiceCount);
     }
 
     protected onGameSpeedButtonClicked(): void

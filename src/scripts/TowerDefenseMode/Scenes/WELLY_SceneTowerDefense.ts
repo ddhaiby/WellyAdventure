@@ -248,6 +248,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
 
         this.sceneUI.events.removeAllListeners("requestRestart");
         this.sceneUI.events.removeAllListeners("wellyBoostSelected");
+        this.sceneUI.events.removeAllListeners("wellyBoostRerollRequested");
         this.sceneUI.events.removeAllListeners("requestUpdateGameSpeed");
         this.sceneUI.events.removeAllListeners("powerRequested");
         this.sceneUI.events.removeAllListeners("startDragPower");
@@ -260,6 +261,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
 
         this.sceneUI.events.on("requestRestart", this.onRestartRequested, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
+        this.sceneUI.events.on("wellyBoostRerollRequested", this.onWellyBoostRerollRequested, this);
         this.sceneUI.events.on("requestUpdateGameSpeed", this.onUpdateGameSpeedRequested, this);
         this.sceneUI.events.on("powerRequested", this.onPowerRequested, this);
 
@@ -591,11 +593,11 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
     {
         this.hideTurretPopup();
         this.clearTurretPreview();
+        this.scene.pause();
 
         const boostDatArray = this.boostManager.generateRandomBoosts(3);
-
-        this.scene.pause();
         this.sceneUI.showWellyBoostSelection(boostDatArray);
+        this.sceneUI.updateRerollCount(this.boostManager.getRerollCount());
     }
 
     protected onWellyBoostSelected(boostData: WELLY_WellyBoostData): void
@@ -603,6 +605,16 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         this.boostManager.grantBoost(boostData);
         this.sceneUI.hideWellyBoostSelection();
         this.scene.resume();
+    }
+
+    protected onWellyBoostRerollRequested(boostChoiceCount: number): void
+    {
+        const boostDatArray = this.boostManager.tryReroll(boostChoiceCount);
+        if (boostDatArray && boostDatArray.length > 0)
+        {
+            this.sceneUI.showWellyBoostSelection(boostDatArray);
+            this.sceneUI.updateRerollCount(this.boostManager.getRerollCount());
+        }
     }
 
     protected onUpdateGameSpeedRequested(): void

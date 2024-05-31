@@ -175,6 +175,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
     {
         this.load.setPath("./assets/wellyBonus/");
         this.load.image("wellyBonusTemplate", "wellyBonusTemplate.png");
+        this.load.image("rerollIcon", "rerollIcon.png");
     }
 
     private loadWellyPowers(): void

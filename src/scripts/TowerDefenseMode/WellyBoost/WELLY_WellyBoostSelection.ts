@@ -3,6 +3,7 @@ import { WELLY_CST } from "../../WELLY_CST";
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
 import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_WellyBoostData } from "./WELLY_WellyBoostManager";
+import { Label, Sizer } from "phaser3-rex-plugins/templates/ui/ui-components";
 
 export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
 {
@@ -135,11 +136,19 @@ export class WELLY_WellyBoostButtonWidget extends Phaser.GameObjects.Container
     }
 }
 
-export class WellyBoostSelection extends Phaser.GameObjects.Container
+export class WELLY_WellyBoostSelection extends Phaser.GameObjects.Container
 {
     public scene: WELLY_BaseScene;
 
-    private boostWidgetArray: WELLY_WellyBoostButtonWidget[];
+    protected boostWidgetArray: WELLY_WellyBoostButtonWidget[];
+
+    private buttonColumn: Sizer;
+    protected rerollButton: Label;
+
+    protected boostChoiceCount: number;
+
+    protected rerollTextButton: Phaser.GameObjects.Text;
+    protected rerollBackground: RoundRectangle;
 
     constructor(scene: WELLY_BaseScene, x: number, y: number)
     {
@@ -156,14 +165,20 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
 
         this.add(background);
 
-        const buttonColumn = this.scene.rexUI.add.sizer({
+        this.createBoostButtons();
+        this.createRerollButton();
+    }
+
+    protected createBoostButtons(): void
+    {
+        this.buttonColumn = this.scene.rexUI.add.sizer({
             orientation: "horizontal",
             space: { top: 0, item: 80 },
             x: 0,
             y: 0
         }).setOrigin(0.5);
 
-        this.add(buttonColumn);
+        this.add(this.buttonColumn);
 
         const boostButtonCount = 3;
         this.boostWidgetArray = [];
@@ -173,31 +188,81 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
             const button = new WELLY_WellyBoostButtonWidget(this.scene, 0, 0);
             button.onClicked(() => { this.onBoostSelected(i); }, this);
             this.boostWidgetArray.push(button);
-            buttonColumn.add(button);
+            this.buttonColumn.add(button);
         }
         
-        buttonColumn.layout();
+        this.buttonColumn.layout();
     }
 
-    public show(boostDatArray: WELLY_WellyBoostData[]): void
+    protected createRerollButton(): void
+    {
+        const blue = "0x526CC1";
+        this.rerollBackground = this.scene.rexUI.add.roundRectangle(0, 0, 120, 48, 8, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE));
+        this.rerollBackground.setStrokeStyle(2, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1.0);
+
+        const rerollIcon = this.scene.add.image(0, 0, "rerollIcon");
+        rerollIcon.setTintFill(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BLUE));
+
+        this.rerollTextButton = this.scene.add.text(0, 0, "3", { fontFamily: WELLY_CST.STYLE.TEXT.KICKERS_FONT_FAMILY, fontSize: "35px", color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE });
+
+        this.rerollButton = new Label(this.scene, {
+            x: 0,
+            y: this.boostWidgetArray[0].y + this.boostWidgetArray[0].height * 0.5 + 52,
+            height: 40,
+            space: { iconTop: -4, icon: 10, left: 8, right: 4, text: 12, top: 4 },
+            background: this.rerollBackground,
+            icon: rerollIcon,
+            text: this.rerollTextButton,
+        });
+        this.rerollButton.setOrigin(0.5, 0);
+        this.add(this.rerollButton);
+        this.rerollButton.layout();
+
+        this.rerollBackground.setInteractive();
+        this.rerollBackground.on(Phaser.Input.Events.POINTER_OVER, () => {
+            this.setRerollHoveredStyle();
+            this.scene.sound.play("buttonHovered", { volume: 0.01 });
+        }, this);
+        
+        this.rerollBackground.on(Phaser.Input.Events.POINTER_OUT, () => {
+            this.setRerollNormalStyle();
+        }, this);
+
+        this.rerollBackground.on(Phaser.Input.Events.POINTER_DOWN, () => {
+            this.setRerollPressedStyle();
+            this.scene.sound.play("buttonPressed", { volume: 0.2 });
+        }, this);
+        this.rerollBackground.on(Phaser.Input.Events.POINTER_DOWN, this.onRerollClicked, this);
+    }
+
+    public show(boostDataArray: WELLY_WellyBoostData[]): void
     {
         this.setVisible(true);
 
-        for (const boostWidget of this.boostWidgetArray)
+        this.boostChoiceCount = Math.min(boostDataArray.length, this.boostWidgetArray.length)
+
+        for (let i = 0; i < this.boostChoiceCount; ++i)
         {
-            boostWidget.setVisible(false);
+            const boostWidget = this.boostWidgetArray[i];
+            this.buttonColumn.show(boostWidget);
+            boostWidget.setScale(1); // Makes sure the sizer layout is correct
             boostWidget.disable();
         }
 
-        this.scene.time.delayedCall(200, () => {
-            const newBoostCount = Math.min(boostDatArray.length, this.boostWidgetArray.length)
+        for (let i = this.boostChoiceCount; i < this.boostWidgetArray.length; ++i)
+        {
+            const boostWidget = this.boostWidgetArray[i];
+            this.buttonColumn.hide(boostWidget);
+            boostWidget.disable();
+        }
 
-            for (let i = 0; i < newBoostCount; ++i)
-            {
-                this.boostWidgetArray[i].setBoostData(boostDatArray[i]);
-                this.animateShowBoostWidget(this.boostWidgetArray[i]);
-            }
-        }, undefined, this);
+        this.buttonColumn.layout();
+
+        for (let i = 0; i < this.boostChoiceCount; ++i)
+        {
+            this.boostWidgetArray[i].setBoostData(boostDataArray[i]);
+            this.animateShowBoostWidget(this.boostWidgetArray[i]);
+        }
     }
 
     public hide(): void
@@ -225,8 +290,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
     protected animateShowBoostWidget(boostButtonWidget: WELLY_WellyBoostButtonWidget): void
     {
         boostButtonWidget.setScale(0);
-        boostButtonWidget.setVisible(true);
-
+        
         this.scene.tweens.add({
             targets: boostButtonWidget,
             duration: 250,
@@ -263,7 +327,7 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
                     callbackScope: this,
                     onComplete: () => {
                         this.scene.time.delayedCall(1100, () => {
-                            this.emit("wellyBoostSelected", boostButtonWidget.getBoostData());
+                            this.emit("boostSelected", boostButtonWidget.getBoostData());
                             this.hide();
                         }, undefined, this);
                     }
@@ -279,5 +343,72 @@ export class WellyBoostSelection extends Phaser.GameObjects.Container
             duration: 380,
             scale: 0
         });
+    }
+
+    protected onRerollClicked(): void
+    {
+        this.emit("rerollRequested", this.boostChoiceCount);
+    }
+
+    public updateRerollCount(rerollCount: number): void
+    {
+        this.rerollTextButton.setText(`${Math.max(0, rerollCount).toFixed(0)}`);
+
+        if (rerollCount > 0)
+        {
+            this.rerollBackground.setInteractive();
+            this.setRerollNormalStyle();
+        }
+        else
+        {
+            this.rerollBackground.disableInteractive();
+            this.setRerollDisabledStyle();
+        }
+    }
+
+    protected setRerollNormalStyle(): void
+    {
+        const rerollIcon = this.rerollButton.getElement("icon") as Phaser.GameObjects.Image;
+        rerollIcon?.setTintFill(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.LIGHT_BLUE));
+        rerollIcon?.setTintFill(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BLUE));
+
+        this.rerollBackground.setFillStyle(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE), 1);
+        this.rerollBackground.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+        this.rerollTextButton.setColor(WELLY_CST.STYLE.COLOR.LIGHT_BLUE);        
+    }
+
+    protected setRerollHoveredStyle(): void
+    {
+        const blue = "0x526CC1";
+        const rerollIcon = this.rerollButton.getElement("icon") as Phaser.GameObjects.Image;
+        rerollIcon?.setTintFill(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE));
+
+        this.rerollBackground.setFillStyle(WELLY_Utils.hexColorToNumber(blue), 1);
+        this.rerollBackground.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+        this.rerollTextButton.setColor(WELLY_CST.STYLE.COLOR.BEIGE)
+    }
+
+    protected setRerollPressedStyle(): void
+    {
+        const blue = "0x526CC1";
+
+        const rerollIcon = this.rerollButton.getElement("icon") as Phaser.GameObjects.Image;
+        rerollIcon?.setTintFill(WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.BEIGE));
+
+        this.rerollBackground.setFillStyle(WELLY_Utils.hexColorToNumber(blue), 1);
+        this.rerollBackground.setStrokeStyle(3, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE), 1);
+        this.rerollTextButton.setColor(WELLY_CST.STYLE.COLOR.BEIGE)
+    }
+
+    protected setRerollDisabledStyle(): void
+    {
+        this.setRerollNormalStyle();
+
+        const tint = 0x555555;
+        const rerollIcon = this.rerollButton.getElement("icon") as Phaser.GameObjects.Image;
+        rerollIcon?.setTint(tint);
+        this.rerollBackground.setFillStyle(tint, 1);
+        this.rerollBackground.setStrokeStyle(3, tint);
+        this.rerollTextButton.setTint(tint);
     }
 }

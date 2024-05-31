@@ -376,10 +376,9 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
 
         this.welcomePage.add(sizerTexts);
 
-        const continueButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 96, WELLY_CST.GAME.HEIGHT - 34, "continue", {
+        const continueButton = new WELLY_TextButton(this, WELLY_CST.GAME.WIDTH - 60, WELLY_CST.GAME.HEIGHT - 34, "skip", {
             fontSize : "37px",
             textColorNormal: WELLY_CST.STYLE.COLOR.WHITE,
-            textColorPressed: "#FFDFD4",
             pixelPerfect: false,
             textOffsetNormalY: -2,
             textOffsetHoveredY: -1,

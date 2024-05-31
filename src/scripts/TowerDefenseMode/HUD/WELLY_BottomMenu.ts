@@ -5,15 +5,24 @@ import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_TurretData } from "../Turrets/WELLY_TurretData";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { WELLY_TextButton } from "../../Common/HUD/WELLY_TextButton";
+import { WELLY_WellyPowerData } from "../WellyPower/WELLY_WellyPower";
 
 export class WELLY_BottomMenu extends Phaser.GameObjects.Container
 {
     public scene: WELLY_BaseScene;
+
+    // Turrets
     protected turretButtons: Label[];
     protected turretsData: WELLY_TurretData[];
     protected turretCounterTexts: Phaser.GameObjects.Text[];
     protected turretPriceTexts: Phaser.GameObjects.Text[];
 
+    // Powers
+    protected powerButtons: Map<string, Label>;
+    protected powerCooldownText: Map<string, Phaser.GameObjects.Text>;
+    protected powersData: WELLY_WellyPowerData[];
+
+    // Options
     protected audioButton: WELLY_TextButton;
     protected gameSpeedButton: WELLY_TextButton;
 
@@ -33,6 +42,7 @@ export class WELLY_BottomMenu extends Phaser.GameObjects.Container
 
         this.createLeftButtons();
         this.createTurretButtons();
+        this.createWellyPowerButtons();
     }
 
     protected createLeftButtons(): void
@@ -41,9 +51,12 @@ export class WELLY_BottomMenu extends Phaser.GameObjects.Container
         leftBackground.setOrigin(0, 0.5);
         this.add(leftBackground);
 
+        const normalTexture = this.scene.sound.mute ? "audioOffButtonNormal" : "audioOnButtonNormal";
+        const pressedTexture = this.scene.sound.mute ? "audioOffButtonPressed": "audioOnButtonPressed";
+
         this.audioButton =  new WELLY_TextButton(this.scene, leftBackground.x + 44, leftBackground.y, "", {
-            textureNormal: "audioOnButtonNormal",
-            texturePressed: "audioOnButtonPressed"
+            textureNormal: normalTexture,
+            texturePressed: pressedTexture
         });
         this.audioButton.onClicked(() => { this.onAudioButtonClicked(); } , this);
         this.add(this.audioButton);
@@ -112,6 +125,71 @@ export class WELLY_BottomMenu extends Phaser.GameObjects.Container
         turretButtonList.layout();
     }
 
+    protected createWellyPowerButtons(): void
+    {
+        const powerButtonList = this.scene.rexUI.add.sizer({
+            orientation: "left-to-right",
+            space: { item: 20 },
+            x: this.width * 0.5 - 20,
+            y: 4
+        }).setOrigin(1, 0.5);
+
+        this.powerButtons = new Map<string, Label>();
+        this.powerCooldownText = new Map<string, Phaser.GameObjects.Text>();
+        this.powersData = this.scene.cache.json.get("wellyPowerData");
+
+        for (const powerData of this.powersData)
+        {
+            const powerId = powerData.id;
+            const powerContainer = this.scene.add.container();
+            powerContainer.width = 88;
+            powerContainer.height = powerContainer.width;
+
+            const buttonBackground = this.scene.rexUI.add.roundRectangle(0, 0, powerContainer.width, powerContainer.height, 10, 0xE9EFFF, 1);
+            buttonBackground.setStrokeStyle(5, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE));
+
+            const powerButton = this.scene.rexUI.add.label({
+                background: buttonBackground,
+                icon: this.scene.add.image(0, 0, powerData.image),
+                text: this.scene.add.text(0,0, "16", { fontSize: "39px", fontFamily: WELLY_CST.STYLE.TEXT.MERRIWEATHER_SANS_FONT_FAMILY, color: WELLY_CST.STYLE.COLOR.LIGHT_BLUE }).setOrigin(0.5).setVisible(false),
+                space: { left: 0, right: 0, top: 0, bottom: 0, icon: 0 }
+            });
+            powerButton.setInteractive(new Phaser.Geom.Rectangle(-powerContainer.width * 0.5, -powerContainer.height * 0.5, powerContainer.width, powerContainer.height), Phaser.Geom.Rectangle.Contains);
+            
+            if (powerData.shouldAim)
+            {
+                this.scene.input.setDraggable(powerButton);
+
+                powerButton.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                    this.scene.sound.play("buttonPressed", { volume: 0.02 });
+                    this.emit("startDragPower", powerId);
+                }, this);
+
+                powerButton.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                    this.emit("dragPower", powerId);
+                }, this);
+
+                powerButton.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+                    this.emit("endDragPower", powerId);
+                }, this);
+            }
+            else
+            {
+                powerButton.on(Phaser.Input.Events.POINTER_DOWN, () => {
+                    this.scene.sound.play("buttonPressed", { volume: 0.02 });
+                    this.emit("powerRequested", powerId);
+                }, this);
+            }
+            
+            this.powerButtons.set(powerId, powerButton);
+            powerContainer.add(powerButton);
+
+            powerButtonList.add(powerContainer);
+        }
+        this.add(powerButtonList);
+        powerButtonList.layout();
+    }
+
     public getTurretButtons(): Label[]
     {
         return this.turretButtons;
@@ -132,15 +210,62 @@ export class WELLY_BottomMenu extends Phaser.GameObjects.Container
                 const priceText = this.turretPriceTexts[index];
 
                 background.setFillStyle(tint);
+                background.setStrokeStyle(background.lineWidth, tint);
                 icon.setTint(tint);
                 priceText.setTint(tint);
             }
         }
     }
 
+    public onPowerCooldownStart(powerId: string, cooldown: number): void
+    {
+        const powerButton = this.powerButtons.get(powerId);
+        if (powerButton)
+        {
+            const tint = 0x555555;
+            const background = powerButton.getElement("background") as RoundRectangle;
+            const icon = powerButton.getElement("icon") as Phaser.GameObjects.Image;
+            const cooldownText = powerButton.getElement("text") as Phaser.GameObjects.Text;
+
+            background.setFillStyle(tint);
+            background.setStrokeStyle(background.lineWidth, tint);
+            icon.setTint(tint);
+            cooldownText.setVisible(true);
+            
+            this.scene.time.delayedCall(cooldown, this.onPowerCooldownEnd, [powerId], this);
+            this.scene.tweens.addCounter({
+                from: cooldown,
+                to: 0,
+                ease: 'Linear',
+                duration: cooldown,
+                repeat: 0,
+                yoyo: false,
+                onUpdate(tween, targets, key, current: number, previous, param) {
+                    cooldownText.setText(`${Math.ceil(current / 1000)}`);
+                }
+            });
+        }
+    }
+
+    public onPowerCooldownEnd(powerId: string): void
+    {
+        const powerButton = this.powerButtons.get(powerId);
+        if (powerButton)
+        {
+            const background = powerButton.getElement("background") as RoundRectangle;
+            const icon = powerButton.getElement("icon") as Phaser.GameObjects.Image;
+            const cooldownText = powerButton.getElement("text") as Phaser.GameObjects.Text;
+
+            background.setFillStyle(0xE9EFFF);
+            background.setStrokeStyle(background.lineWidth, WELLY_Utils.hexColorToNumber(WELLY_CST.STYLE.COLOR.WHITE));
+            icon.clearTint();
+            cooldownText.setVisible(false);
+        }
+    }
+
     protected onAudioButtonClicked(): void
     {
-        this.scene.sound.setMute(!this.scene.sound.mute);
+        (this.scene.sound as Phaser.Sound.HTML5AudioSoundManager | Phaser.Sound.WebAudioSoundManager).setMute(!this.scene.sound.mute);
 
         const normalTexture = this.scene.sound.mute ? "audioOffButtonNormal" : "audioOnButtonNormal";
         const pressedTexture = this.scene.sound.mute ? "audioOffButtonPressed": "audioOnButtonPressed";

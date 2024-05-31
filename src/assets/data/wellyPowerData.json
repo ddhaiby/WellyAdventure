@@ -1,0 +1,23 @@
+[
+    {
+        "id": "chiefsOnRush",
+        "activated": true,
+        "name": "Chiefs On Rush",
+        "description": "All chiefs get temporary stronger and faster",
+        "image": "powerChiefsOnRush",
+        "cooldownInSec": 20,
+        "duration": 5,
+        "shouldAim": false
+    },
+    {
+        "id": "rainOfTenders",
+        "activated": true,
+        "name": "Full Training",
+        "description": "All chefs in game\nlevel up",
+        "image": "powerRainOfTenders",
+        "cooldownInSec": 20,
+        "duration": 5,
+        "shouldAim": true,
+        "range": 250
+    }
+]

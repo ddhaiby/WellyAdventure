@@ -11,14 +11,16 @@ import { WELLY_Utils } from "../../Utils/WELLY_Utils";
 import { WELLY_WaveCountdownWidget } from "../HUD/WELLY_WaveCountdownWidget";
 import { WELLY_WellyBoostData, WELLY_WellyBoostManager } from "../WellyBoost/WELLY_WellyBoostManager";
 import { WELLY_TurretData } from "../Turrets/WELLY_TurretData";
-import { WELLY_TurretPreviewWidget } from "../HUD/WELLY_TurretPreviewWidget";
+import { WELLY_TurretPreviewWidget } from "../Turrets/WELLY_TurretPreviewWidget";
 import { WELLY_GameAnalytics } from "../Analytics/WELLY_GameAnalytics";
+import { WELLY_WellyPowerManager } from "../WellyPower/WELLY_WellyPowerManager";
 
 export class WELLY_SceneTowerDefense extends WELLY_BaseScene
 {
     private sceneUI: WELLY_SceneTowerDefenseUI;
 
     private boostManager: WELLY_WellyBoostManager;
+    private powerManager: WELLY_WellyPowerManager;
 
     // Map
     private currentMap: Phaser.Tilemaps.Tilemap;
@@ -149,7 +151,10 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         this.setSpeedMode(WELLY_SpeedMode.SLOW);
 
         this.boostManager = new WELLY_WellyBoostManager(this);
+        this.powerManager = new WELLY_WellyPowerManager(this);
 
+        this.powerManager.on("powerCooldownStart", this.onPowerCooldownStart, this);
+        
         this.startGame();
     }
 
@@ -243,14 +248,23 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         this.sceneUI.events.removeAllListeners("requestRestart");
         this.sceneUI.events.removeAllListeners("wellyBoostSelected");
         this.sceneUI.events.removeAllListeners("requestUpdateGameSpeed");
+        this.sceneUI.events.removeAllListeners("powerRequested");
+        this.sceneUI.events.removeAllListeners("startDragPower");
+        this.sceneUI.events.removeAllListeners("dragPower");
+        this.sceneUI.events.removeAllListeners("endDragPower");
         this.sceneUI.events.removeAllListeners("startDragTurret");
         this.sceneUI.events.removeAllListeners("dragTurret");
         this.sceneUI.events.removeAllListeners("endDragTurret");
         this.sceneUI.events.removeAllListeners("pauseMenuToggled");
 
-        this.sceneUI.events.on("requestRestart", () => { this.onRestartRequested(); }, this);
+        this.sceneUI.events.on("requestRestart", this.onRestartRequested, this);
         this.sceneUI.events.on("wellyBoostSelected", this.onWellyBoostSelected, this);
         this.sceneUI.events.on("requestUpdateGameSpeed", this.onUpdateGameSpeedRequested, this);
+        this.sceneUI.events.on("powerRequested", this.onPowerRequested, this);
+
+        this.sceneUI.events.on("startDragPower", this.onStartDragPower, this);
+        this.sceneUI.events.on("dragPower", this.onDragPower, this);
+        this.sceneUI.events.on("endDragPower", this.onEndDragPower, this);
 
         this.sceneUI.events.on("startDragTurret", this.onStartDragTurret, this);
         this.sceneUI.events.on("dragTurret", this.onDragTurret, this);
@@ -399,6 +413,11 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         this.cameras.main.shake(80, 0.003);
         this.removePlayerHealth(monster.getCurrentDamage());
         monster.die();
+    }
+
+    public getCurrentWave(): number
+    {
+        return this.waveManager.getCurrentWave();
     }
 
     private addPlayerCoin(coin: number): void
@@ -703,11 +722,29 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         }
     }
 
+    public removeBonusDamageTo(turretId: string, bonusDamage: number): void
+    {
+        if ((bonusDamage > 0) && this.bonusDamagePerTurret.has(turretId))
+        {
+            this.bonusDamagePerTurret.set(turretId, this.bonusDamagePerTurret.get(turretId) - bonusDamage);
+            this.updateAllTurretBonusDamage();
+        }
+    }
+
     public addBonusAttackSpeedTo(turretId: string, bonusAttackSpeed: number): void
     {
         if ((bonusAttackSpeed > 0) && this.bonusAttackSpeedPerTurret.has(turretId))
         {
             this.bonusAttackSpeedPerTurret.set(turretId, this.bonusAttackSpeedPerTurret.get(turretId) + bonusAttackSpeed);
+            this.updateAllTurretBonusAttackSpeed();
+        }
+    }
+
+    public removeBonusAttackSpeedTo(turretId: string, bonusAttackSpeed: number): void
+    {
+        if ((bonusAttackSpeed > 0) && this.bonusAttackSpeedPerTurret.has(turretId))
+        {
+            this.bonusAttackSpeedPerTurret.set(turretId, this.bonusAttackSpeedPerTurret.get(turretId) - bonusAttackSpeed);
             this.updateAllTurretBonusAttackSpeed();
         }
     }
@@ -833,5 +870,30 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
                 this.sceneUI.onGameOver(WELLY_GameAnalytics.instance.getGameStatistics());
             }
         }
+    }
+
+    protected onPowerRequested(powerId: string): void
+    {
+        this.powerManager.activatePower(powerId);
+    }
+
+    protected onPowerCooldownStart(powerId: string, cooldown: number): void
+    {
+        this.sceneUI.onPowerCooldownStart(powerId, cooldown);
+    }
+
+    protected onStartDragPower(powerId: string): void
+    {
+        this.powerManager.onStartDragPower(powerId);
+    }
+
+    protected onDragPower(powerId: string): void
+    {
+        this.powerManager.onDragPower(powerId);
+    }
+
+    protected onEndDragPower(powerId: string): void
+    {
+        this.powerManager.onEndDragPower(powerId);
     }
 }

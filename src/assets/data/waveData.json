@@ -6,6 +6,6 @@
     "healthPercentageIncreasePerWave": 0.15,
     "monsterCountBase": 1,
     "monsterCountIncreasePerWaveMin": 0,
-    "monsterCountIncreasePerWaveMax": 0,
+    "monsterCountIncreasePerWaveMax": 3,
     "bonusEveryXWave": 10
 }

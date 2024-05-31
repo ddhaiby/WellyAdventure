@@ -1,5 +1,5 @@
 import { WELLY_BaseScene } from "../../Common/Scenes/WELLY_BaseScene";
-import { WELLY_TurretData } from "../Turrets/WELLY_TurretData";
+import { WELLY_TurretData } from "./WELLY_TurretData";
 
 export class WELLY_TurretPreviewWidget extends Phaser.GameObjects.Container 
 {

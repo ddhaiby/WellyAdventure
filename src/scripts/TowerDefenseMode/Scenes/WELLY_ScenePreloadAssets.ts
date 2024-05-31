@@ -64,6 +64,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.loadMainMenu();
         this.loadTowerDefenseAssets();
         this.loadWellyBonus();
+        this.loadWellyPowers();
 
         this.load.setPath("./assets/data/");
         this.load.json("dialogues", "dialogues.json");
@@ -71,6 +72,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.load.json("turretsData", "turretsData.json");
         this.load.json("waveData", "waveData.json");
         this.load.json("wellyBoostData", "wellyBoostData.json");
+        this.load.json("wellyPowerData", "wellyPowerData.json");
 
         this.load.start();
     }
@@ -176,6 +178,14 @@ export class ScenePreloadAssets extends WELLY_BaseScene
         this.load.image("wellyBonusTemplate", "wellyBonusTemplate.png");
     }
 
+    private loadWellyPowers(): void
+    {
+        this.load.setPath("./assets/wellyPowers/");
+        this.load.image("powerChiefsOnRush", "powerChiefsOnRush.png");
+        this.load.image("powerRainOfTenders", "powerRainOfTenders.png");
+        this.load.image("tenderParticle", "tenderParticle.png");
+    }
+
     // Create
     ////////////////////////////////////////////////////////////////////////
   
@@ -185,7 +195,7 @@ export class ScenePreloadAssets extends WELLY_BaseScene
 
         new WELLY_LoadingScreen(this);
 
-        this.time.delayedCall(1000, () => { this.loadAssets(); }, undefined, this);
+        this.time.delayedCall(1, () => { this.loadAssets(); }, undefined, this);
 
         this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             const sceneUI = this.scene.add(WELLY_CST.SCENES.TOWER_DEFENSE_UI, WELLY_SceneTowerDefenseUI, false, undefined) as WELLY_SceneTowerDefenseUI;

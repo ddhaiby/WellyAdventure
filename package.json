@@ -12,8 +12,8 @@
     "format:write": "prettier --write src/scripts/**"
   },
   "dependencies": {
-    "phaser": "^3.70.0",
-    "phaser3-rex-plugins": "^1.60.4"
+    "phaser": "3.80.1",
+    "phaser3-rex-plugins": "1.80.3"
   },
   "devDependencies": {
     "@yandeu/prettier-config": "^0.0.3",

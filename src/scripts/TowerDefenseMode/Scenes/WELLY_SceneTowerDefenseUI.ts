@@ -176,23 +176,28 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
         this.bottomMenu = new WELLY_BottomMenu(this, this.scale.displaySize.width * 0.5, this.scale.displaySize.height - menuHeight * 0.5, menuWidth, menuHeight); // Display the bottomMenu below the game
 
         this.bottomMenu.on("audioButtonClicked", () => {}, this);
-        this.bottomMenu.on("gameSpeedButtonClicked", () => { this.onGameSpeedButtonClicked(); }, this);
+        this.bottomMenu.on("gameSpeedButtonClicked", this.onGameSpeedButtonClicked, this);
+        this.bottomMenu.on("powerRequested", this.onPowerRequested, this);
+
+        this.bottomMenu.on("startDragPower", this.onStartDragPower, this);
+        this.bottomMenu.on("dragPower", this.onDragPower, this);
+        this.bottomMenu.on("endDragPower", this.onEndDragPower, this);
 
         const turretButtons = this.bottomMenu.getTurretButtons();
 
         for (let i = 0; i < turretButtons.length; ++i)
         {
-            const button = turretButtons[i];
+            const turretButton = turretButtons[i];
 
-            button.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            turretButton.on(Phaser.Input.Events.DRAG_START, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
                 this.events.emit("startDragTurret", i);
             }, this);
 
-            button.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            turretButton.on(Phaser.Input.Events.DRAG, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
                 this.events.emit("dragTurret");
             }, this);
 
-            button.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+            turretButton.on(Phaser.Input.Events.DRAG_END, (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
                 this.events.emit("endDragTurret");
             }, this);
         }
@@ -311,6 +316,31 @@ export class WELLY_SceneTowerDefenseUI extends WELLY_BaseScene
     protected onGameSpeedButtonClicked(): void
     {
         this.events.emit("requestUpdateGameSpeed");
+    }
+
+    protected onPowerRequested(powerId: string): void
+    {
+        this.events.emit("powerRequested", powerId);
+    }
+
+    protected onStartDragPower(powerId: string): void
+    {
+        this.events.emit("startDragPower", powerId);
+    }
+
+    protected onDragPower(powerId: string): void
+    {
+        this.events.emit("dragPower", powerId);
+    }
+
+    protected onEndDragPower(powerId: string): void
+    {
+        this.events.emit("endDragPower", powerId);
+    }
+
+    public onPowerCooldownStart(powerId: string, cooldown: number): void
+    {
+        this.bottomMenu.onPowerCooldownStart(powerId, cooldown);
     }
 
     public onSpeedModeChanged(speedMode: WELLY_SpeedMode): void

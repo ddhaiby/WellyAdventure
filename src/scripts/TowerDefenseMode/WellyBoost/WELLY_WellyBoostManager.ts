@@ -66,6 +66,7 @@ export class WELLY_WellyBoostManager
             const boostIndex = indexes[Phaser.Math.Between(0, indexes.length - 1)];
             const wellyBoost = this.wellyBoostData[boostIndex];
             boostDatArray.push(wellyBoost);
+            Phaser.Utils.Array.Remove(indexes, boostIndex);
         }
 
         this.boostDatArray = boostDatArray;

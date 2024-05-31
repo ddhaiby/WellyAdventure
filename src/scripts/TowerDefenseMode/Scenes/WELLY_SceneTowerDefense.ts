@@ -123,6 +123,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         
         this.turrets = this.physics.add.staticGroup();
         this.turretPreviewWidget = new WELLY_TurretPreviewWidget(this, 0, 0).setVisible(false).setDepth(9999);
+        this.turretSpawnAreaPreview = this.add.graphics().setVisible(false);
         this.spawnedTurrets = new Map<string, number>();
         this.bonusDamagePerTurret = new Map<string, number>();
         this.bonusAttackSpeedPerTurret = new Map<string, number>();
@@ -589,6 +590,7 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
     protected showWellyBoostSelection(): void
     {
         this.hideTurretPopup();
+        this.clearTurretPreview();
 
         const boostDatArray = this.boostManager.generateRandomBoosts(3);
 
@@ -654,8 +656,6 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
         this.turretPreviewWidget.setTurretData(this.turretsData[this.turretPrewiewIndex]);
         this.turretPreviewWidget.setValid(true);
         this.turretPreviewWidget.setVisible(true);
-
-        this.turretSpawnAreaPreview = this.add.graphics();
     }
 
     protected onDragTurret(): void
@@ -701,12 +701,18 @@ export class WELLY_SceneTowerDefense extends WELLY_BaseScene
                 const price = turretPreviewData.gameStatsPerLevel[turretLevel].price;
                 this.trySpawnTurret(tile.pixelX + tile.width * 0.5, tile.pixelY + tile.height * 0.5, turretPreviewData, turretLevel, price);
             }
-
-            this.turretPreviewWidget.setVisible(false);
-            this.turretSpawnAreaPreview.destroy();
-
-            this.turretPrewiewIndex = WELLY_CST.INDEX_INVALID;
         }
+
+        this.clearTurretPreview();
+    }
+
+    protected clearTurretPreview(): void
+    {
+        this.turretPrewiewIndex = WELLY_CST.INDEX_INVALID;
+
+        this.turretPreviewWidget.setVisible(false);
+        this.turretSpawnAreaPreview.setVisible(false);
+        this.turretSpawnAreaPreview.clear();
     }
 
     public getTurrets(): WELLY_Turret[]
